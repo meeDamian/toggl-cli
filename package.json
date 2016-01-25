@@ -1,0 +1,34 @@
+{
+  "name": "toggl-cli",
+  "version": "0.0.1",
+  "description": "Manage your Toggl.com time enties from the familiarity of the nearby CLI.",
+  "main": "index.js",
+  "bin": {
+    "toggl": "index.js"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "toggl",
+    "cli",
+    "utility",
+    "tool",
+    "time",
+    "tracking"
+  ],
+  "author": "Damian Mee <mee.damian@gmail.com> (https://meedamian.com)",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4"
+  },
+  "dependencies": {
+    "chalk": "^1.1.1",
+    "elegant-spinner": "^1.0.1",
+    "fs-extended": "^0.2.1",
+    "log-update": "^1.0.2",
+    "minimist": "^1.2.0",
+    "request": "^2.67.0"
+  }
+}
