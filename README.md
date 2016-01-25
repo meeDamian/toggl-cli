@@ -1,5 +1,5 @@
-# google-search-cli
-[![Build Status](https://travis-ci.org/chester1000/google-search-cli.svg?branch=master)](https://travis-ci.org/chester1000/google-search-cli)
+# toggl-cli
+[![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 
 CLI tool to launch Google Search in the default browser
 
