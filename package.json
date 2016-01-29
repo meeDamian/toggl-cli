@@ -29,11 +29,16 @@
 		"elegant-spinner": "^1.0.1",
 		"fs-extended": "^0.2.1",
 		"log-update": "^1.0.2",
+		"mee": "^0.9.0",
 		"minimist": "^1.2.0",
 		"request": "^2.67.0"
 	},
 	"xo": {
 		"esnext": true,
-		"envs": ["node", "mocha", "es6"]
+		"envs": [
+			"node",
+			"mocha",
+			"es6"
+		]
 	}
 }

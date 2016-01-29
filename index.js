@@ -4,13 +4,14 @@
 require('./lib/input.js')
 	.parse()
 	.then(input => {
-		// if (!input.cmd) {
-		// 	interactive.start(toggl, input);
-		// 	return;
-		// }
-		//
+		if (!input.cmd) {
+			console.log('\n    Invalid option. Run:\n\t$ toggl --help');
+			// require('./lib/interactive.js').start(input);
+			return;
+		}
+
 		require('./lib/simple/').execute(input);
 	})
 	.catch(err => {
-		console.log(err);
+		console.error(err);
 	});
