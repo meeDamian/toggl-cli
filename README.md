@@ -35,6 +35,6 @@ If you discover a bug please report it [here](https://github.com/chester1000/goo
 Mail me at mee DOT damian AT gmail THAT-LITTLE-ROUND-THING com, on twitter I'm [@meeDamian](http://twitter.com/meedamian).
 
 
-## Licence
+## License
 
 MIT @ [Damian Mee](https://meedamian.com)
