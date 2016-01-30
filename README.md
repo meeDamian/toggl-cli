@@ -1,6 +1,5 @@
 # toggl-cli
-[![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
-
+[![Build Status](https://travis-ci.org/chester1000/toggl-cli.svg?branch=master)](https://travis-ci.org/chester1000/toggl-cli) [![npm version](https://badge.fury.io/js/toggl-cli.svg)](https://badge.fury.io/js/toggl-cli) [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 CLI tool to launch Google Search in the default browser
 
 ## Download
