@@ -46,7 +46,7 @@ describe('getShort', () => {
 
 describe('getLong', () => {
 	beforeEach(() => {
-		mocks.chalk.gray = () => {}
+		mocks.chalk.gray = () => {};
 	});
 
 	it('should color \'x\' in \'xor\'', done => {
