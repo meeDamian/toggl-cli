@@ -7,7 +7,7 @@
     "toggl": "lib/index.js"
   },
   "scripts": {
-    "test": "xo && mocha --harmony_destructuring"
+    "test": "xo && mocha --harmony --harmony_destructuring --harmony_default_parameters"
   },
   "keywords": [
     "toggl",

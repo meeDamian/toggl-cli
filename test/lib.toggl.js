@@ -42,7 +42,6 @@ describe('lib.toggl.js', () => {
 			te.should.contain.all.keys(keys);
 			for (const key of keys) {
 				te[key].should.contain.all.keys(ENDPOINT_PROPS);
-				// TODO: should `method` and `endpoint` types be checked
 			}
 		});
 	});
