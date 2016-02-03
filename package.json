@@ -1,7 +1,7 @@
 {
   "name": "toggl-cli",
   "version": "0.0.2",
-  "description": "Manage your Toggl.com time enties from the familiarity of the nearby CLI.",
+  "description": "Manage your Toggl.com time entries from the familiarity of the nearby CLI.",
   "main": "lib/index.js",
   "bin": {
     "toggl": "lib/index.js"
