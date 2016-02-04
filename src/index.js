@@ -1,11 +1,12 @@
-#!/usr/bin/env node --harmony --harmony_destructuring --harmony_default_parameters
 'use strict';
+
+require('./utils.js');
 
 require('./input.js')
 	.parse()
 	.then(input => {
 		if (!input.cmd) {
-			console.log('\n    Invalid option. Run:\n\t$ toggl --help');
+			console.log('\n  Invalid option. Run:\n    $ toggl --help');
 			// require('./interactive.js').start(input);
 			return;
 		}

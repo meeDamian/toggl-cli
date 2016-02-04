@@ -78,7 +78,7 @@ me = require('mee')(module, me, {
 	minimist: require('minimist'),
 	chalk: require('chalk'),
 
-	pkg: require('../package.json'),
+	pkg: require('./utils.js').getPackage(),
 
 	config: require('./config.js'),
 	help: require('./help.js'),

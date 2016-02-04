@@ -77,5 +77,5 @@ me.getLong = function ({pkg, chalk}) {
 
 me = require('mee')(module, me, {
 	chalk: require('chalk'),
-	pkg: require('../package.json')
+	pkg: require('./utils.js').getPackage()
 });

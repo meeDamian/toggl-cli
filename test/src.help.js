@@ -1,3 +1,4 @@
+/* eslint no-unused-expressions: 0 */
 'use strict';
 
 const should = require('chai').should();
