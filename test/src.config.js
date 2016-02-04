@@ -2,8 +2,8 @@
 
 // const should = require('chai').should();
 
-describe('lib.config.js', () => {
-	// const toggl = require('../lib/config.js');
+describe('src.config.js', () => {
+	// const toggl = require('../src/config.js');
 
 	describe('', () => {
 

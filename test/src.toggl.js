@@ -2,8 +2,8 @@
 
 const should = require('chai').should();
 
-describe('lib.toggl.js', () => {
-	const toggl = require('../lib/toggl.js');
+describe('src.toggl.js', () => {
+	const toggl = require('../src/toggl.js');
 
 	describe('#DEFS', () => {
 		it('should have URL defined', () => {

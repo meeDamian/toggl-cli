@@ -9,7 +9,7 @@ const mocks = {
 	chalk: {}
 };
 
-const help = require('../lib/help.js')(mocks);
+const help = require('../src/help.js')(mocks);
 
 describe('getShort', () => {
 	it('should mention all categories', () => {
