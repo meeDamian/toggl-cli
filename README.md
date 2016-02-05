@@ -13,7 +13,7 @@ $ npm i -g toggl-cli
 
 **Everything is subject to change.**
 
-## Usage (Simple)
+## Usage (Simple) 
 
 ```
 $ toggl --help
