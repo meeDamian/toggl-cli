@@ -53,7 +53,11 @@ const DEFS = {
 	}
 };
 
-let me = {};
+let me = {
+	URL,
+	API_VER,
+	DEFS
+};
 
 me.getUrl = function (_, version, endpoint, id) {
 	if (!endpoint) {
@@ -75,7 +79,7 @@ me.getUrl = function (_, version, endpoint, id) {
 	].join('/');
 };
 
-me.request = function ({request, url}, token, {endpoint, method, version}, params) {
+me.request = function ({request}, token, {endpoint, method, version}, params) {
 	return new Promise((resolve, reject) => {
 		const tm = setTimeout(reject, 2000);
 
@@ -229,7 +233,6 @@ me.stopTimeEntry = function (_, token, id) {
  **/
 me = require('mee')(module, me, {
 	request: require('request'),
-	url: require('url'),
 
 	utils: require('./utils.js')
 });

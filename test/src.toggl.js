@@ -2,10 +2,8 @@
 
 const should = require('chai').should();
 
-describe('src.toggl.js', () => {
-	return;
-	
-	const toggl = require('../src/toggl.js');
+describe('toggl.js', () => {
+	const toggl = require('../src/toggl.js')({});
 
 	describe('#DEFS', () => {
 		it('should have URL defined', () => {
@@ -46,6 +44,38 @@ describe('src.toggl.js', () => {
 				te[key].should.contain.all.keys(ENDPOINT_PROPS);
 			}
 		});
+
+		it('should have "projects" endpoints properly defined', () => {
+			should.exist(toggl.DEFS);
+			toggl.DEFS.should.be.an('object');
+			toggl.DEFS.should.have.any.keys('project');
+
+			const keys = [
+				'details'
+			];
+
+			const p = toggl.DEFS.project;
+			p.should.contain.all.keys(keys);
+			for (const key of keys) {
+				p[key].should.contain.all.keys(ENDPOINT_PROPS);
+			}
+		});
+
+		it('should have "clients" endpoints properly defined', () => {
+			should.exist(toggl.DEFS);
+			toggl.DEFS.should.be.an('object');
+			toggl.DEFS.should.have.any.keys('client');
+
+			const keys = [
+				'details'
+			];
+
+			const c = toggl.DEFS.client;
+			c.should.contain.all.keys(keys);
+			for (const key of keys) {
+				c[key].should.contain.all.keys(ENDPOINT_PROPS);
+			}
+		});
 	});
 
 	describe('#getUrl()', () => {
@@ -56,7 +86,7 @@ describe('src.toggl.js', () => {
 
 		it('should throw on no endpoint', () => {
 			const fn = () => {
-				toggl.getUrl(null, {});
+				toggl.getUrl(toggl.API_VER, undefined);
 			};
 
 			fn.should.throw(Error, /endpoint/);
@@ -65,69 +95,69 @@ describe('src.toggl.js', () => {
 		const endpoint = 'endpoint_test';
 
 		it('should return a string', () => {
-			const url = toggl.getUrl(null, {endpoint});
+			const url = toggl.getUrl(undefined, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
 		});
 
 		it('should contain Toggl url', () => {
-			const url = toggl.getUrl(null, {endpoint});
+			const url = toggl.getUrl(undefined, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
-			url.should.match(new RegExp('^' + toggl.URL));
+			url.should.match(new RegExp(`^${toggl.URL}`));
 		});
 
 		it('should set endpoint from `string` correctly', () => {
-			const url = toggl.getUrl(null, {endpoint});
+			const url = toggl.getUrl(undefined, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
-			url.should.match(new RegExp('/' + endpoint + '$'));
+			url.should.match(new RegExp(`/${endpoint}$`));
 		});
 
 		it('should set endpoint from `array` correctly', () => {
 			const endpoint = ['time_entries', 'start'];
-			const url = toggl.getUrl(null, {endpoint});
+			const url = toggl.getUrl(undefined, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
-			url.should.match(new RegExp('/' + endpoint[0] + '/'));
-			url.should.match(new RegExp('/' + endpoint[1] + '$'));
+			url.should.match(new RegExp(`/${endpoint[0]}/`));
+			url.should.match(new RegExp(`/${endpoint[1]}$`));
 		});
 
 		it('should use default version', () => {
 			const DEFAULT_VERSION = 'v8';
 
-			const url = toggl.getUrl(null, {endpoint});
+			const url = toggl.getUrl(undefined, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
-			url.should.match(new RegExp('/' + DEFAULT_VERSION + '/'));
+			url.should.match(new RegExp(`/${DEFAULT_VERSION}/`));
 		});
 
 		it('should set custom API version', () => {
 			const version = 'v9';
 
-			const url = toggl.getUrl(null, {endpoint, version});
+			const url = toggl.getUrl(version, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
-			url.should.match(new RegExp('/' + version + '/'));
+			url.should.match(new RegExp(`/${version}/`));
 		});
 
 		it('should replace with :id with `id` provided', () => {
 			const endpoint = ['time_entries', ':id', 'stop'];
 			const id = 6666;
 
-			const url = toggl.getUrl(null, {endpoint, id});
+			const url = toggl.getUrl(undefined, endpoint, id);
 
 			should.exist(url);
 			url.should.be.a('string');
-			url.should.match(new RegExp('/' + endpoint[0] + '/'));
-			url.should.match(new RegExp('/' + id + '/'));
-			url.should.match(new RegExp('/' + endpoint[2] + '$'));
+			url.should.match(new RegExp(`/${endpoint[0]}/`));
+			url.should.match(new RegExp(`/${id}/`));
+			url.should.match(new RegExp(`/${endpoint[2]}$`));
 		});
 	});
 });

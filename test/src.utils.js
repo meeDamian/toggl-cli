@@ -203,7 +203,7 @@ describe('utils.js', () => {
 		const LONG = 'testers';
 		const DEPS = false;
 
-		const spy = chai.spy((token, {ids, deps}) => Promise.resolve(dict));
+		const spy = chai.spy(() => Promise.resolve(dict));
 
 		let fn;
 		it('should return a function', () => {
