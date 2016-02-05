@@ -2,10 +2,10 @@
   "name": "toggl-cli",
   "version": "0.0.2",
   "description": "Manage your Toggl.com time entries from the familiarity of the nearby CLI.",
-	"repository": {
-		"type": "git",
-		"url": "git@github.com:meeDamian/toggl-cli.git"
-	},
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:meeDamian/toggl-cli.git"
+  },
   "bin": {
     "toggl": "./src/index.js"
   },
@@ -31,7 +31,7 @@
     "elegant-spinner": "^1.0.1",
     "fs-extended": "^0.2.1",
     "log-update": "^1.0.2",
-    "mee": "^0.9.0",
+    "mee": "^0.10.0",
     "minimist": "^1.2.0",
     "request": "^2.67.0"
   },
