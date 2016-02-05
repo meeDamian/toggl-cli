@@ -3,6 +3,8 @@
 const should = require('chai').should();
 
 describe('src.toggl.js', () => {
+	return;
+	
 	const toggl = require('../src/toggl.js');
 
 	describe('#DEFS', () => {
