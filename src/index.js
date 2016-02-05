@@ -1,7 +1,5 @@
 'use strict';
 
-require('./utils.js');
-
 require('./input.js')
 	.parse()
 	.then(input => {

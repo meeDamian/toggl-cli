@@ -36,7 +36,7 @@ function attach(fn, token, short, long, deps = false) {
 function getPackage() {
 	try {
 		return require('../package.json');
-	} catch (e) {
+	} catch (_) {
 		return require('../../package.json');
 	}
 }
