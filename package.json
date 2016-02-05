@@ -3,13 +3,11 @@
   "version": "0.0.2",
   "description": "Manage your Toggl.com time entries from the familiarity of the nearby CLI.",
   "bin": {
-    "toggl": "./run.sh"
+    "toggl": "./src/index.js"
   },
   "scripts": {
-    "compile": "babel src -qd compiled/src && babel test -qd compiled/test",
-    "clean": "rm -rf compiled/",
-    "start": "./run.sh",
-    "test": "./test.sh"
+    "start": "./src/index.js",
+    "test": "xo && mocha --harmony --harmony_destructuring --harmony_default_parameters"
   },
   "keywords": [
     "toggl",
@@ -25,8 +23,6 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "babel-cli": "^6.4.5",
-    "babel-preset-es2015": "^6.3.13",
     "chalk": "^1.1.1",
     "elegant-spinner": "^1.0.1",
     "fs-extended": "^0.2.1",
@@ -38,7 +34,6 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "chai-spies": "^0.7.1",
-    "isparta": "^4.0.0",
     "mocha": "^2.3.4",
     "xo": "^0.12.1"
   },
@@ -51,11 +46,6 @@
     ],
     "ignores": [
       "compiled/**"
-    ]
-  },
-  "babel": {
-    "presets": [
-      "es2015"
     ]
   }
 }
