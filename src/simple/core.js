@@ -6,19 +6,21 @@ const DAY_IN_SEC = 24 * HOUR_IN_SEC;
 
 let me = {};
 
-me.isEntryRunning = function (duration) {
+me.isEntryRunning = function ({duration}) {
 	return duration < 0;
 };
 
 me.to24hour = function (iso8601date) {
 	const date = new Date(iso8601date);
+	const minutes = date.getMinutes();
+
 	return [
 		date.getHours(),
-		date.getMinutes()
+		minutes > 9 ? minutes : `0${minutes}`
 	].join(':');
 };
 
-me.getDurationStr = function (duration) {
+me.getDurationStr = function ({duration}) {
 	const dur = [];
 
 	if (duration >= DAY_IN_SEC) {
@@ -44,19 +46,30 @@ me.getDurationStr = function (duration) {
 };
 
 // always returns 7 characters
-me.getDuration = function (duration, start, pad = true) {
-	const isCurrent = me.isEntryRunning(duration);
+me.getDuration = function ({duration, start}, pad = false) {
+	const isCurrent = me.isEntryRunning({duration});
 
-	let durStr = me.getDurationStr(isCurrent ?
+	duration = isCurrent ?
 		Math.floor((new Date() - Date.parse(start)) / 1e3) :
-		duration
-	);
+		duration;
+
+	let durStr = me.getDurationStr({duration});
 
 	if (pad && durStr.length <= 7) {
 		durStr = Array(7 + 1 - durStr.length).join(' ') + durStr;
 	}
 
 	return {durStr, isCurrent};
+};
+
+me.getBrackets = function ({name, client}, clientFn = (v => v)) {
+	const brackets = [name];
+
+	if (client) {
+		brackets.push(clientFn(client.name));
+	}
+
+	return `[${ brackets.join(' • ') }]`;
 };
 
 me = require('mee')(module, me);

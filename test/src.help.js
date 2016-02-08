@@ -1,7 +1,9 @@
 /* eslint no-unused-expressions: 0 */
 'use strict';
 
-const should = require('chai').should();
+const chai = require('chai');
+chai.use(require('chai-spies'));
+const should = chai.should();
 
 const mocks = {
 	pkg: {
@@ -48,20 +50,33 @@ describe('help.js', () => {
 
 	describe('#getLong()', () => {
 		beforeEach(() => {
-			mocks.chalk.gray = () => {};
+			mocks.chalk.gray = chai.spy();
 		});
 
-		it('should color \'x\' in \'xor\'', done => {
-			mocks.chalk.gray = x => {
-				done(x === 'x' ? undefined : new Error(`wrong letter: ${x}`));
-			};
-
+		it('should color \'x\' in \'xor\'', () => {
 			help.getLong();
+			mocks.chalk.gray.should.have.been.called.once;
 		});
 
 		it('should be multiline', () => {
 			const newLines = (help.getLong().match(/\n/g) || []).length;
-			newLines.should.be.at.least(42);
+			newLines.should.be.at.least(30);
+		});
+	});
+
+	describe('#getExamples()', () => {
+		beforeEach(() => {
+			mocks.chalk.white = chai.spy();
+		});
+
+		it('should color descriptions', () => {
+			help.getExamples();
+			mocks.chalk.white.should.have.been.called.exactly(4);
+		});
+
+		it('should be multiline', () => {
+			const newLines = (help.getExamples().match(/\n/g) || []).length;
+			newLines.should.be.at.least(10);
 		});
 	});
 });

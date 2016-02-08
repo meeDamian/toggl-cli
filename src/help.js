@@ -39,39 +39,42 @@ me.getLong = function ({pkg, chalk}) {
 		'Flags:',
 		'  -v --version - output version',
 		'  -h --help    - output this help',
+		'  --examples   -  show usage examples',
+		'  --no-color   - disable colors',
 		'  --save-token - save provided token and exit',
 		'  -t --token   - run with a custom token (will not be saved)',
 		'  -f --force   - (NOT recomended) prevent all confirmations',
 		'',
 		'Commands:',
 		'  b                    - open in default browser.',
-		'  n now                - see details of currently running time entry (if any).',
+		'  c current            - see details of currently running time entry (if any).',
 		`  s [name]             - start ${chalk.gray('x')}or stop the entry, whatever makes more sense.`,
 		'  start [name]         - start new time entry with the given name.',
 		'  stop [name]          - stop running entry. If name is provided, stop only if matches.',
-		'  r rename <new-name>  - rename the last entry to <new name>. Asks to confirm.',
-		'  d delete [name]      - delete latest entry with matching name. Asks to confirm.',
+		'  r rename <new-name>  - rename currently running entry to <new name>.',
+		'  d delete [name]      - delete latest entry with a matching name. Asks to confirm.',
 		'  l list [number]      - list last <number> of time entries (default: 8)',
-		'  p project "<name>" "<project>"  - add project to time entry',
-		'  c client  "<name>" "<client>"   - add client to time entry',
 		'',
 		'Notes:',
-		'  → Two last commands require quotes.',
-		'  → All values in [square brackets] are optional.',
+		'  → The last command requires quotes.',
+		'  → Values in [square brackets] are optional.'
+	].map(l => `  ${l}`).join('\n');
+};
+
+me.getExamples = function ({chalk: {white}}) {
+	return [
 		'',
-		'Examples:',
-		'  Set default token for all future launches:',
-		'    $ toggl --save-token d9db051bf06be16c2027d3cb08769451',
+		white('Set default token for all future launches:'),
+		'  $ toggl --save-token d9db051bf06be16c2027d3cb08769451',
 		'',
-		'  List last 17 time entries for a different account:',
-		'    $ toggl --token a1ad615af03be16c2027d3dc08291457 list 17',
+		white('List last 17 time entries for a different account:'),
+		'  $ toggl --token a1ad615af03be16c2027d3dc08291457 list 17',
 		'',
-		'  Run interactive mode with a different token and force no confirmations:',
-		'    $ toggl --force --token a1ad615af03be16c2027d3dc08291457',
+		white('Run interactive mode with a different token and force no confirmations:'),
+		'  $ toggl --force --token a1ad615af03be16c2027d3dc08291457',
 		'',
-		'  Start a new task named "Writing toggl-cli docs":',
-		'    $ toggl start Writing toggl-cli docs',
-		''
+		white('Start a new task named "Writing toggl-cli docs":'),
+		'  $ toggl start Writing toggl-cli docs'
 	].map(l => `  ${l}`).join('\n');
 };
 

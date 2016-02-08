@@ -4,7 +4,7 @@ let me = {};
 
 me.preProcessFlags = function ({minimist, process: {argv}}) {
 	return minimist(argv.slice(2), {
-		boolean: ['help', 'version', 'force'],
+		boolean: ['help', 'version', 'examples', 'force'],
 		string: ['token', 'save-token'],
 		alias: {
 			h: 'help',
@@ -45,6 +45,11 @@ me.parse = function ({process, console: {log}, pkg, help, config}) {
 
 		if (argv.help) {
 			log(help.getLong());
+			return;
+		}
+
+		if (argv.examples) {
+			log(help.getExamples());
 			return;
 		}
 

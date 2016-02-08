@@ -2,24 +2,14 @@
 
 let me = {};
 
-me.getBrackets = function ({chalk: {bold}}, {name, client}) {
-	const brackets = [name];
-
-	if (client) {
-		brackets.push(bold(client.name));
-	}
-
-	return `[${ brackets.join(' • ') }]`;
-};
-
 me.getListElement = function ({chalk: {white, blue, red, green, bold}, core}, idx, {description, duration, start, project}) {
-	const {durStr, isCurrent} = core.getDuration(duration, start);
+	const {durStr, isCurrent} = core.getDuration({duration, start}, true);
 
 	return [
 		blue(`${(idx < 10 ? ' ' : '') + idx})`),
 		green(isCurrent ? bold(durStr) : durStr),
 		white(description || '(no description)'),
-		project ? red(me.getBrackets(project)) : ''
+		project ? red(core.getBrackets(project, bold)) : ''
 	];
 };
 

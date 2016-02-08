@@ -2,27 +2,40 @@
 
 let me = {};
 
-me.getDescriptionLine = function ({chalk: {bold}}, description) {
+me.getDescriptionLine = function ({core, chalk: {bold, red}}, {description, project}) {
 	return [
-		description ? bold(description) : '(no description)'
+		description ? bold(description) : '(no description)',
+		project ? red(core.getBrackets(project, bold)) : ''
 	].join(' ');
 };
 
-me.getTimeLine = function ({core, chalk: {dim, green, blue}}, duration, start) {
+me.getTimeLine = function ({core, chalk: {dim, green, blue}}, {duration, start}) {
 	return [
 		dim('Running for:'),
-		green(core.getDuration(duration, start, false).durStr),
+		green(core.getDuration({duration, start}).durStr),
 		'  since',
 		blue(core.to24hour(start))
 	].join(' ');
 };
 
-me.printEntry = function ({console: {log}}, {description, duration, start}) {
+me.getMetaLine = function ({chalk: {black}}, {id, project}) {
+	const line = [`id:${id}`];
+	if (project) {
+		line.push(`pid:${project.id}`);
+
+		if (project.client) {
+			line.push(`cid:${project.client.id}`);
+		}
+	}
+	return black(line.join(', '));
+};
+
+me.printEntry = function ({console: {log}}, timeEntry) {
 	log([
 		'',
-		me.getDescriptionLine(description),
-		me.getTimeLine(duration, start),
-		''
+		me.getDescriptionLine(timeEntry),
+		me.getTimeLine(timeEntry),
+		me.getMetaLine(timeEntry)
 	].join('\n  '));
 };
 
