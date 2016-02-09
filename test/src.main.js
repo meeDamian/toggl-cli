@@ -16,6 +16,9 @@ const mocks = {
 		FINISHED: true,
 		start: chai.spy()
 	},
+	help: {
+		getHint: chai.spy()
+	},
 	console: {
 		log: chai.spy(),
 		error: chai.spy()
@@ -70,6 +73,7 @@ describe('main.js#main()', () => {
 
 		it('should print err message', () => {
 			mocks.console.log.should.have.been.called.once;
+			mocks.help.getHint.should.have.been.called.once;
 		});
 	});
 

@@ -64,6 +64,19 @@ describe('help.js', () => {
 		});
 	});
 
+	describe('#getHint()', () => {
+		it('should contain more important keywords', () => {
+			const hint = help.getHint();
+			should.exist(hint);
+			hint.should.contain('current', 'start', 'stop', 'browser', 'help', 'list', 'rename', 'delete');
+		});
+		
+		it('should be multiline', () => {
+			const newLines = (help.getHint().match(/\n/g) || []).length;
+			newLines.should.be.at.least(5);
+		});
+	});
+
 	describe('#getExamples()', () => {
 		beforeEach(() => {
 			mocks.chalk.white = chai.spy();

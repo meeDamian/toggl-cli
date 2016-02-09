@@ -39,14 +39,14 @@ me.getLong = function ({pkg, chalk}) {
 		'Flags:',
 		'  -v --version - output version',
 		'  -h --help    - output this help',
-		'  --examples   -  show usage examples',
+		'  --examples   - show usage examples',
 		'  --no-color   - disable colors',
 		'  --save-token - save provided token and exit',
 		'  -t --token   - run with a custom token (will not be saved)',
 		'  -f --force   - (NOT recomended) prevent all confirmations',
 		'',
 		'Commands:',
-		'  b                    - open in default browser.',
+		'  b browser            - open in default browser.',
 		'  c current            - see details of currently running time entry (if any).',
 		`  s [name]             - start ${chalk.gray('x')}or stop the entry, whatever makes more sense.`,
 		'  start [name]         - start new time entry with the given name.',
@@ -57,7 +57,21 @@ me.getLong = function ({pkg, chalk}) {
 		'',
 		'Notes:',
 		'  → The last command requires quotes.',
-		'  → Values in [square brackets] are optional.'
+		'  → Values in [square brackets] are optional.',
+		''
+	].map(l => `  ${l}`).join('\n');
+};
+
+me.getHint = function () {
+	return [
+		'',
+		'Invalid option. Try one of:',
+		'  current, s, start, stop, rename,',
+		'  delete, list, browser.',
+		'',
+		'Or run:',
+		'  $ toggl --help',
+		''
 	].map(l => `  ${l}`).join('\n');
 };
 
@@ -74,7 +88,8 @@ me.getExamples = function ({chalk: {white}}) {
 		'  $ toggl --force --token a1ad615af03be16c2027d3dc08291457',
 		'',
 		white('Start a new task named "Writing toggl-cli docs":'),
-		'  $ toggl start Writing toggl-cli docs'
+		'  $ toggl start Writing toggl-cli docs',
+		''
 	].map(l => `  ${l}`).join('\n');
 };
 

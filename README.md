@@ -15,42 +15,43 @@ $ npm i -g toggl-cli
 
 ## Usage (Simple)
 
-```
+```help
 $ toggl --help
 
-Manage your Toggl.com time entries from the familiarity of the nearby CLI.
+	Manage your Toggl.com time entries from the familiarity of the nearby CLI.
 
-Usage:
-	Interactive mode:
-		$ toggl
+	Usage:
+		Interactive mode:
+			$ toggl
 
-	Single request:
-		$ toggl <cmd>
+		Single request:
+			$ toggl <cmd>
 
-Flags:
-	-v --version - output version
-	-h --help    - output this help
-	--save-token - save provided token and exit
-	-t --token   - run with a custom token (will not be saved)
-	-f --force   - (NOT recomended) prevent all confirmations
+	Flags:
+		-v --version - output version
+		-h --help    - output this help
+		--examples   - show usage examples
+		--no-color   - disable colors
+		--save-token - save provided token and exit
+		-t --token   - run with a custom token (will not be saved)
+		-f --force   - (NOT recomended) prevent all confirmations
 
-Commands:
-	b                    - open in default browser.
-	n now                - see details of currently running time entry (if any).
-	s [name]             - start xor stop the entry, whatever makes more sense.
-	start [name]         - start new time entry with the given name.
-	stop [name]          - stop running entry. If name is provided, stop only if matches.
-	r rename <new-name>  - rename the last entry to <new name>. Asks to confirm.
-	d delete [name]      - delete latest entry with matching name. Asks to confirm.
-	l list [number]      - list last <number> of time entries (default: 8)
-	p project "<name>" "<project>"  - add project to time entry
-	c client  "<name>" "<client>"   - add client to time entry
+	Commands:
+		b                    - open in default browser.
+		c current            - see details of currently running time entry (if any).
+		s [name]             - start xor stop the entry, whatever makes more sense.
+		start [name]         - start new time entry with the given name.
+		stop [name]          - stop running entry. If name is provided, stop only if matches.
+		r rename <new-name>  - rename currently running entry to <new name>.
+		d delete [name]      - delete latest entry with a matching name. Asks to confirm.
+		l ls list [number]   - list last <number> of time entries (default: 8)
 
-Notes:
-	→ Two last commands require quotes.
-	→ All values in [square brackets] are optional.
+	Notes:
+		→ The last command requires quotes.
+		→ Values in [square brackets] are optional.
 
-Examples:
+$ toggl --examples
+
 	Set default token for all future launches:
 		$ toggl --save-token d9db051bf06be16c2027d3cb08769451
 
@@ -62,6 +63,7 @@ Examples:
 
 	Start a new task named "Writing toggl-cli docs":
 		$ toggl start Writing toggl-cli docs
+
 ```
 
 ## Usage (Interactive)
@@ -87,19 +89,18 @@ What do you want to do [s,r,d,p,l,L,o,v,q,h,?]?
 ## TODO
 
 ### Simple
-- [ ] **list** of entries with an optional amount
-- [ ] get the entry running **now**
-- [ ] smart start/stop
-- [ ] start
-- [ ] stop
-- [ ] launch in browser
-- [ ] change description
-- [ ] change project
-- [ ] finish this list
+- [x] **list** of entries with an optional amount
+- [x] get the **current** entry running
+- [x] **smart** start/stop
+- [x] **start**
+- [x] **stop**
+- [ ] launch in **browser**
+- [ ] **rename**/change description
+- [ ] **delete**
 
 ### Interactive
 
-- [ ] create this list
+- [ ] everything
 
 
 ## Bugs and feedback
