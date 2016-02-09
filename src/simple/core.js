@@ -16,11 +16,15 @@ me.isEntryRunning = function ({duration}) {
 
 me.to24hour = function (iso8601date) {
 	const date = new Date(iso8601date);
-	const minutes = date.getMinutes();
+	let minutes = date.getMinutes();
+
+	if (minutes < 10) {
+		minutes = `0${minutes}`;
+	}
 
 	return [
 		date.getHours(),
-		minutes > 9 ? minutes : `0${minutes}`
+		minutes
 	].join(':');
 };
 
@@ -66,7 +70,13 @@ me.getDuration = function ({duration, start}, pad = false) {
 	return {durStr, isCurrent};
 };
 
-me.getBrackets = function ({name, client}, clientFn = (v => v)) {
+me.getBrackets = function (project, clientFn = (v => v)) {
+	if (!project) {
+		return '';
+	}
+
+	const {name, client} = project;
+
 	const brackets = [name];
 
 	if (client) {

@@ -9,7 +9,7 @@ me.getListElement = function ({chalk: {white, blue, red, green, bold}, core}, id
 		blue(`${(idx < 10 ? ' ' : '') + idx})`),
 		green(isCurrent ? bold(durStr) : durStr),
 		white(description || '(no description)'),
-		project ? red(core.getBrackets(project, bold)) : ''
+		red(core.getBrackets(project, bold))
 	];
 };
 

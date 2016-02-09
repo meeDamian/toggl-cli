@@ -70,6 +70,16 @@ describe('simple/core.js', () => {
 		it('should return hour in 24-hours format', () => {
 			time.split(':')[0].should.equal('13');
 		});
+
+		it('should skip prepending 0 if not necessary', () => {
+			const iso8601string = new Date(0, 0, 0, 13, 10, 0).toISOString();
+
+			const time = core.to24hour(iso8601string);
+
+			const minutes = time.split(':')[1];
+			minutes.length.should.equal(2);
+			minutes.should.equal('10');
+		});
 	});
 
 	describe('#getDurationStr()', () => {
@@ -142,6 +152,123 @@ describe('simple/core.js', () => {
 			dur = core.getDurationStr({duration});
 			should.exist(dur);
 			dur.should.equal('1d 23h');
+		});
+	});
+
+	describe('#getDuration()', () => {
+		it('should return an object', () => {
+			const dur = core.getDuration({duration: 1});
+
+			should.exist(dur);
+			dur.should.be.an('object');
+			dur.should.have.all.keys('durStr', 'isCurrent');
+			dur.durStr.should.be.a('string');
+			dur.isCurrent.should.be.a('boolean');
+		});
+
+		it('should return unpadded string', () => {
+			const dur = core.getDuration({duration: 1}, false);
+
+			should.exist(dur);
+			dur.should.be.an('object');
+			dur.durStr.should.exist;
+			dur.durStr.length.should.be.at.most(6);
+			dur.isCurrent.should.equal(false);
+		});
+
+		it('should return padded string', () => {
+			const dur = core.getDuration({duration: 1}, true);
+
+			should.exist(dur);
+			dur.should.be.an('object');
+			dur.durStr.should.exist;
+			dur.durStr.length.should.equal(7);
+			dur.isCurrent.should.equal(false);
+		});
+
+		it('should return current duration of ongoing timer', () => {
+			const start = new Date();
+			start.setMinutes(start.getMinutes() - 10);
+			start.setSeconds(start.getSeconds() - 3);
+
+			const dur = core.getDuration({duration: -1, start: start.toISOString()});
+
+			should.exist(dur);
+			dur.should.be.an('object');
+			dur.durStr.should.exist;
+			dur.durStr.should.equal('10m 3s');
+			dur.isCurrent.should.equal(true);
+		});
+	});
+
+	describe('#getBrackets()', () => {
+		it('should return empty string on no project', () => {
+			const brackets = core.getBrackets(undefined);
+
+			should.exist(brackets);
+			brackets.should.be.a('string');
+			brackets.should.be.empty;
+		});
+
+		it('should return project only', () => {
+			const mock = {
+				name: 'project 42'
+			};
+
+			const brackets = core.getBrackets(mock);
+
+			should.exist(brackets);
+			brackets.should.be.a('string');
+			brackets.should.equal('[project 42]');
+		});
+
+		it('should return project and client', () => {
+			const mock = {
+				name: 'project 42',
+				client: {
+					name: 'mice'
+				}
+			};
+
+			const brackets = core.getBrackets(mock);
+
+			should.exist(brackets);
+			brackets.should.be.a('string');
+			brackets.should.match(/^\[project 42 .? mice\]$/);
+		});
+
+		it('should use • as separator', () => {
+			const mock = {
+				name: 'project 42',
+				client: {
+					name: 'mice'
+				}
+			};
+
+			const brackets = core.getBrackets(mock);
+
+			should.exist(brackets);
+			brackets.should.be.a('string');
+			brackets.should.contain('•');
+		});
+
+		it('should run provided function on client', () => {
+			const mock = {
+				name: 'project 42',
+				client: {
+					name: 'mice'
+				}
+			};
+
+			const mockFn = chai.spy(v => v);
+
+			const brackets = core.getBrackets(mock, mockFn);
+
+			should.exist(brackets);
+			brackets.should.be.a('string');
+			brackets.should.contain('project 42');
+			brackets.should.contain('mice');
+			mockFn.should.have.been.called.once;
 		});
 	});
 });

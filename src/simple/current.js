@@ -5,7 +5,7 @@ let me = {};
 me.getDescriptionLine = function ({core, chalk: {bold, red}}, {description, project}) {
 	return [
 		description ? bold(description) : '(no description)',
-		project ? red(core.getBrackets(project, bold)) : ''
+		red(core.getBrackets(project, bold))
 	].join(' ');
 };
 
