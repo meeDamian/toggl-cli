@@ -1,6 +1,8 @@
 'use strict';
 
-let me = {};
+let me = {
+	FINISHED: false
+};
 
 me.keyListener = function ({process: {stdin, exit}}, cb) {
 	stdin.setRawMode(true);
