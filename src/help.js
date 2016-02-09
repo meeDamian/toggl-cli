@@ -24,9 +24,8 @@ me.getShort = function () {
 	].join('\n');
 };
 
-me.getLong = function ({pkg, chalk}) {
-	return [
-		'',
+me.getLong = function ({pkg, pad, chalk}) {
+	return pad([
 		pkg.description,
 		'',
 		'Usage:',
@@ -57,27 +56,23 @@ me.getLong = function ({pkg, chalk}) {
 		'',
 		'Notes:',
 		'  → The last command requires quotes.',
-		'  → Values in [square brackets] are optional.',
-		''
-	].map(l => `  ${l}`).join('\n');
+		'  → Values in [square brackets] are optional.'
+	]);
 };
 
-me.getHint = function () {
-	return [
-		'',
+me.getHint = function ({pad}) {
+	return pad([
 		'Invalid option. Try one of:',
 		'  current, s, start, stop, rename,',
 		'  delete, list, browser.',
 		'',
 		'Or run:',
-		'  $ toggl --help',
-		''
-	].map(l => `  ${l}`).join('\n');
+		'  $ toggl --help'
+	]);
 };
 
-me.getExamples = function ({chalk: {white}}) {
-	return [
-		'',
+me.getExamples = function ({pad, chalk: {white}}) {
+	return pad([
 		white('Set default token for all future launches:'),
 		'  $ toggl --save-token d9db051bf06be16c2027d3cb08769451',
 		'',
@@ -88,12 +83,13 @@ me.getExamples = function ({chalk: {white}}) {
 		'  $ toggl --force --token a1ad615af03be16c2027d3dc08291457',
 		'',
 		white('Start a new task named "Writing toggl-cli docs":'),
-		'  $ toggl start Writing toggl-cli docs',
-		''
-	].map(l => `  ${l}`).join('\n');
+		'  $ toggl start Writing toggl-cli docs'
+	]);
 };
 
 me = require('mee')(module, me, {
 	chalk: require('chalk'),
-	pkg: require('../package.json')
+	pkg: require('../package.json'),
+
+	pad: require('./views.js').pad
 });

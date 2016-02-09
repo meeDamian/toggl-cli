@@ -2,7 +2,7 @@
 
 let me = {};
 
-me.execute = function ({list, current, smart, start, stop, rename, open, console}, {cmd, token}) {
+me.execute = function ({list, current, smart, start, stop, rename, open, help, log}, {cmd, token}) {
 	switch (cmd[0].toLowerCase()) {
 		case 'list': case 'ls': case 'l':
 			list(token, cmd[1]);
@@ -24,7 +24,7 @@ me.execute = function ({list, current, smart, start, stop, rename, open, console
 			stop(token);
 			break;
 
-		case 'rename':
+		case 'rename': case 'r':
 			rename(token, cmd.splice(1).join(' '));
 			break;
 
@@ -33,7 +33,7 @@ me.execute = function ({list, current, smart, start, stop, rename, open, console
 			break;
 
 		default:
-			console.error('Invalid command. Try `toggl --help`.');
+			log(help.getHint());
 	}
 };
 
@@ -47,5 +47,6 @@ me = require('mee')(module, me, {
 	stop: require('./stop.js').act,
 	rename: require('./rename.js').act,
 
-	console
+	help: require('../help.js'),
+	log: require('../views.js').log
 });

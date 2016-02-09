@@ -30,6 +30,10 @@ me.getToken = function () {
 
 me.setToken = function ({fs}, token) {
 	return new Promise((resolve, reject) => {
+		if (!token) {
+			throw new Error('token can\'t be empty.');
+		}
+
 		let config = me.getConfig();
 		if (!config || typeof config !== 'object') {
 			config = {};

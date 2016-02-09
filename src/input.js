@@ -32,7 +32,7 @@ me.chooseToken = function ({config: {getToken}}, token) {
 	});
 };
 
-me.parse = function ({process, console: {log}, pkg, help, config}) {
+me.parse = function ({process, views: {log, err, errMsg}, pkg, help, config}) {
 	return new Promise(resolve => {
 		let argv = process.argv;
 
@@ -53,10 +53,10 @@ me.parse = function ({process, console: {log}, pkg, help, config}) {
 			return;
 		}
 
-		if (argv['save-token']) {
+		if (argv['save-token'] !== undefined) {
 			config.setToken(argv['save-token'])
 				.then(token => log(`token '${token}' saved`))
-				.catch(err => log('token NOT saved:', err));
+				.catch(errMsg('token NOT saved'));
 			return;
 		}
 
@@ -75,7 +75,7 @@ me.parse = function ({process, console: {log}, pkg, help, config}) {
 					token
 				});
 			})
-			.catch(log);
+			.catch(err);
 	});
 };
 
@@ -86,8 +86,8 @@ me = require('mee')(module, me, {
 	pkg: require('../package.json'),
 
 	config: require('./config.js'),
+	views: require('./views.js'),
 	help: require('./help.js'),
 
-	process,
-	console
+	process
 });

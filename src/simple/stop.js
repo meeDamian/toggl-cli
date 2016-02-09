@@ -2,30 +2,12 @@
 
 let me = {};
 
-me.print = function ({console: {log}, chalk: {red, white, green, blue, bold, black}, core}, {id, description, start, stop, duration}) {
-	log([
-		'\n ',
-		red('Stopped'),
-		white(description ? bold(description) : '(no description)'),
-		'after',
-		green(core.getDuration({duration, start}).durStr),
-		'at',
-		blue(core.to24hour(stop)),
-		black(`[id:#${id}]`),
-		'\n'
-	].join(' '));
-};
-
-me.printErr = function ({chalk: {red}, console: {log}}, err) {
-	log(`\n  ${red(err.message)}\n`);
-};
-
-me.stop = function ({toggl}, token, id) {
+me.stop = function ({toggl, views}, token, id) {
 	return toggl.stopTimeEntry(token, id)
-		.then(me.print);
+		.then(views.stopped);
 };
 
-me.act = function ({current}, token) {
+me.act = function ({current, views}, token) {
 	current.get(token)
 		.then(entry => {
 			if (!entry) {
@@ -34,15 +16,11 @@ me.act = function ({current}, token) {
 
 			return me.stop(token, entry.id);
 		})
-		.catch(me.printErr);
+		.catch(views.err);
 };
 
 me = require('mee')(module, me, {
-	chalk: require('chalk'),
-
-	core: require('./core.js'),
 	current: require('./current.js'),
 	toggl: require('../toggl.js'),
-
-	console
+	views: require('../views.js')
 });

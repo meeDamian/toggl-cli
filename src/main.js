@@ -2,31 +2,28 @@
 
 let me = {};
 
-me.main = function ({input, simple, interactive, console, help}) {
+me.main = function ({input, simple, interactive, help, views}) {
 	input.parse()
 		.then(input => {
 			if (!input.cmd) {
 				if (!interactive.FINISHED) {
-					console.log(help.getHint());
+					views.log(help.getHint());
 					return;
 				}
 
 				interactive.start(input);
-				return;
 			}
 
 			simple.execute(input);
 		})
-		.catch(err => {
-			console.error(err);
-		});
+		.catch(views.err);
 };
 
 me = require('mee')(module, me, {
 	help: require('./help.js'),
+	views: require('./views.js'),
+
 	input: require('./input.js'),
 	simple: require('./simple/'),
-	interactive: require('./interactive.js'),
-
-	console
+	interactive: require('./interactive.js')
 });
