@@ -165,38 +165,27 @@ describe('utils.js', () => {
 	});
 
 	describe('#attach()', () => {
-		const dict = [
-			{
-				id: 1,
-				sth: 'banana'
-			},
-			{
-				id: 3,
-				sth: 'prime'
-			},
-			{
-				id: 5,
-				sth: true
-			}
-		];
+		const dict = [{
+			id: 1, sth: 'banana'
+		}, {
+			id: 3, sth: 'prime'
+		}, {
+			id: 5, sth: true
+		}];
 
-		const parents = [
-			{
-				id: 1,
-				name: 'one',
-				tid: 1
-			},
-			{
-				id: 2,
-				name: 'three',
-				tid: 3
-			},
-			{
-				id: 3,
-				name: 'five',
-				tid: 5
-			}
-		];
+		const parents = [{
+			id: 1,
+			name: 'one',
+			tid: 1
+		}, {
+			id: 2,
+			name: 'three',
+			tid: 3
+		}, {
+			id: 3,
+			name: 'five',
+			tid: 5
+		}];
 
 		const TOKEN = 'test token';
 		const SHORT = 'tid';
@@ -229,29 +218,6 @@ describe('utils.js', () => {
 					done();
 				})
 				.catch(done);
-		});
-	});
-
-	describe('#getPackage()', () => {
-		let pkg;
-
-		before(() => {
-			pkg = utils.getPackage();
-		});
-
-		it('should return a valid object', () => {
-			should.exist(pkg);
-			pkg.should.be.an('object');
-		});
-
-		it('should have all required properties', () => {
-			pkg.should.contain.all.keys('description', 'version', 'name');
-			pkg.version.should.be.a('string');
-			pkg.version.should.match(/^\d{0,3}\.\d{0,3}\.\d{0,3}$/);
-			pkg.description.should.be.a('string');
-			pkg.description.should.not.be.empty;
-			pkg.name.should.be.a('string');
-			pkg.name.should.not.be.empty;
 		});
 	});
 });

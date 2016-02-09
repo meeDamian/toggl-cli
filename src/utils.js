@@ -33,17 +33,8 @@ function attach(fn, token, short, long, deps = false) {
 	};
 }
 
-function getPackage() {
-	try {
-		return require('../package.json');
-	} catch (_) {
-		return require('../../package.json');
-	}
-}
-
 Object.assign(module.exports, {
 	objectify,
 	combine,
-	attach,
-	getPackage
+	attach
 });

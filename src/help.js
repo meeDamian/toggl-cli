@@ -80,5 +80,5 @@ me.getExamples = function ({chalk: {white}}) {
 
 me = require('mee')(module, me, {
 	chalk: require('chalk'),
-	pkg: require('./utils.js').getPackage()
+	pkg: require('../package.json')
 });
