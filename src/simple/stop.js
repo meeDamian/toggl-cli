@@ -11,12 +11,13 @@ me.print = function ({console: {log}, chalk: {red, white, green, blue, bold, bla
 		green(core.getDuration({duration, start}).durStr),
 		'at',
 		blue(core.to24hour(stop)),
-		black(`[id:#${id}]`)
+		black(`[id:#${id}]`),
+		'\n'
 	].join(' '));
 };
 
 me.printErr = function ({chalk: {red}, console: {log}}, err) {
-	log(`\n  ${red(err.message)}`);
+	log(`\n  ${red(err.message)}\n`);
 };
 
 me.stop = function ({toggl}, token, id) {
@@ -24,19 +25,14 @@ me.stop = function ({toggl}, token, id) {
 		.then(me.print);
 };
 
-me.act = function ({current, console}, token, id) {
-	if (id !== undefined) {
-		me.stop(token, id);
-		return;
-	}
-
+me.act = function ({current}, token) {
 	current.get(token)
 		.then(entry => {
 			if (!entry) {
 				throw new Error('No timer is running…');
 			}
 
-			me.stop(token, entry.id);
+			return me.stop(token, entry.id);
 		})
 		.catch(me.printErr);
 };

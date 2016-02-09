@@ -94,8 +94,8 @@ What do you want to do [s,r,d,p,l,L,o,v,q,h,?]?
 - [x] **smart** start/stop
 - [x] **start**
 - [x] **stop**
-- [ ] launch in **browser**
-- [ ] **rename**/change description
+- [x] **rename**/change description
+- [x] launch in **browser**
 - [ ] **delete**
 
 ### Interactive

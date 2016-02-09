@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git@github.com:meeDamian/toggl-cli.git"
   },
-	"main": "./src/main.js",
+  "main": "./src/main.js",
   "bin": {
     "toggl": "./src/index.js"
   },
@@ -34,6 +34,7 @@
     "log-update": "^1.0.2",
     "mee": "^0.10.0",
     "minimist": "^1.2.0",
+    "open": "0.0.5",
     "request": "^2.67.0"
   },
   "devDependencies": {

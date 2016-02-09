@@ -19,7 +19,7 @@ const DEFS = {
 	},
 	timeEntry: {
 		create: {
-			endpoint: ['time_entires', 'create'],
+			endpoint: ['time_entries', 'create'],
 			method: 'POST'
 		},
 		current: {
@@ -47,7 +47,7 @@ const DEFS = {
 			method: 'PUT'
 		},
 		update: {
-			endpoint: ['time_entires', ':id'],
+			endpoint: ['time_entries', ':id'],
 			method: 'PUT'
 		}
 	}
@@ -225,6 +225,11 @@ me.startTimeEntry = function (_, token, description) {
 
 me.stopTimeEntry = function (_, token, id) {
 	return me.request(token, DEFS.timeEntry.stop, {id})
+		.then(({body: {data}}) => data);
+};
+
+me.updateTimeEntry = function (_, token, id, changes) {
+	return me.request(token, DEFS.timeEntry.update, {id, body: {time_entry: changes}})
 		.then(({body: {data}}) => data);
 };
 

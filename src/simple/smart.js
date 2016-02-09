@@ -15,7 +15,7 @@ me.act = function ({current, start, stop}, token, description) {
 				return;
 			}
 
-			stop.act(token, current.id);
+			stop.stop(token, current.id);
 		});
 };
 

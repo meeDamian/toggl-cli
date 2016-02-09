@@ -9,7 +9,8 @@ me.print = function ({console: {log}, chalk: {green, white, blue, bold, black}, 
 		white(description ? bold(description) : '(no description)'),
 		'at',
 		blue(to24hour(start)),
-		black(`[id:#${id}]`)
+		black(`[id:#${id}]`),
+		'\n'
 	].join(' '));
 };
 
