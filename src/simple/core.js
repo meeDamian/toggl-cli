@@ -4,7 +4,11 @@ const MIN_IN_SEC = 60;
 const HOUR_IN_SEC = 60 * MIN_IN_SEC;
 const DAY_IN_SEC = 24 * HOUR_IN_SEC;
 
-let me = {};
+let me = {
+	MIN_IN_SEC,
+	HOUR_IN_SEC,
+	DAY_IN_SEC
+};
 
 me.isEntryRunning = function ({duration}) {
 	return duration < 0;
