@@ -6,6 +6,7 @@
     "type": "git",
     "url": "git@github.com:meeDamian/toggl-cli.git"
   },
+	"main": "./src/main.js",
   "bin": {
     "toggl": "./src/index.js"
   },
