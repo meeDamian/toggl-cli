@@ -67,10 +67,6 @@ describe('help.js', () => {
 			const newLines = (help.getShort().match(/\n/g) || []).length;
 			newLines.should.be.at.least(10);
 		});
-
-		it('should contain micro', () => {
-			help.getShort().should.contain(help.getMicro());
-		});
 	});
 
 	describe('#getLong()', () => {

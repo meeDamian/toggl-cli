@@ -1,7 +1,23 @@
 'use strict';
 
 let me = {
-	FINISHED: false
+	FINISHED: true
+};
+
+me.render = function ({logger, help, chalk}, lines) {
+	if (lines === undefined) {
+		logger.clear();
+		return;
+	}
+
+	if (typeof lines === 'string') {
+		lines = [lines];
+	}
+
+	logger([
+		...lines,
+		chalk.bold.cyan(help.getMicro())
+	].join('\n'));
 };
 
 me.keyListener = function ({process: {stdin, exit}}, cb) {
@@ -17,35 +33,52 @@ me.keyListener = function ({process: {stdin, exit}}, cb) {
 	});
 };
 
-me.start = function ({console, toggl, help, params, list}, {token}) {
+me.list = function ({toggl, views}, token, amount) {
+	toggl.getTimeEntries(token, {amount})
+		.then(e => {
+			views.list(e, me.render);
+		})
+		.catch(views.err);
+};
+
+me.start = function ({views, help}, {token}) {
 	me.keyListener(key => {
 		switch (key) {
 			case 'h':
 			case '?':
-				console.log(help.getShort());
+				me.render(help.getShort());
+				break;
+
+			case 'x':
+				me.render(undefined);
 				break;
 
 			case 'l':
-				list.listTimeEntries(token, 8);
+				me.list(token, 8);
 				break;
 
 			case 'L':
-				list.listTimeEntries(token, 16);
+				me.list(token, 16);
 				break;
 
+			case '\u001b[A': console.log('up'); break;
+			case '\u001b[B': console.log('down'); break;
+			case '\u001b[C': console.log('right'); break;
+			case '\u001b[D': console.log('left'); break;
+
 			default:
-				console.log(key);
+				views.log(key);
 				break;
 		}
 	});
 };
 
 me = require('mee')(module, me, {
-	process,
-	console,
-	toggl: require('./toggl.js'),
-	help: require('./help.js'),
+	logger: require('log-update'),
+	chalk: require('chalk'),
 
-	// tmp
-	list: require('./simple/list.js')
+	process,
+	views: require('./views.js'),
+	toggl: require('./toggl.js'),
+	help: require('./help.js')
 });

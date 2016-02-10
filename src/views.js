@@ -33,8 +33,8 @@ me.log = function ({console: {log}}, val, pad = false) {
 	log(pad ? me.pad(val) : val);
 };
 
-me.started = function ({chalk}, {id, description, start}) {
-	me.log([
+me.started = function ({chalk}, {id, description, start}, out = me.log) {
+	out([
 		chalk.green('Started'),
 		me.getDescription(description),
 		'at',
@@ -43,20 +43,20 @@ me.started = function ({chalk}, {id, description, start}) {
 	].join(' '), true);
 };
 
-me.details = function (_, timeEntry) {
-	me.log([
+me.details = function (_, timeEntry, out = me.log) {
+	out([
 		me.descriptionLine(timeEntry),
 		me.timeLine(timeEntry),
 		me.metaLine(timeEntry)
 	], true);
 };
 
-me.list = function (_, entries) {
-	me.log(entries.map(me.listLine), true);
+me.list = function (_, entries, out = me.log) {
+	out(entries.map(me.listLine), true);
 };
 
-me.stopped = function ({chalk}, {id, description, start, stop, duration}) {
-	me.log([
+me.stopped = function ({chalk}, {id, description, start, stop, duration}, out = me.log) {
+	out([
 		chalk.red('Stopped'),
 		me.getDescription(description),
 		'after',
@@ -67,8 +67,8 @@ me.stopped = function ({chalk}, {id, description, start, stop, duration}) {
 	].join(' '), true);
 };
 
-me.renamed = function ({chalk}, oldName, newName, id) {
-	me.log([
+me.renamed = function ({chalk}, oldName, newName, id, out = me.log) {
+	out([
 		chalk.blue('Renamed'),
 		me.getDescription(oldName),
 		'to',

@@ -3,7 +3,7 @@
 let me = {};
 
 me.show = function ({views, toggl}, token, amount) {
-	toggl.getTimeEntries(token, {amount, deps: true})
+	toggl.getTimeEntries(token, {amount})
 		.then(views.list)
 		.catch(views.err);
 };

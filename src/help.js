@@ -18,12 +18,16 @@ me.getShort = function () {
 		'  l - list last 8',
 		'  L - list last 16',
 
+		'Navigation:',
+		'  ← - see previous screen',
+		'  ⇅ - select from lists',
+
 		'Other:',
 		'  o - open Toggl in browser',
 		'  v - version',
+		'  x - clear',
 		'  q - quit',
-		'  h, ? - help',
-		me.getMicro()
+		'  h, ? - help'
 	].join('\n');
 };
 
