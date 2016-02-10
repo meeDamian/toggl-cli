@@ -51,18 +51,12 @@ describe('help.js', () => {
 
 	describe('#getLong()', () => {
 		beforeEach(() => {
-			mocks.chalk.gray = chai.spy();
 			mocks.pad = chai.spy(v => v);
 		});
 
 		it('should use standard view', () => {
 			help.getLong();
 			mocks.pad.should.have.been.called.once;
-		});
-
-		it('should color \'x\' in \'xor\'', () => {
-			help.getLong();
-			mocks.chalk.gray.should.have.been.called.once;
 		});
 
 		it('should be multiline', () => {

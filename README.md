@@ -9,13 +9,9 @@ Manage your Toggl.com time entries from the familiarity of the nearby CLI.
 $ npm i -g toggl-cli
 ```
 
-## Notice
-
-**Everything is subject to change.**
-
 ## Usage (Simple)
 
-```help
+```
 $ toggl --help
 
 	Manage your Toggl.com time entries from the familiarity of the nearby CLI.
@@ -31,24 +27,24 @@ $ toggl --help
 		-v --version - output version
 		-h --help    - output this help
 		--examples   - show usage examples
-		--no-color   - disable colors
+		--no-colors  - disable colors
 		--save-token - save provided token and exit
 		-t --token   - run with a custom token (will not be saved)
 		-f --force   - (NOT recomended) prevent all confirmations
 
 	Commands:
-		b                    - open in default browser.
 		c current            - see details of currently running time entry (if any).
-		s [name]             - start xor stop the entry, whatever makes more sense.
-		start [name]         - start new time entry with the given name.
-		stop [name]          - stop running entry. If name is provided, stop only if matches.
+		l list [number]      - list last <number> of time entries (default: 8)
+		s smart [name]       - start or stop the entry, whatever makes more sense.
 		r rename <new-name>  - rename currently running entry to <new name>.
+		start [name]         - start new time entry with the given name.
+		stop                 - stop running entry.
 		d delete [name]      - delete latest entry with a matching name. Asks to confirm.
-		l ls list [number]   - list last <number> of time entries (default: 8)
+		b browser            - open Toggl timer in default browser.
 
-	Notes:
-		→ The last command requires quotes.
+	Note:
 		→ Values in [square brackets] are optional.
+
 
 $ toggl --examples
 
@@ -63,7 +59,6 @@ $ toggl --examples
 
 	Start a new task named "Writing toggl-cli docs":
 		$ toggl start Writing toggl-cli docs
-
 ```
 
 ## Usage (Interactive)
@@ -78,29 +73,21 @@ Recent:
   l - list last 8
   L - list last 16
 Other:
-  o - open Toggl in browser
+  b - open Toggl in browser
   v - version
   q - quit
   h, ? - help
-What do you want to do [s,r,d,p,l,L,o,v,q,h,?]?
-
+What do you want to do [s,r,d,p,l,L,b,v,q,h,?]?
 ```
 
 ## TODO
 
 ### Simple
-- [x] **list** of entries with an optional amount
-- [x] get the **current** entry running
-- [x] **smart** start/stop
-- [x] **start**
-- [x] **stop**
-- [x] **rename**/change description
-- [x] launch in **browser**
 - [ ] **delete**
 
 ### Interactive
 
-- [ ] everything
+- [ ] _almost_ everything
 
 
 ## Bugs and feedback

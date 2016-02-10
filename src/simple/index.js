@@ -12,7 +12,7 @@ me.execute = function ({list, current, smart, start, stop, rename, open, help, l
 			current(token);
 			break;
 
-		case 's':
+		case 'smart': case 's':
 			smart(token, cmd.splice(1).join(' '));
 			break;
 

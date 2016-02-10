@@ -24,7 +24,7 @@ me.getShort = function () {
 	].join('\n');
 };
 
-me.getLong = function ({pkg, pad, chalk}) {
+me.getLong = function ({pkg, pad}) {
 	return pad([
 		pkg.description,
 		'',
@@ -45,14 +45,14 @@ me.getLong = function ({pkg, pad, chalk}) {
 		'  -f --force   - (NOT recomended) prevent all confirmations',
 		'',
 		'Commands:',
-		'  b browser            - open in default browser.',
 		'  c current            - see details of currently running time entry (if any).',
-		`  s [name]             - start ${chalk.gray('x')}or stop the entry, whatever makes more sense.`,
-		'  start [name]         - start new time entry with the given name.',
-		'  stop [name]          - stop running entry. If name is provided, stop only if matches.',
-		'  r rename <new-name>  - rename currently running entry to <new name>.',
-		'  d delete [name]      - delete latest entry with a matching name. Asks to confirm.',
 		'  l list [number]      - list last <number> of time entries (default: 8)',
+		`  s smart [name]       - start or stop the entry, whatever makes more sense.`,
+		'  r rename <new-name>  - rename currently running entry to <new name>.',
+		'  start [name]         - start new time entry with the given name.',
+		'  stop                 - stop running entry.',
+		'  d delete [name]      - delete latest entry with a matching name. Asks to confirm.',
+		'  b browser            - open Toggl timer in default browser.',
 		'',
 		'Note:',
 		'  → Values in [square brackets] are optional.'
