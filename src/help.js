@@ -39,7 +39,7 @@ me.getLong = function ({pkg, pad, chalk}) {
 		'  -v --version - output version',
 		'  -h --help    - output this help',
 		'  --examples   - show usage examples',
-		'  --no-color   - disable colors',
+		'  --no-colors  - disable colors',
 		'  --save-token - save provided token and exit',
 		'  -t --token   - run with a custom token (will not be saved)',
 		'  -f --force   - (NOT recomended) prevent all confirmations',
@@ -54,8 +54,7 @@ me.getLong = function ({pkg, pad, chalk}) {
 		'  d delete [name]      - delete latest entry with a matching name. Asks to confirm.',
 		'  l list [number]      - list last <number> of time entries (default: 8)',
 		'',
-		'Notes:',
-		'  → The last command requires quotes.',
+		'Note:',
 		'  → Values in [square brackets] are optional.'
 	]);
 };
