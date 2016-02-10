@@ -12,6 +12,7 @@ me.main = function ({input, simple, interactive, help, views}) {
 				}
 
 				interactive.start(input);
+				return;
 			}
 
 			simple.execute(input);

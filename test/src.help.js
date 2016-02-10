@@ -9,7 +9,8 @@ const mocks = {
 	pkg: {
 		description: 'This is a test description'
 	},
-	chalk: {}
+	chalk: {},
+	pad: chai.spy(v => v)
 };
 
 const help = require('../src/help.js')(mocks);
@@ -51,6 +52,12 @@ describe('help.js', () => {
 	describe('#getLong()', () => {
 		beforeEach(() => {
 			mocks.chalk.gray = chai.spy();
+			mocks.pad = chai.spy(v => v);
+		});
+
+		it('should use standard view', () => {
+			help.getLong();
+			mocks.pad.should.have.been.called.once;
 		});
 
 		it('should color \'x\' in \'xor\'', () => {
@@ -59,27 +66,49 @@ describe('help.js', () => {
 		});
 
 		it('should be multiline', () => {
-			const newLines = (help.getLong().match(/\n/g) || []).length;
-			newLines.should.be.at.least(30);
+			const arr = help.getLong();
+
+			should.exist(arr);
+			arr.should.be.an('array');
+			arr.length.should.be.at.least(30);
 		});
 	});
 
 	describe('#getHint()', () => {
+		beforeEach(() => {
+			mocks.pad = chai.spy(v => v);
+		});
+
+		it('should use standard view', () => {
+			help.getHint();
+			mocks.pad.should.have.been.called.once;
+		});
+
 		it('should contain more important keywords', () => {
-			const hint = help.getHint();
+			const hint = help.getHint().join('\n');
+
 			should.exist(hint);
 			hint.should.contain('current', 'start', 'stop', 'browser', 'help', 'list', 'rename', 'delete');
 		});
 
 		it('should be multiline', () => {
-			const newLines = (help.getHint().match(/\n/g) || []).length;
-			newLines.should.be.at.least(5);
+			const arr = help.getHint();
+
+			should.exist(arr);
+			arr.should.be.an('array');
+			arr.length.should.be.at.least(5);
 		});
 	});
 
 	describe('#getExamples()', () => {
 		beforeEach(() => {
 			mocks.chalk.white = chai.spy();
+			mocks.pad = chai.spy(v => v);
+		});
+
+		it('should use standard view', () => {
+			help.getExamples();
+			mocks.pad.should.have.been.called.once;
 		});
 
 		it('should color descriptions', () => {
@@ -88,8 +117,11 @@ describe('help.js', () => {
 		});
 
 		it('should be multiline', () => {
-			const newLines = (help.getExamples().match(/\n/g) || []).length;
-			newLines.should.be.at.least(10);
+			const arr = help.getExamples();
+
+			should.exist(arr);
+			arr.should.be.an('array');
+			arr.length.should.be.at.least(10);
 		});
 	});
 });

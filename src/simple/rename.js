@@ -23,7 +23,6 @@ me.act = function ({current, toggl, views}, token, newName) {
 
 me = require('mee')(module, me, {
 	current: require('./current.js'),
-
-	views: require('../views.js'),
-	toggl: require('../toggl.js')
+	toggl: require('../toggl.js'),
+	views: require('../views.js')
 });

@@ -19,9 +19,9 @@ const mocks = {
 	help: {
 		getHint: chai.spy()
 	},
-	console: {
+	views: {
 		log: chai.spy(),
-		error: chai.spy()
+		err: chai.spy()
 	}
 };
 
@@ -52,6 +52,9 @@ describe('main.js#main()', () => {
 
 		it('should call interactive#start() with right args', () => {
 			mocks.interactive.start.should.have.been.called.once.with(mockInput);
+			mocks.simple.execute.should.not.have.been.called();
+			mocks.views.log.should.not.have.been.called();
+			mocks.views.err.should.not.have.been.called();
 		});
 	});
 
@@ -63,6 +66,7 @@ describe('main.js#main()', () => {
 		before(() => {
 			mocks.interactive.FINISHED = false;
 			mocks.input.parse = chai.spy(() => Promise.resolve(mockInput));
+			mocks.interactive.start = chai.spy();
 
 			require('../src/main.js')(mocks).main();
 		});
@@ -72,8 +76,11 @@ describe('main.js#main()', () => {
 		});
 
 		it('should print err message', () => {
-			mocks.console.log.should.have.been.called.once;
+			mocks.views.log.should.have.been.called.once;
 			mocks.help.getHint.should.have.been.called.once;
+			mocks.interactive.start.should.not.have.been.called();
+			mocks.simple.execute.should.not.have.been.called();
+			mocks.views.err.should.not.have.been.called();
 		});
 	});
 
@@ -86,6 +93,7 @@ describe('main.js#main()', () => {
 
 		before(() => {
 			mocks.input.parse = chai.spy(() => Promise.resolve(mockInput));
+			mocks.views.log = chai.spy();
 
 			require('../src/main.js')(mocks).main();
 		});
@@ -96,18 +104,25 @@ describe('main.js#main()', () => {
 
 		it('should invoke simple#execute() with right args', () => {
 			mocks.simple.execute.should.have.been.called.once.with(mockInput);
+			mocks.interactive.start.should.not.have.been.called();
+			mocks.views.log.should.not.have.been.called();
+			mocks.views.err.should.not.have.been.called();
 		});
 	});
 
 	describe('input parse error', () => {
 		before(() => {
 			mocks.input.parse = chai.spy(() => Promise.reject(new Error('Fake Error')));
+			mocks.simple.execute = chai.spy();
 
 			require('../src/main.js')(mocks).main();
 		});
 
 		it('should print the error', () => {
-			mocks.console.error.should.have.been.called.once;
+			mocks.views.err.should.have.been.called.once;
+			mocks.simple.execute.should.not.have.been.called();
+			mocks.interactive.start.should.not.have.been.called();
+			mocks.views.log.should.not.have.been.called();
 		});
 	});
 });
