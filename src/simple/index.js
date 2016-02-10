@@ -4,11 +4,11 @@ let me = {};
 
 me.execute = function ({list, current, smart, start, stop, rename, open, help, log}, {cmd, token}) {
 	switch (cmd[0].toLowerCase()) {
-		case 'list': case 'ls': case 'l':
+		case 'list': case 'l': case 'ls':
 			list(token, cmd[1]);
 			break;
 
-		case 'current': case 'c':
+		case 'current': case 'c': case 'top':
 			current(token);
 			break;
 
@@ -16,19 +16,19 @@ me.execute = function ({list, current, smart, start, stop, rename, open, help, l
 			smart(token, cmd.splice(1).join(' '));
 			break;
 
-		case 'start':
+		case 'start': case 'up':
 			start(token, cmd.splice(1).join(' '));
 			break;
 
-		case 'stop':
+		case 'stop': case 'down':
 			stop(token);
 			break;
 
-		case 'rename': case 'r':
+		case 'rename': case 'r': case 'mv':
 			rename(token, cmd.splice(1).join(' '));
 			break;
 
-		case 'browser': case 'b':
+		case 'browser': case 'b': case 'open':
 			open('https://www.toggl.com/app/timer');
 			break;
 
