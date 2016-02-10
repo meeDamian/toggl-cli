@@ -2,6 +2,10 @@
 
 let me = {};
 
+me.getMicro = function () {
+	return 'What do you want to do [s,r,d,p,l,L,o,v,q,h,?]?';
+};
+
 me.getShort = function () {
 	return [
 		'Time entry management:',
@@ -9,7 +13,6 @@ me.getShort = function () {
 		'  r - rename',
 		'  d - delete',
 		'  p - assign to project',
-		// '  t - edit time',
 
 		'Recent:',
 		'  l - list last 8',
@@ -20,7 +23,7 @@ me.getShort = function () {
 		'  v - version',
 		'  q - quit',
 		'  h, ? - help',
-		'What do you want to do [s,r,d,p,l,L,o,v,q,h,?]?'
+		me.getMicro()
 	].join('\n');
 };
 

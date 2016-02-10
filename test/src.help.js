@@ -16,6 +16,26 @@ const mocks = {
 const help = require('../src/help.js')(mocks);
 
 describe('help.js', () => {
+	describe('#getMicro()', () => {
+		it('should contain all available options', () => {
+			const micro = help.getMicro();
+
+			should.exist(micro);
+			micro.split('[')[1]
+				.should.contain('s')
+				.and.contain('r')
+				.and.contain('d')
+				.and.contain('p')
+				.and.contain('l')
+				.and.contain('L')
+				.and.contain('o')
+				.and.contain('v')
+				.and.contain('q')
+				.and.contain('h')
+				.and.contain('?');
+		});
+	});
+
 	describe('#getShort()', () => {
 		it('should mention all categories', () => {
 			const shortHelp = help.getShort();
@@ -30,22 +50,26 @@ describe('help.js', () => {
 
 		it('should mention all commands', () => {
 			const shortHelp = help.getShort();
-			shortHelp.should.contain(' s -').and.match(/(\[|,)s(\]|,)/);
-			shortHelp.should.contain(' r -').and.match(/(\[|,)r(\]|,)/);
-			shortHelp.should.contain(' d -').and.match(/(\[|,)d(\]|,)/);
-			shortHelp.should.contain(' p -').and.match(/(\[|,)p(\]|,)/);
-			shortHelp.should.contain(' l -').and.match(/(\[|,)l(\]|,)/);
-			shortHelp.should.contain(' L -').and.match(/(\[|,)L(\]|,)/);
-			shortHelp.should.contain(' o -').and.match(/(\[|,)o(\]|,)/);
-			shortHelp.should.contain(' v -').and.match(/(\[|,)v(\]|,)/);
-			shortHelp.should.contain(' q -').and.match(/(\[|,)q(\]|,)/);
-			shortHelp.should.contain(' h, ').and.match(/(\[|,)h(\]|,)/);
-			shortHelp.should.contain(' ? -').and.match(/(\[|,)\?(\]|,)/);
+			shortHelp.should.contain(' s -');
+			shortHelp.should.contain(' r -');
+			shortHelp.should.contain(' d -');
+			shortHelp.should.contain(' p -');
+			shortHelp.should.contain(' l -');
+			shortHelp.should.contain(' L -');
+			shortHelp.should.contain(' o -');
+			shortHelp.should.contain(' v -');
+			shortHelp.should.contain(' q -');
+			shortHelp.should.contain(' ? -');
+			shortHelp.should.contain(' h, ');
 		});
 
 		it('should be multiline', () => {
 			const newLines = (help.getShort().match(/\n/g) || []).length;
 			newLines.should.be.at.least(10);
+		});
+
+		it('should contain micro', () => {
+			help.getShort().should.contain(help.getMicro());
 		});
 	});
 
