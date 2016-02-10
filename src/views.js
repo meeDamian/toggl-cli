@@ -20,10 +20,10 @@ me.errMsg = function (_, msg) {
 	};
 };
 
-// views
+// loggers
 me.err = function ({chalk: {red}, console: {error}}, err) {
 	if (err instanceof Error) {
-		error(red(me.pad([err.message, err.stack])));
+		error(me.pad([red(err.message), err.stack]));
 	} else {
 		me.log(err);
 	}
@@ -33,30 +33,52 @@ me.log = function ({console: {log}}, val, pad = false) {
 	log(pad ? me.pad(val) : val);
 };
 
-me.started = function ({chalk}, {id, description, start}, out = me.log) {
-	out([
+me.startedLog = function (_, ...args) {
+	me.log(me.started(...args), true);
+};
+
+me.detailsLog = function (_, ...args) {
+	me.log(me.details(...args), true);
+};
+
+me.listLog = function (_, ...args) {
+	me.log(me.list(...args), true);
+};
+
+me.stoppedLog = function (_, ...args) {
+	me.log(me.stopped(...args), true);
+};
+
+me.renamedLog = function(_, ...args) {
+	me.log(me.renamed(...args), true);
+};
+
+
+// views
+me.started = function ({chalk}, {id, description, start}) {
+	return [
 		chalk.green('Started'),
 		me.getDescription(description),
 		'at',
 		me.get24hour(start),
 		me.getId({id})
-	].join(' '), true);
+	].join(' ');
 };
 
-me.details = function (_, timeEntry, out = me.log) {
-	out([
+me.details = function (_, timeEntry) {
+	return [
 		me.descriptionLine(timeEntry),
 		me.timeLine(timeEntry),
 		me.metaLine(timeEntry)
-	], true);
+	];
 };
 
-me.list = function (_, entries, out = me.log) {
-	out(entries.map(me.listLine), true);
+me.list = function (_, entries) {
+	return entries.map(me.listLine);
 };
 
-me.stopped = function ({chalk}, {id, description, start, stop, duration}, out = me.log) {
-	out([
+me.stopped = function ({chalk}, {id, description, start, stop, duration}) {
+	return [
 		chalk.red('Stopped'),
 		me.getDescription(description),
 		'after',
@@ -64,17 +86,17 @@ me.stopped = function ({chalk}, {id, description, start, stop, duration}, out = 
 		'at',
 		me.get24hour(stop),
 		me.getId({id})
-	].join(' '), true);
+	].join(' ');
 };
 
-me.renamed = function ({chalk}, oldName, newName, id, out = me.log) {
-	out([
+me.renamed = function ({chalk}, oldName, newName, id) {
+	return [
 		chalk.blue('Renamed'),
 		me.getDescription(oldName),
 		'to',
 		me.getDescription(newName),
 		me.getId({id})
-	].join(' '), true);
+	].join(' ');
 };
 
 // lines

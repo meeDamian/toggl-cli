@@ -35,9 +35,15 @@ me.keyListener = function ({process: {stdin, exit}}, cb) {
 
 me.list = function ({toggl, views}, token, amount) {
 	toggl.getTimeEntries(token, {amount})
-		.then(e => {
-			views.list(e, me.render);
-		})
+		.then(views.list)
+		.then(me.render)
+		.catch(views.err);
+};
+
+me.details = function ({toggl, views}, token) {
+	toggl.getCurrentTimeEntry(token, true)
+		.then(views.details)
+		.then(me.render)
 		.catch(views.err);
 };
 
@@ -51,6 +57,10 @@ me.start = function ({views, help}, {token}) {
 
 			case 'x':
 				me.render(undefined);
+				break;
+
+			case 'c':
+				me.details(token);
 				break;
 
 			case 'l':

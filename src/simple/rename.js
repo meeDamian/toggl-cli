@@ -15,7 +15,7 @@ me.act = function ({current, toggl, views}, token, newName) {
 
 			return toggl.updateTimeEntry(token, entry.id, {description: newName})
 				.then(e => {
-					views.renamed(entry.description, newName, e.id);
+					views.renamedLog(entry.description, newName, e.id);
 				});
 		})
 		.catch(views.err);

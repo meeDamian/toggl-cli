@@ -13,7 +13,7 @@ me.show = function ({toggl, views}, token) {
 				throw new Error('No timer is running.');
 			}
 
-			views.details(current);
+			views.detailsLog(current);
 		})
 		.catch(views.err);
 };
