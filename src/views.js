@@ -49,10 +49,9 @@ me.stoppedLog = function (_, ...args) {
 	me.log(me.stopped(...args), true);
 };
 
-me.renamedLog = function(_, ...args) {
+me.renamedLog = function (_, ...args) {
 	me.log(me.renamed(...args), true);
 };
-
 
 // views
 me.started = function ({chalk}, {id, description, start}) {
