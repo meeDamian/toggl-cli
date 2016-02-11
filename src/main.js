@@ -26,5 +26,5 @@ me = require('mee')(module, me, {
 
 	input: require('./input.js'),
 	simple: require('./simple/'),
-	interactive: require('./interactive.js')
+	interactive: require('./interactive/')
 });

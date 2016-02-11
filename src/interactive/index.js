@@ -88,7 +88,7 @@ me = require('mee')(module, me, {
 	chalk: require('chalk'),
 
 	process,
-	views: require('./views.js'),
-	toggl: require('./toggl.js'),
-	help: require('./help.js')
+	views: require('../views.js'),
+	toggl: require('../toggl.js'),
+	help: require('../help.js')
 });
