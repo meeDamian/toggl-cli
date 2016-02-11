@@ -4,7 +4,9 @@ let me = {};
 
 me.stop = function ({toggl, views}, token, id) {
 	return toggl.stopTimeEntry(token, id)
-		.then(views.stoppedLog);
+		.then(views.stopped)
+		.then(views.pad)
+		.then(views.log)
 };
 
 me.act = function ({current, views}, token) {

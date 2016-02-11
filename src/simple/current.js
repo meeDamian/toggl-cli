@@ -8,13 +8,9 @@ me.get = function ({toggl}, token, deps = true) {
 
 me.show = function ({toggl, views}, token) {
 	me.get(token)
-		.then(current => {
-			if (!current) {
-				throw new Error('No timer is running.');
-			}
-
-			views.detailsLog(current);
-		})
+		.then(views.details)
+		.then(views.pad)
+		.then(views.log)
 		.catch(views.err);
 };
 

@@ -33,26 +33,6 @@ me.log = function ({console: {log}}, val, pad = false) {
 	log(pad ? me.pad(val) : val);
 };
 
-me.startedLog = function (_, ...args) {
-	me.log(me.started(...args), true);
-};
-
-me.detailsLog = function (_, ...args) {
-	me.log(me.details(...args), true);
-};
-
-me.listLog = function (_, ...args) {
-	me.log(me.list(...args), true);
-};
-
-me.stoppedLog = function (_, ...args) {
-	me.log(me.stopped(...args), true);
-};
-
-me.renamedLog = function (_, ...args) {
-	me.log(me.renamed(...args), true);
-};
-
 // views
 me.started = function ({chalk}, {id, description, start}) {
 	return [
@@ -65,6 +45,10 @@ me.started = function ({chalk}, {id, description, start}) {
 };
 
 me.details = function (_, timeEntry) {
+	if (!timeEntry) {
+		throw new Error('No timer is running.');
+	}
+
 	return [
 		me.descriptionLine(timeEntry),
 		me.timeLine(timeEntry),
@@ -88,14 +72,16 @@ me.stopped = function ({chalk}, {id, description, start, stop, duration}) {
 	].join(' ');
 };
 
-me.renamed = function ({chalk}, oldName, newName, id) {
-	return [
-		chalk.blue('Renamed'),
-		me.getDescription(oldName),
-		'to',
-		me.getDescription(newName),
-		me.getId({id})
-	].join(' ');
+me.renamed = function ({chalk}, oldName) {
+	return ({id, description}) => {
+		return [
+			chalk.blue('Renamed'),
+			me.getDescription(oldName),
+			'to',
+			me.getDescription(description),
+			me.getId({id})
+		].join(' ');
+	};
 };
 
 // lines

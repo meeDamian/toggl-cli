@@ -6,28 +6,19 @@ me.getMicro = function () {
 	return 'What do you want to do [s,r,d,p,l,L,o,v,q,h,?]?';
 };
 
-me.getShort = function () {
+me.getShort = function ({chalk: {bold}}) {
 	return [
-		'Time entry management:',
-		'  s - start or stop',
-		'  r - rename',
-		'  d - delete',
-		'  p - assign to project',
+		bold('Time entry'),
+		'  s ⇾ start or stop    r ⇾ rename   l ⇾ list last 8',
+		'  p ⇾ add project      d ⇾ delete   L ⇾ list last 16',
 
-		'Recent:',
-		'  l - list last 8',
-		'  L - list last 16',
+		bold('Other'),
+		'  x ⇾ clear         h, ? ⇾ help',
+		'  q ⇾ quit             v ⇾ version',
+		'  o ⇾ open in browser',
 
-		'Navigation:',
-		'  ← - see previous screen',
-		'  ⇅ - select from lists',
-
-		'Other:',
-		'  o - open Toggl in browser',
-		'  v - version',
-		'  x - clear',
-		'  q - quit',
-		'  h, ? - help'
+		bold('Navigation'),
+		' ⇦  ⇾ previous screen  ⇅ ⇾ scroll',
 	].join('\n');
 };
 

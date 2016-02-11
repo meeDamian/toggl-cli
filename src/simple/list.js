@@ -4,7 +4,9 @@ let me = {};
 
 me.show = function ({views, toggl}, token, amount) {
 	toggl.getTimeEntries(token, {amount})
-		.then(views.listLog)
+		.then(views.list)
+		.then(views.pad)
+		.then(views.log)
 		.catch(views.err);
 };
 

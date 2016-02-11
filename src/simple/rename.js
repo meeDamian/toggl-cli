@@ -9,14 +9,18 @@ me.act = function ({current, toggl, views}, token, newName) {
 				throw new Error('No timer is running…');
 			}
 
-			if (entry.description === newName) {
+			const {id, description} = entry;
+			if (description === newName) {
 				throw new Error('Can\'t rename to the same…');
 			}
 
-			return toggl.updateTimeEntry(token, entry.id, {description: newName})
-				.then(e => {
-					views.renamedLog(entry.description, newName, e.id);
-				});
+			return {id, description};
+		})
+		.then(({id, description}) => {
+			return toggl.updateTimeEntry(token, id, {description: newName})
+				.then(views.renamed(description))
+				.then(views.pad)
+				.then(views.log);
 		})
 		.catch(views.err);
 };

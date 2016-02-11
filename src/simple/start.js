@@ -4,7 +4,9 @@ let me = {};
 
 me.act = function ({toggl, views}, token, description) {
 	toggl.startTimeEntry(token, description)
-		.then(views.startedLog)
+		.then(views.started)
+		.then(views.pad)
+		.then(views.log)
 		.catch(views.err);
 };
 
