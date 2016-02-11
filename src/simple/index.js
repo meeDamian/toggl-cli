@@ -2,7 +2,9 @@
 
 let me = {};
 
-me.execute = function ({list, current, smart, start, stop, rename, open, help, log}, {cmd, token}) {
+me.execute = function ({list, current, smart, start, stop, rename, open, help, views}, {cmd, token, debug}) {
+	views.debug = debug;
+
 	switch (cmd[0].toLowerCase()) {
 		case 'list': case 'l': case 'ls':
 			list(token, cmd[1]);
@@ -33,7 +35,7 @@ me.execute = function ({list, current, smart, start, stop, rename, open, help, l
 			break;
 
 		default:
-			log(help.getHint());
+			views.log(help.getHint());
 	}
 };
 
@@ -48,5 +50,5 @@ me = require('mee')(module, me, {
 	rename: require('./rename.js').act,
 
 	help: require('../help.js'),
-	log: require('../views.js').log
+	views: require('../views.js')
 });

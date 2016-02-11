@@ -1,6 +1,17 @@
 'use strict';
 
-let me = {};
+let me = {
+	debug: false,
+	lightBkg: false
+};
+
+me.dim = function ({chalk}, ...args) {
+	return (me.lightBkg ? chalk.white : chalk.black)(...args);
+};
+
+me.accent = function ({chalk}, ...args) {
+	return (me.lightBkg ? chalk.black : chalk.white)(...args);
+};
 
 me.pad = function (_, arr) {
 	if (typeof arr === 'string') {
@@ -23,7 +34,13 @@ me.errMsg = function (_, msg) {
 // loggers
 me.err = function ({chalk: {red}, console: {error}}, err) {
 	if (err instanceof Error) {
-		error(me.pad([red(err.message), err.stack]));
+		const msg = [red(err.message)];
+
+		if (me.debug) {
+			msg.push(err.stack);
+		}
+
+		error(me.pad(msg));
 	} else {
 		me.log(err);
 	}
@@ -101,11 +118,12 @@ me.descriptionLine = function (_, {description, project}) {
 	].join(' ');
 };
 
-me.timeLine = function ({chalk}, {duration, start}) {
+me.timeLine = function (_, {duration, start}) {
 	return [
-		chalk.dim('Running for:'),
+		me.accent('Running for:'),
 		me.getDuration({duration, start}),
-		'  since',
+		' ',
+		me.accent('since'),
 		me.get24hour(start)
 	].join(' ');
 };
@@ -124,12 +142,12 @@ me.metaLine = function (_, {id, project}) {
 };
 
 // elements
-me.getId = function ({chalk: {black}}, {id}, label = 'id') {
-	return black(`[${label}:#${id}]`);
+me.getId = function (_, {id}, label = 'id') {
+	return me.dim(`[${label}:#${id}]`);
 };
 
-me.getDescription = function ({chalk: {white, bold}}, description) {
-	return white(description ? bold(description) : '(no description)');
+me.getDescription = function ({chalk: {bold}}, description) {
+	return description ? bold(description) : '(no description)';
 };
 
 me.getDuration = function ({core, chalk: {bold, green}}, {duration, start}, pad = false) {

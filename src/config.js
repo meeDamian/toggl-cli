@@ -17,15 +17,15 @@ me.getConfig = function ({require}) {
 	}
 };
 
-me.getToken = function () {
-	return new Promise((resolve, reject) => {
-		const config = me.getConfig();
-		if (config && config.token && typeof config.token === 'string') {
-			resolve(config.token);
-			return;
-		}
-		reject('no token saved');
-	});
+me.get = function () {
+	return Promise.resolve(me.getConfig())
+		.then(config => {
+			if (!config) {
+				throw new Error('no config exists');
+			}
+
+			return config;
+		});
 };
 
 me.setToken = function ({fs}, token) {

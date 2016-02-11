@@ -4,6 +4,50 @@ let me = {
 	FINISHED: true
 };
 
+me.dashboard = function (_, {current, action}) {
+	if (typeof current === 'string') {
+		console.log('details');
+	} else {
+		console.log('list');
+	}
+};
+
+me.state = function ({views, toggl}, token) {
+	const {log, err} = views;
+
+	return new class State {
+		constructor() {}
+
+		doThings(fetcher, renderer, ...args) {
+			fetcher(token, ...args)
+				.then(renderer)
+				.then(me.render)
+				.catch(err);
+		}
+
+		showList(amount) {
+			this.doThings(toggl.getTimeEntries, views.list, {amount});
+		}
+
+		showDetails() {
+			this.doThings(toggl.getCurrentTimeEntry, views.details, true);
+		}
+
+		up() {
+			log('up');
+		}
+		right() {
+			log('right');
+		}
+		down() {
+			log('down');
+		}
+		left() {
+			log('left');
+		}
+	};
+};
+
 me.render = function ({logger, help, chalk}, lines) {
 	if (lines === undefined) {
 		logger.clear();
@@ -33,25 +77,14 @@ me.keyListener = function ({process: {stdin, exit}}, cb) {
 	});
 };
 
-me.list = function ({toggl, views}, token, amount) {
-	toggl.getTimeEntries(token, {amount})
-		.then(views.list)
-		.then(me.render)
-		.catch(views.err);
-};
+me.start = function ({views, help}, {token, force, debug}) {
+	views.debug = debug;
 
-me.details = function ({toggl, views}, token) {
-	toggl.getCurrentTimeEntry(token, true)
-		.then(views.details)
-		.then(me.render)
-		.catch(views.err);
-};
+	const state = me.state(token, force);
 
-me.start = function ({views, help}, {token}) {
 	me.keyListener(key => {
 		switch (key) {
-			case 'h':
-			case '?':
+			case 'h': case '?':
 				me.render(help.getShort());
 				break;
 
@@ -60,21 +93,21 @@ me.start = function ({views, help}, {token}) {
 				break;
 
 			case 'c':
-				me.details(token);
+				state.showDetails();
 				break;
 
 			case 'l':
-				me.list(token, 8);
+				state.showList(8);
 				break;
 
 			case 'L':
-				me.list(token, 16);
+				state.showList(16);
 				break;
 
-			case '\u001b[A': console.log('up'); break;
-			case '\u001b[B': console.log('down'); break;
-			case '\u001b[C': console.log('right'); break;
-			case '\u001b[D': console.log('left'); break;
+			case '\u001b[A': state.up(); break;
+			case '\u001b[B': state.down(); break;
+			case '\u001b[C': state.right(); break;
+			case '\u001b[D': state.left(); break;
 
 			default:
 				views.log(key);

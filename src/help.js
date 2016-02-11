@@ -18,7 +18,7 @@ me.getShort = function ({chalk: {bold}}) {
 		'  o ⇾ open in browser',
 
 		bold('Navigation'),
-		' ⇦  ⇾ previous screen  ⇅ ⇾ scroll',
+		' ⇦  ⇾ previous screen  ⇅ ⇾ scroll'
 	].join('\n');
 };
 
@@ -47,8 +47,8 @@ me.getLong = function ({pkg, pad}) {
 		'  l list [number]      - list last <number> of time entries (default: 8)',
 		`  s smart [name]       - start or stop the entry, whatever makes more sense.`,
 		'  r rename <new-name>  - rename currently running entry to <new name>.',
-		'  start [name]         - start new time entry with the given name.',
-		'  stop                 - stop running entry.',
+		'    start [name]       - start new time entry with the given name.',
+		'    stop               - stop running entry.',
 		'  d delete [name]      - delete latest entry with a matching name. Asks to confirm.',
 		'  b browser            - open Toggl timer in default browser.',
 		'',

@@ -4,7 +4,7 @@ let me = {};
 
 me.preProcessFlags = function ({minimist, process: {argv}}) {
 	return minimist(argv.slice(2), {
-		boolean: ['help', 'version', 'examples', 'force'],
+		boolean: ['help', 'version', 'examples', 'force', 'debug'],
 		string: ['token', 'save-token'],
 		alias: {
 			h: 'help',
@@ -15,28 +15,18 @@ me.preProcessFlags = function ({minimist, process: {argv}}) {
 	});
 };
 
-me.chooseToken = function ({config: {getToken}}, token) {
-	return new Promise((resolve, reject) => {
-		if (token === '') {
-			reject('`--token` can\'t be empty');
-			return undefined;
-		}
+me.chooseToken = function (_, file, argument) {
+	if (argument !== undefined && argument === '') {
+		reject('`--token` can\'t be empty');
+		return undefined;
+	}
 
-		if (token) {
-			resolve(token);
-			return undefined;
-		}
-
-		return getToken()
-			.then(resolve, reject);
-	});
+	return argument || file;
 };
 
-me.parse = function ({process, views: {log, err, errMsg}, pkg, help, config}) {
+me.parse = function ({views: {log, err, errMsg}, pkg, help, config}) {
 	return new Promise(resolve => {
-		let argv = process.argv;
-
-		argv = me.preProcessFlags();
+		const argv = me.preProcessFlags();
 
 		if (argv.version) {
 			log(pkg.version);
@@ -60,22 +50,30 @@ me.parse = function ({process, views: {log, err, errMsg}, pkg, help, config}) {
 			return;
 		}
 
-		const {force} = argv;
+		const {force, debug} = argv;
 
-		me.chooseToken(argv.token)
-			.then(token => {
+		config.get()
+			.then(c => {
+				const token = me.chooseToken(c.token, argv.token);
+
+				// TODO: check theme
+				// TODO: check init-ed
+				// TODO: onboarding?
+
 				if (!argv._.length) {
-					resolve({token, force});
+					resolve({token, force, debug});
 					return;
 				}
 
 				resolve({
 					cmd: argv._,
-					force,
-					token
+					token, force, debug
 				});
 			})
-			.catch(err);
+			.catch(e => {
+				console.error('a', e);
+			});
+			// .catch(err);
 	});
 };
 
