@@ -2,15 +2,15 @@
 
 let me = {
 	debug: false,
-	lightBkg: false
+	dark: true
 };
 
 me.dim = function ({chalk}, ...args) {
-	return (me.lightBkg ? chalk.white : chalk.black)(...args);
+	return (me.dark ? chalk.black : chalk.white)(...args);
 };
 
 me.accent = function ({chalk}, ...args) {
-	return (me.lightBkg ? chalk.black : chalk.white)(...args);
+	return (me.dark ? chalk.white : chalk.black)(...args);
 };
 
 me.pad = function (_, arr) {
@@ -34,6 +34,10 @@ me.errMsg = function (_, msg) {
 // loggers
 me.err = function ({chalk: {red}, console: {error}}, err) {
 	if (err instanceof Error) {
+		if (err.message === 'ignore') {
+			return;
+		}
+
 		const msg = [red(err.message)];
 
 		if (me.debug) {

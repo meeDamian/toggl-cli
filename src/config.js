@@ -9,7 +9,7 @@ me.getPath = function ({path, process: {env}}) {
 	]);
 };
 
-me.getConfig = function ({require}) {
+me.open = function ({require}) {
 	try {
 		return require(me.getPath());
 	} catch (err) {
@@ -18,7 +18,7 @@ me.getConfig = function ({require}) {
 };
 
 me.get = function () {
-	return Promise.resolve(me.getConfig())
+	return Promise.resolve(me.open())
 		.then(config => {
 			if (!config) {
 				throw new Error('no config exists');
@@ -28,18 +28,15 @@ me.get = function () {
 		});
 };
 
-me.setToken = function ({fs}, token) {
+me.save = function ({fs}, newConfig) {
 	return new Promise((resolve, reject) => {
-		if (!token) {
-			throw new Error('token can\'t be empty.');
-		}
+		let config = me.open();
 
-		let config = me.getConfig();
 		if (!config || typeof config !== 'object') {
 			config = {};
 		}
 
-		config.token = token;
+		Object.assign(config, newConfig);
 
 		fs.writeJSON(me.getPath(), config, 2, err => {
 			if (err) {
@@ -47,7 +44,7 @@ me.setToken = function ({fs}, token) {
 				return;
 			}
 
-			resolve(token);
+			resolve(config);
 		});
 	});
 };

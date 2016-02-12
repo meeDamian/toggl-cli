@@ -68,6 +68,31 @@ me.getHint = function ({pad}) {
 	]);
 };
 
+me.onBoard = function ({pad, chalk: {white, yellow, magenta}}, token = true, theme = true) {
+	const flags = [];
+	const desc = [];
+
+	if (token) {
+		const TOKEN = magenta('TOKEN');
+		flags.push('--save-token', TOKEN);
+		desc.push(`  ${TOKEN} is the thingy from the very bottom of this website: ${white.underline('https://www.toggl.com/app/profile')}`);
+	}
+
+	if (theme) {
+		const BACKGROUND = yellow('BACKGROUND');
+		flags.push('--set-background', BACKGROUND);
+		desc.push(`  ${BACKGROUND} is the background color of your terminal. Either ${white('dark')} or ${white('light')}`);
+	}
+
+	return pad([
+		'Oops, some things are missing. Run:',
+		white(['  $ toggl', ...flags].join(' ')),
+		'',
+		'Where:',
+		...desc
+	]);
+};
+
 me.getExamples = function ({pad, chalk: {white}}) {
 	return pad([
 		white('Set default token for all future launches:'),

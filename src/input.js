@@ -2,10 +2,10 @@
 
 let me = {};
 
-me.preProcessFlags = function ({minimist, process: {argv}}) {
+me.preProcess = function ({minimist, process: {argv}}) {
 	return minimist(argv.slice(2), {
 		boolean: ['help', 'version', 'examples', 'force', 'debug'],
-		string: ['token', 'save-token'],
+		string: ['token', 'save-token', 'set-background'],
 		alias: {
 			h: 'help',
 			v: 'version',
@@ -17,16 +17,75 @@ me.preProcessFlags = function ({minimist, process: {argv}}) {
 
 me.chooseToken = function (_, file, argument) {
 	if (argument !== undefined && argument === '') {
-		reject('`--token` can\'t be empty');
-		return undefined;
+		throw new Error('--token can\'t be empty');
 	}
 
 	return argument || file;
 };
 
-me.parse = function ({views: {log, err, errMsg}, pkg, help, config}) {
+me.saveNeeded = function ({config, views: {log, errMsg}}, argv) {
+	const newConfig = {};
+
+	if (argv['save-token'] !== undefined) {
+		if (!argv['save-token']) {
+			throw new Error('--save-token can\'t be empty.');
+		}
+
+		newConfig.token = argv['save-token'];
+	}
+
+	if (argv['set-background'] !== undefined) {
+		switch (argv['set-background']) {
+			case 'dark': newConfig.dark = true; break;
+			case 'light': newConfig.dark = false; break;
+			default: throw new Error('Invalid --set-background value. Allowed: dark, light');
+		}
+	}
+
+	const keys = Object.keys(newConfig);
+	if (keys.length) {
+		config.save(newConfig)
+			.then(config => {
+				const status = keys.map(k => `${k} '${config[k]}'`).join(' and ');
+				log(`${status} saved.`, true);
+			})
+			.catch(errMsg(`${keys.join(' and ')} NOT saved.`));
+
+		return true;
+	}
+
+	return false;
+};
+
+me.process = function ({help, views: {log}}, argv) {
+	return config => {
+		const input = {
+			token: me.chooseToken(config.token, argv.token),
+			dark: config.dark,
+			force: argv.force,
+			debug: argv.debug
+		};
+
+		if (argv._.length) {
+			input.cmd = argv._;
+		}
+
+		if (!input.token || input.dark === undefined) {
+			log(help.onBoard(
+				!input.token,
+				input.dark === undefined
+			));
+
+			throw new Error('ignore');
+		}
+
+		return input;
+	};
+};
+
+me.parse = function ({views: {log, err}, pkg, help, config}) {
 	return new Promise(resolve => {
-		const argv = me.preProcessFlags();
+		const argv = me.preProcess();
 
 		if (argv.version) {
 			log(pkg.version);
@@ -43,43 +102,26 @@ me.parse = function ({views: {log, err, errMsg}, pkg, help, config}) {
 			return;
 		}
 
-		if (argv['save-token'] !== undefined) {
-			config.setToken(argv['save-token'])
-				.then(token => log(`token '${token}' saved`))
-				.catch(errMsg('token NOT saved'));
+		if (me.saveNeeded(argv)) {
 			return;
 		}
 
-		const {force, debug} = argv;
-
 		config.get()
-			.then(c => {
-				const token = me.chooseToken(c.token, argv.token);
-
-				// TODO: check theme
-				// TODO: check init-ed
-				// TODO: onboarding?
-
-				if (!argv._.length) {
-					resolve({token, force, debug});
+			.then(me.process(argv))
+			.then(resolve)
+			.catch(error => {
+				if (error.message === 'no config exists') {
+					log(help.onBoard());
 					return;
 				}
 
-				resolve({
-					cmd: argv._,
-					token, force, debug
-				});
-			})
-			.catch(e => {
-				console.error('a', e);
+				err(error);
 			});
-			// .catch(err);
 	});
 };
 
 me = require('mee')(module, me, {
 	minimist: require('minimist'),
-	chalk: require('chalk'),
 
 	pkg: require('../package.json'),
 
