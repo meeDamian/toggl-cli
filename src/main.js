@@ -5,6 +5,9 @@ let me = {};
 me.main = function ({input, simple, interactive, help, views}) {
 	input.parse()
 		.then(input => {
+			views.dark = input.dark;
+			views.debug = input.debug;
+
 			if (!input.cmd) {
 				if (!interactive.FINISHED) {
 					views.log(help.getHint());

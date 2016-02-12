@@ -78,9 +78,6 @@ me.keyListener = function ({process: {stdin, exit}}, cb) {
 };
 
 me.start = function ({views, help}, {token, force, debug, dark}) {
-	views.debug = debug;
-	views.dark = dark;
-
 	const state = me.state(token, force);
 
 	me.keyListener(key => {
