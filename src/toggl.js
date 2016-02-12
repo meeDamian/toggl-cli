@@ -214,10 +214,10 @@ me.getCurrentTimeEntry = function ({utils}, token, deps = true) {
 /**
  * SETTERS
  **/
-me.startTimeEntry = function (_, token, description) {
+me.startTimeEntry = function ({pkg}, token, description) {
 	const time_entry = {
 		description,
-		created_with: 'toggl-cli'
+		created_with: `toggl-cli ${pkg.version}`
 	};
 	return me.request(token, DEFS.timeEntry.start, {body: {time_entry}})
 		.then(({body: {data}}) => data);
@@ -239,5 +239,7 @@ me.updateTimeEntry = function (_, token, id, changes) {
 me = require('mee')(module, me, {
 	request: require('request'),
 
-	utils: require('./utils.js')
+	utils: require('./utils.js'),
+
+	pkg: require('../package.json')
 });
