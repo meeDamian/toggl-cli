@@ -46,9 +46,9 @@ me.getLong = function ({pkg, pad}) {
 		'  c current            - see details of currently running time entry (if any).',
 		'  l list [number]      - list last <number> of time entries (default: 8)',
 		`  s smart [name]       - start or stop the entry, whatever makes more sense.`,
-		'  r rename <new-name>  - rename currently running entry to <new name>.',
 		'    start [name]       - start new time entry with the given name.',
 		'    stop               - stop running entry.',
+		'  r rename <new-name>  - rename currently running entry to <new name>.',
 		'  d delete [name]      - delete latest entry with a matching name. Asks to confirm.',
 		'  b browser            - open Toggl timer in default browser.',
 		'',
@@ -60,8 +60,8 @@ me.getLong = function ({pkg, pad}) {
 me.getHint = function ({pad}) {
 	return pad([
 		'Invalid option. Try one of:',
-		'  current, s, start, stop, rename,',
-		'  delete, list, browser.',
+		'  current, smart, start, stop,',
+		'  rename, delete, list, browser.',
 		'',
 		'Or run:',
 		'  $ toggl --help'
