@@ -109,6 +109,19 @@ me.getExamples = function ({pad, chalk: {white}}) {
 	]);
 };
 
+me.getLogo = function ({pad, chalk: {red}}) {
+	return pad([
+		'      NN',
+		'   .: NN :.',
+		' cX0l NN l0Nc',
+		'xM;   NN   ;Mx',
+		'WK    OO    KW',
+		'oMc        cMo',
+		' ;0Xd:,,:dX0;',
+		'   .xNMMNx.'
+	].map(l => red(l)));
+};
+
 me = require('mee')(module, me, {
 	chalk: require('chalk'),
 	pkg: require('../package.json'),

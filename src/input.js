@@ -4,7 +4,7 @@ let me = {};
 
 me.preProcess = function ({minimist, process: {argv}}) {
 	return minimist(argv.slice(2), {
-		boolean: ['help', 'version', 'examples', 'force', 'debug'],
+		boolean: ['help', 'version', 'examples', 'force', 'debug', 'logo'],
 		string: ['token', 'save-token', 'set-background'],
 		alias: {
 			h: 'help',
@@ -99,6 +99,11 @@ me.parse = function ({views: {log, err}, pkg, help, config}) {
 
 		if (argv.examples) {
 			log(help.getExamples());
+			return;
+		}
+
+		if (argv.logo) {
+			log(help.getLogo());
 			return;
 		}
 
