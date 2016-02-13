@@ -2,7 +2,7 @@
 
 let me = {};
 
-me.execute = function ({list, current, smart, start, stop, rename, open, help, views}, {cmd, token, debug, dark}) {
+me.execute = function ({list, current, smart, start, stop, rename, open, help, views}, {cmd, token}) {
 	switch (cmd[0].toLowerCase()) {
 		case 'list': case 'l': case 'ls':
 			list(token, cmd[1]);

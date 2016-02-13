@@ -9,11 +9,6 @@ me.main = function ({input, simple, interactive, help, views}) {
 			views.debug = input.debug;
 
 			if (!input.cmd) {
-				if (!interactive.FINISHED) {
-					views.log(help.getHint());
-					return;
-				}
-
 				interactive.start(input);
 				return;
 			}

@@ -33,8 +33,20 @@ function attach(fn, token, short, long, deps = false) {
 	};
 }
 
+// execute sth in `.then()` without breaking the pipe
+function pass(fn) {
+	return value => {
+		if (fn) {
+			fn(value);
+		}
+
+		return value;
+	};
+}
+
 Object.assign(module.exports, {
 	objectify,
 	combine,
-	attach
+	attach,
+	pass
 });

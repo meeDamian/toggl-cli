@@ -32,22 +32,32 @@ me.errMsg = function (_, msg) {
 };
 
 // loggers
-me.err = function ({chalk: {red}, console: {error}}, err) {
-	if (err instanceof Error) {
-		if (err.message === 'ignore') {
-			return;
-		}
-
-		const msg = [red(err.message)];
-
-		if (me.debug) {
-			msg.push(err.stack);
-		}
-
-		error(me.pad(msg));
-	} else {
-		me.log(err);
+me.err = function ({chalk: {red}, console: {error}}, err, fn = error) {
+	if (err.message === 'ignore') {
+		return;
 	}
+
+	const msg = [red(err.message)];
+
+	if (me.debug) {
+		msg.push(err.stack);
+	}
+
+	fn(me.pad(msg));
+};
+
+me.err2 = function ({chalk: {red}, console: {error}}, err, fn = error) {
+	if (err.message === 'ignore') {
+		return;
+	}
+
+	const msg = [red(err.message)];
+
+	if (me.debug) {
+		msg.push(err.stack);
+	}
+
+	return me.pad(msg);
 };
 
 me.log = function ({console: {log}}, val, pad = false) {
@@ -55,16 +65,6 @@ me.log = function ({console: {log}}, val, pad = false) {
 };
 
 // views
-me.started = function ({chalk}, {id, description, start}) {
-	return [
-		chalk.green('Started'),
-		me.getDescription(description),
-		'at',
-		me.get24hour(start),
-		me.getId({id})
-	].join(' ');
-};
-
 me.details = function (_, timeEntry) {
 	if (!timeEntry) {
 		throw new Error('No timer is running.');
@@ -81,14 +81,12 @@ me.list = function (_, entries) {
 	return entries.map(me.listLine);
 };
 
-me.stopped = function ({chalk}, {id, description, start, stop, duration}) {
+me.started = function ({chalk}, {id, description, start}) {
 	return [
-		chalk.red('Stopped'),
+		chalk.green('Started'),
 		me.getDescription(description),
-		'after',
-		me.getDuration({duration, start}),
 		'at',
-		me.get24hour(stop),
+		me.get24hour(start),
 		me.getId({id})
 	].join(' ');
 };
@@ -103,6 +101,18 @@ me.renamed = function ({chalk}, oldName) {
 			me.getId({id})
 		].join(' ');
 	};
+};
+
+me.stopped = function ({chalk}, {id, description, start, stop, duration}) {
+	return [
+		chalk.red('Stopped'),
+		me.getDescription(description),
+		'after',
+		me.getDuration({duration, start}),
+		'at',
+		me.get24hour(stop),
+		me.getId({id})
+	].join(' ');
 };
 
 // lines
@@ -126,7 +136,7 @@ me.timeLine = function (_, {duration, start}) {
 	return [
 		me.accent('Running for:'),
 		me.getDuration({duration, start}),
-		' ',
+		'\t',
 		me.accent('since'),
 		me.get24hour(start)
 	].join(' ');

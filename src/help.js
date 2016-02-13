@@ -3,7 +3,7 @@
 let me = {};
 
 me.getMicro = function () {
-	return 'What do you want to do [s,r,d,p,l,L,o,v,q,h,?]?';
+	return 'What do you want to do [s,r,d,p,l,L,b,v,q,h,?]?';
 };
 
 me.getShort = function ({chalk: {bold}}) {
@@ -15,7 +15,7 @@ me.getShort = function ({chalk: {bold}}) {
 		bold('Other'),
 		'  x ⇾ clear         h, ? ⇾ help',
 		'  q ⇾ quit             v ⇾ version',
-		'  o ⇾ open in browser',
+		'  b ⇾ open in browser',
 
 		bold('Navigation'),
 		' ⇦  ⇾ previous screen  ⇅ ⇾ scroll'
@@ -110,7 +110,7 @@ me.getExamples = function ({pad, chalk: {white}}) {
 };
 
 me.getLogo = function ({pad, chalk: {red}}) {
-	return pad([
+	return red(pad([
 		'      NN',
 		'   .: NN :.',
 		' cX0l NN l0Nc',
@@ -119,7 +119,7 @@ me.getLogo = function ({pad, chalk: {red}}) {
 		'oMc        cMo',
 		' ;0Xd:,,:dX0;',
 		'   .xNMMNx.'
-	].map(l => red(l)));
+	].map(v => ' '.repeat(6) + v)));
 };
 
 me = require('mee')(module, me, {

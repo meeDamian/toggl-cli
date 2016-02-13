@@ -28,7 +28,7 @@ me.getDuration = function ({duration}, maxLength = 2) {
 		duration %= MIN_IN_SEC;
 	}
 
-	if (duration >= 1 && dur.length < maxLength) {
+	if (duration >= 0 && dur.length < maxLength) {
 		dur.push(`${ duration }s`);
 	}
 
