@@ -50,10 +50,10 @@ me.state = function (_, exit) {
 
 	return {
 		exit,
-		set (hooks) {
+		set(hooks) {
 			extensions = hooks;
 		},
-		isActionable (key) {
+		isActionable(key) {
 			if (!extensions || !extensions[key]) {
 				return false;
 			}
@@ -66,8 +66,10 @@ me.state = function (_, exit) {
 };
 
 me.current = function ({toggl, views, utils}, {token}) {
-	let current, list;
-	let renderInterval, updateTimeout;
+	let current;
+	let list;
+	let renderInterval;
+	let updateTimeout;
 
 	function renderView() {
 		let hasCurrent = false;
@@ -114,7 +116,7 @@ me.current = function ({toggl, views, utils}, {token}) {
 		renderView();
 	}
 
-	function get() {
+	function update() {
 		toggl.getCurrentTimeEntry(token, true)
 			.then(updateCurrent)
 			.catch(me.err);
@@ -123,7 +125,7 @@ me.current = function ({toggl, views, utils}, {token}) {
 			.then(updateList)
 			.catch(me.err);
 
-		updateTimeout = setTimeout(get, 8 * 1000);
+		updateTimeout = setTimeout(update, 8 * 1000);
 	}
 
 	function startStop() {
@@ -133,12 +135,12 @@ me.current = function ({toggl, views, utils}, {token}) {
 					toggl.stopTimeEntry(token, entry.id) :
 					toggl.startTimeEntry(token);
 			})
-			.then(get);
+			.then(update);
 	}
 
 	return {
-		get: get,
 		startStop,
+		update,
 
 		freeze() {
 			clearInterval(renderInterval);
@@ -182,7 +184,7 @@ me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, 
 		state.set(undefined);
 
 		switch (key) {
-			case 'v': //version
+			case 'v': // version
 				me.render([
 					...Array(4),
 					`    v${pkg.version}`,
@@ -195,14 +197,14 @@ me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, 
 				break;
 
 			case 'c': // current
-				current.get();
+				current.update();
 				break;
 
 			case 's': // start/stop
 				current.startStop();
 				break;
 
-			case 'l': //list of last 8
+			case 'l': // list of last 8
 				me.showList(token);
 				break;
 
@@ -256,9 +258,9 @@ me.start = function (_, {token}) {
 	me.loading();
 
 	const current = me.current({token});
-	const state = me.state(current.get);
+	const state = me.state(current.update);
 
-	current.get();
+	current.update();
 
 	me.setKeyListener(me.onKey(token, current, state));
 };

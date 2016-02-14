@@ -1,7 +1,7 @@
 /* eslint camelcase: 0 */ /* some vars are used as indexes of Toggl API*/
 'use strict';
 
-const URL = 'https://www.toggl.com'
+const URL = 'https://www.toggl.com';
 const TIMER_URL = `${URL}/app/timer`;
 const API_URL = `${URL}/api`;
 const API_VER = 'v8';

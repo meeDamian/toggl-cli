@@ -3,7 +3,7 @@
 let me = {};
 
 me.getState = function ({toggl}, token, id, exit) {
-	function confirm () {
+	function confirm() {
 		toggl.deleteTimeEntry(token, id)
 			.then(exit, exit);
 	}
@@ -11,7 +11,7 @@ me.getState = function ({toggl}, token, id, exit) {
 	return {
 		y: confirm,
 		n: exit
-	}
+	};
 };
 
 me.act = function ({toggl, views, logger, utils}, token, state) {
@@ -21,7 +21,7 @@ me.act = function ({toggl, views, logger, utils}, token, state) {
 		}))
 		.then(views.discard)
 		.then(x => logger(x.join('\n')));
-}
+};
 
 me = require('mee')(module, me, {
 	logger: require('log-update'),

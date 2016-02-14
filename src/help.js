@@ -15,7 +15,7 @@ me.getShort = function ({chalk: {bold, dim}}) {
 		'',
 		bold('Other'),
 		'  x ⇾ clear         h, ? ⇾ help          v ⇾ version',
-		'  b ⇾ open in browser  q ⇾ quit',
+		'  b ⇾ open in browser  q ⇾ quit'
 	].join('\n');
 };
 
