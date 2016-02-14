@@ -1,5 +1,5 @@
 # toggl-cli
-[![Build Status](https://travis-ci.org/meeDamian/toggl-cli.svg?branch=master)](https://travis-ci.org/meeDamian/toggl-cli) [ ![Codeship Status for meeDamian/toggl-cli](https://codeship.com/projects/4651ffa0-ae14-0133-e229-0eeab60c84ba/status?branch=master)](https://codeship.com/projects/132211) [![Coverage Status](https://coveralls.io/repos/github/meeDamian/toggl-cli/badge.svg?branch=master)](https://coveralls.io/github/meeDamian/toggl-cli?branch=master) [![npm version](https://badge.fury.io/js/toggl-cli.svg)](https://badge.fury.io/js/toggl-cli) [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
+[![Build Status](https://travis-ci.org/meeDamian/toggl-cli.svg?branch=master)](https://travis-ci.org/meeDamian/toggl-cli) [ ![Codeship Status for meeDamian/toggl-cli](https://codeship.com/projects/4651ffa0-ae14-0133-e229-0eeab60c84ba/status?branch=master)](https://codeship.com/projects/132211) [![Coverage Status](https://coveralls.io/repos/github/meeDamian/toggl-cli/badge.svg?branch=master)](https://coveralls.io/github/meeDamian/toggl-cli?branch=master) [![codecov.io](https://codecov.io/github/meeDamian/toggl-cli/coverage.svg?branch=master)](https://codecov.io/github/meeDamian/toggl-cli?branch=master) [![npm version](https://badge.fury.io/js/toggl-cli.svg)](https://badge.fury.io/js/toggl-cli) [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 
 Manage your Toggl.com time entries from the familiarity of the nearby CLI.
 
@@ -97,7 +97,7 @@ $ toggl --logo
 * This module is in no way supported nor developed by Toggl.com .
 * It's still WIP, any and all PRs highly appreciated (esp. tests ☺)
 
-gsb
+
 ## Bugs and feedback
 
 If you discover a bug please report it [here](https://github.com/meeDamian/toggl-cli/issues/new).
