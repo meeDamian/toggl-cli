@@ -1,5 +1,9 @@
 'use strict';
 
+/*
+ * Nope, not proud of below code. Either 1) deal with it, or 2) submit a cleanup PR.
+ */
+
 let me = {};
 
 me.render = function ({logger, help, chalk}, lines) {
@@ -29,7 +33,39 @@ me.loading = function ({help, logger}) {
 	].join('\n'));
 };
 
-me.dashboard = function ({toggl, views, utils}, {token}) {
+me.help = function ({help, chalk: {red, bold}}, key) {
+	const msg = [help.getShort(), ''];
+
+	if (key) {
+		msg.push(red(`${bold(key)} is not an option. Try one of the above.`));
+	} else {
+		msg.unshift('');
+	}
+
+	me.render(msg);
+};
+
+me.state = function (_, exit) {
+	let extensions;
+
+	return {
+		exit,
+		set (hooks) {
+			extensions = hooks;
+		},
+		isActionable (key) {
+			if (!extensions || !extensions[key]) {
+				return false;
+			}
+
+			extensions[key]();
+			extensions = undefined;
+			return true;
+		}
+	};
+};
+
+me.current = function ({toggl, views, utils}, {token}) {
 	let current, list;
 	let renderInterval, updateTimeout;
 
@@ -78,7 +114,7 @@ me.dashboard = function ({toggl, views, utils}, {token}) {
 		renderView();
 	}
 
-	function getCurrent() {
+	function get() {
 		toggl.getCurrentTimeEntry(token, true)
 			.then(updateCurrent)
 			.catch(me.err);
@@ -87,23 +123,21 @@ me.dashboard = function ({toggl, views, utils}, {token}) {
 			.then(updateList)
 			.catch(me.err);
 
-		updateTimeout = setTimeout(getCurrent, 8 * 1000);
+		updateTimeout = setTimeout(get, 8 * 1000);
 	}
 
 	function startStop() {
 		toggl.getCurrentTimeEntry(token, false)
 			.then(entry => {
-				if (entry) {
-					return toggl.stopTimeEntry(token, entry.id);
-				}
-
-				return toggl.startTimeEntry(token);
+				return entry ?
+					toggl.stopTimeEntry(token, entry.id) :
+					toggl.startTimeEntry(token);
 			})
-			.then(getCurrent);
+			.then(get);
 	}
 
 	return {
-		getCurrent,
+		get: get,
 		startStop,
 
 		freeze() {
@@ -124,7 +158,7 @@ me.showList = function ({toggl, views}, token, amount = 9) {
 		.catch(me.err);
 };
 
-me.keyListener = function ({process: {stdin, exit}}, cb) {
+me.setKeyListener = function ({process: {stdin, exit}}, cb) {
 	stdin.setRawMode(true);
 	stdin.resume();
 	stdin.setEncoding('utf8');
@@ -137,22 +171,18 @@ me.keyListener = function ({process: {stdin, exit}}, cb) {
 	});
 };
 
-me.start = function ({open, views, help, pkg, toggl}, {token}) {
-	me.loading();
+me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, current, state) {
+	return key => {
+		current.freeze();
 
-	const dash = me.dashboard({token});
+		if (state.isActionable(key)) {
+			return;
+		}
 
-	dash.getCurrent();
-
-	me.keyListener(key => {
-		dash.freeze();
+		state.set(undefined);
 
 		switch (key) {
-			case 'h': case '?':
-				me.render(['', help.getShort()]);
-				break;
-
-			case 'v':
+			case 'v': //version
 				me.render([
 					...Array(4),
 					`    v${pkg.version}`,
@@ -160,63 +190,85 @@ me.start = function ({open, views, help, pkg, toggl}, {token}) {
 				]);
 				break;
 
-			case 'x':
+			case 'x': // clear
 				me.render(undefined);
 				break;
 
-			case 'c':
-				dash.getCurrent();
+			case 'c': // current
+				current.get();
 				break;
 
-			case 's':
-				dash.startStop();
+			case 's': // start/stop
+				current.startStop();
 				break;
 
-			case 'l':
+			case 'l': //list of last 8
 				me.showList(token);
 				break;
 
-			case 'L':
+			case 'L': // list of last 16
 				me.showList(token, 16);
 				break;
 
-			case 'b':
+			case 'b': // open in browser
 				open(toggl.TIMER_URL);
 				break;
 
-			case 'p':
-				// TODO: assign project
-				toggl.getProjects(token, {})
-					.then(l => {
-						console.log(l);
-					});
+			case 'p': // add project to current entry
+				me.render([
+					...Array(2),
+					yellow('  Oops, you\'ve found a thing that\'s not there yet…'),
+					'',
+					`  To ${bold('add a project')}`,
+					`    Press ${bold('b')} to open in browser.`,
+					...Array(4)
+				]);
+				break;
+
+			case 'r': // rename current entry
+				me.render([
+					...Array(2),
+					yellow('  Oops, you\'ve found a thing that\'s not there yet…'),
+					'',
+					`  To ${bold('rename')} current ${bold('time entry')}`,
+					`    Exit this mode (press ${bold('q')}), and run:`,
+					bold('      $ toggl rename <new name>'),
+					...Array(3)
+				]);
 				break;
 
 			case 'd':
-				// TODO: delete
+				discard.act(token, state);
 				break;
 
-			case 'r':
-				// TODO: rename
+			case 'h': case '?': // help
+				me.help();
 				break;
-
-			case '\u001b[A': views.log('up'); break;
-			case '\u001b[B': views.log('down'); break;
-			case '\u001b[C': views.log('right'); break;
-			case '\u001b[D': views.log('left'); break;
 
 			default:
-			// TODO: handle that better…
-				views.log(key);
+				me.help(key);
 				break;
 		}
-	});
+	};
+};
+
+me.start = function (_, {token}) {
+	me.loading();
+
+	const current = me.current({token});
+	const state = me.state(current.get);
+
+	current.get();
+
+	me.setKeyListener(me.onKey(token, current, state));
 };
 
 me = require('mee')(module, me, {
 	open: require('open'),
 	logger: require('log-update'),
 	chalk: require('chalk'),
+
+	discard: require('./discard.js'),
 
 	pkg: require('../../package.json'),
 

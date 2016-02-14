@@ -248,6 +248,11 @@ me.updateTimeEntry = function (_, token, id, changes) {
 		.then(({body: {data}}) => data);
 };
 
+me.deleteTimeEntry = function (_, token, id) {
+	return me.request(token, DEFS.timeEntry.delete, {id})
+		.then(({body}) => body);
+};
+
 /**
  * EXPORT
  **/

@@ -105,6 +105,16 @@ me.stopped = function ({chalk}, {id, description, start, stop, duration}) {
 	].join(' ');
 };
 
+me.discard = function ({chalk: {cyan, red}}, entry) {
+	return [
+		...Array(2),
+		red('Discard time entry:'),
+		me.pad(me.details(entry)),
+		...Array(2),
+		cyan.bold('Are you sure [y,n]?')
+	];
+};
+
 // lines
 me.listLine = function ({chalk}, {description, duration, start, project}, idx) {
 	return [

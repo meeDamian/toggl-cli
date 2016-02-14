@@ -6,17 +6,16 @@ me.getMicro = function () {
 	return 'What do you want to do [s,r,d,p,l,L,b,v,q,h,?]?';
 };
 
-me.getShort = function ({chalk: {bold}}) {
+me.getShort = function ({chalk: {bold, dim}}) {
 	return [
 		bold('Time entry'),
-		'  s ⇾ start or stop   *r ⇾ rename   l ⇾ list last 8',
-		' *p ⇾ add project     *d ⇾ delete   L ⇾ list last 16',
+		`  c ⇾ current          ${dim('r ⇾ rename')}        l ⇾ list last 8`,
+		`  s ⇾ start or stop    ${dim('p ⇾ add project')}   L ⇾ list last 16`,
+		'  d ⇾ discard',
 		'',
 		bold('Other'),
-		'  x ⇾ clear         h, ? ⇾ help',
-		'  q ⇾ quit             v ⇾ version',
-		'  b ⇾ open in browser',
-		''
+		'  x ⇾ clear         h, ? ⇾ help          v ⇾ version',
+		'  b ⇾ open in browser  q ⇾ quit',
 	].join('\n');
 };
 
@@ -47,7 +46,6 @@ me.getLong = function ({pkg, pad, chalk: {white, black}}) {
 		'    start [name]       - start new time entry with the given name.',
 		'    stop               - stop running entry.',
 		'  r rename <new-name>  - rename currently running entry to <new name>.',
-		'  d delete [name]      - delete latest entry with a matching name. Asks to confirm.',
 		'  b browser            - open Toggl timer in default browser.',
 		'',
 		'Note:',
@@ -59,7 +57,7 @@ me.getHint = function ({pad}) {
 	return pad([
 		'Invalid option. Try one of:',
 		'  current, smart, start, stop,',
-		'  rename, delete, list, browser.',
+		'  rename, list, browser.',
 		'',
 		'Or run:',
 		'  $ toggl --help'
@@ -91,19 +89,24 @@ me.onBoard = function ({pad, chalk: {white, yellow, magenta}}, token = true, the
 	]);
 };
 
-me.getExamples = function ({pad, chalk: {white}}) {
+me.getExamples = function ({pad, chalk: {bold}}) {
 	return pad([
-		white('Set default token for all future launches:'),
+		bold('Set default token for all future launches:'),
 		'  $ toggl --save-token d9db051bf06be16c2027d3cb08769451',
 		'',
-		white('List last 17 time entries for a different account:'),
+		bold('List last 17 time entries for a different account:'),
 		'  $ toggl --token a1ad615af03be16c2027d3dc08291457 list 17',
 		'',
-		white('Run interactive mode with a different token:'),
+		bold('Run interactive mode with a different token:'),
 		'  $ toggl --token a1ad615af03be16c2027d3dc08291457',
 		'',
-		white('Start a new task named "Writing toggl-cli docs":'),
-		'  $ toggl start Writing toggl-cli docs'
+		bold('Start a new task named "Writing toggl-cli docs":'),
+		'  $ toggl start Writing toggl-cli docs',
+		'',
+		bold('Alias toggl for work:'),
+		`  $ echo "toggl2='toggl --token <work-token>'" >> ~/.bashrc`,
+		'  $ toggl list   # last 8 entries from your private account',
+		'  $ toggl2 list  # last 8 entries from your work account'
 	]);
 };
 
