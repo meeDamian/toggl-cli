@@ -3,10 +3,10 @@
 
 Manage your Toggl.com time entries from the familiarity of the nearby CLI.
 
-## Download
+## Download (node v5.0+)
 
 ```
-$ npm i -g toggl-cli
+$ npm install -g toggl-cli
 ```
 
 ## Usage (Simple)
@@ -24,21 +24,21 @@ $ toggl --help
 			$ toggl <cmd>
 
 	Flags:
-		-v --version - output version
-		-h --help    - output this help
-		--examples   - show usage examples
-		--no-colors  - disable colors
-		--save-token - save provided token and exit
-		-t --token   - run with a custom token (will not be saved)
+		-v --version     - output version
+		-h --help        - output this help
+		--examples       - show usage examples
+		--no-colors      - disable colors
+		--save-token     - save provided token and exit
+		-t --token       - run with a custom token (will not be saved)
+		--set-background - set color theme. Choose more readible: dark or light
 
 	Commands:
 		c current            - see details of currently running time entry (if any).
 		l list [number]      - list last <number> of time entries (default: 8)
 		s smart [name]       - start or stop the entry, whatever makes more sense.
+			start [name]       - start new time entry with the given name.
+			stop               - stop running entry.
 		r rename <new-name>  - rename currently running entry to <new name>.
-		start [name]         - start new time entry with the given name.
-		stop                 - stop running entry.
-		d delete [name]      - delete latest entry with a matching name. Asks to confirm.
 		b browser            - open Toggl timer in default browser.
 
 	Note:
@@ -58,35 +58,44 @@ $ toggl --examples
 
 	Start a new task named "Writing toggl-cli docs":
 		$ toggl start Writing toggl-cli docs
+
+	Alias toggl for work:
+		$ echo "toggl2='toggl --token <work-token>'" >> ~/.bashrc
+		$ toggl list   # last 8 entries from your private account
+		$ toggl2 list  # last 8 entries from your work account
+
+
+$ toggl --logo
+
+	            NN
+	         .: NN :.
+	       cX0l NN l0Nc
+	      xM;   NN   ;Mx
+	      WK    OO    KW
+	      oMc        cMo
+	       ;0Xd:,,:dX0;
+	         .xNMMNx.
 ```
 
 ## Usage (Interactive)
 
 ```
-Time entry management:
-  s - start or stop
-  r - rename
-  d - delete
-  p - assign to project
-Recent:
-  l - list last 8
-  L - list last 16
-Other:
-  b - open Toggl in browser
-  v - version
-  q - quit
-  h, ? - help
-What do you want to do [s,r,d,p,l,L,b,v,q,h,?]?
+	Time entry
+	  c ⇾ current          r ⇾ rename        l ⇾ list last 8
+	  s ⇾ start or stop    p ⇾ add project   L ⇾ list last 16
+	  d ⇾ discard
+
+	Other
+	  x ⇾ clear         h, ? ⇾ help          v ⇾ version
+	  b ⇾ open in browser  q ⇾ quit
+
+	What do you want to do [c,s,r,d,p,l,L,b,v,h,?,q]?
 ```
 
-## TODO
+## Notice
 
-### Simple
-- [ ] **delete**
-
-### Interactive
-
-- [ ] _almost_ everything
+* This module is in no way supported nor developed by Toggl.com .
+* It's still WIP, any and all PRs highly appreciated (esp. tests ;))
 
 
 ## Bugs and feedback
