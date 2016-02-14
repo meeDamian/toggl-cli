@@ -2,7 +2,7 @@
 
 let me = {};
 
-me.execute = function ({list, current, smart, start, stop, rename, open, help, views}, {cmd, token}) {
+me.execute = function ({list, current, smart, start, stop, rename, open, help, views, toggl}, {cmd, token}) {
 	switch (cmd[0].toLowerCase()) {
 		case 'list': case 'l': case 'ls':
 			list(token, cmd[1]);
@@ -29,7 +29,7 @@ me.execute = function ({list, current, smart, start, stop, rename, open, help, v
 			break;
 
 		case 'browser': case 'b': case 'open':
-			open('https://www.toggl.com/app/timer');
+			open(toggl.TIMER_URL);
 			break;
 
 		default:
@@ -47,6 +47,7 @@ me = require('mee')(module, me, {
 	stop: require('./stop.js').act,
 	rename: require('./rename.js').act,
 
+	toggl: require('../toggl.js'),
 	help: require('../help.js'),
 	views: require('../views.js')
 });

@@ -9,16 +9,14 @@ me.getMicro = function () {
 me.getShort = function ({chalk: {bold}}) {
 	return [
 		bold('Time entry'),
-		'  s ⇾ start or stop    r ⇾ rename   l ⇾ list last 8',
-		'  p ⇾ add project      d ⇾ delete   L ⇾ list last 16',
-
+		'  s ⇾ start or stop   *r ⇾ rename   l ⇾ list last 8',
+		' *p ⇾ add project     *d ⇾ delete   L ⇾ list last 16',
+		'',
 		bold('Other'),
 		'  x ⇾ clear         h, ? ⇾ help',
 		'  q ⇾ quit             v ⇾ version',
 		'  b ⇾ open in browser',
-
-		bold('Navigation'),
-		' ⇦  ⇾ previous screen  ⇅ ⇾ scroll'
+		''
 	].join('\n');
 };
 

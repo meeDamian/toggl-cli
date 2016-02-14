@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "chalk": "^1.1.1",
-    "elegant-spinner": "^1.0.1",
     "fs-extended": "^0.2.1",
     "log-update": "^1.0.2",
     "mee": "^0.10.0",

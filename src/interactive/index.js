@@ -30,17 +30,14 @@ me.loading = function ({help, logger}) {
 };
 
 me.dashboard = function ({toggl, views, utils}, {token}) {
-	let current; // object
-	let list; // view
-
-	let renderInterval;
-	let updateTimeout;
+	let current, list;
+	let renderInterval, updateTimeout;
 
 	function renderView() {
 		let hasCurrent = false;
 
 		Promise.resolve(current)
-			.then(views.details)
+			.then(views.details) // can throw and skip to `.catch()`
 			.then(utils.pass(() => hasCurrent = true))
 			.then(views.pad)
 			.catch(views.formatErr)
@@ -140,7 +137,7 @@ me.keyListener = function ({process: {stdin, exit}}, cb) {
 	});
 };
 
-me.start = function ({open, views, help, pkg}, {token}) {
+me.start = function ({open, views, help, pkg, toggl}, {token}) {
 	me.loading();
 
 	const dash = me.dashboard({token});
@@ -156,7 +153,11 @@ me.start = function ({open, views, help, pkg}, {token}) {
 				break;
 
 			case 'v':
-				me.render([...Array(4), `    v${pkg.version}`, ...Array(5)]);
+				me.render([
+					...Array(4),
+					`    v${pkg.version}`,
+					...Array(5)
+				]);
 				break;
 
 			case 'x':
@@ -180,7 +181,23 @@ me.start = function ({open, views, help, pkg}, {token}) {
 				break;
 
 			case 'b':
-				open('https://www.toggl.com/app/timer');
+				open(toggl.TIMER_URL);
+				break;
+
+			case 'p':
+				// TODO: assign project
+				toggl.getProjects(token, {})
+					.then(l => {
+						console.log(l);
+					});
+				break;
+
+			case 'd':
+				// TODO: delete
+				break;
+
+			case 'r':
+				// TODO: rename
 				break;
 
 			case '\u001b[A': views.log('up'); break;
@@ -189,6 +206,7 @@ me.start = function ({open, views, help, pkg}, {token}) {
 			case '\u001b[D': views.log('left'); break;
 
 			default:
+			// TODO: handle that better…
 				views.log(key);
 				break;
 		}

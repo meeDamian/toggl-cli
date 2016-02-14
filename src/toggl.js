@@ -1,7 +1,9 @@
 /* eslint camelcase: 0 */ /* some vars are used as indexes of Toggl API*/
 'use strict';
 
-const URL = 'https://www.toggl.com/api';
+const URL = 'https://www.toggl.com'
+const TIMER_URL = `${URL}/app/timer`;
+const API_URL = `${URL}/api`;
 const API_VER = 'v8';
 
 const DEFS = {
@@ -15,6 +17,11 @@ const DEFS = {
 		details: {
 			endpoint: ['projects', ':id'],
 			method: 'GET'
+		},
+		list: {
+			endpoint: ['me', 'projects'],
+			method: 'GET',
+			version: 'v9'
 		}
 	},
 	timeEntry: {
@@ -55,6 +62,8 @@ const DEFS = {
 
 let me = {
 	URL,
+	TIMER_URL,
+	API_URL,
 	API_VER,
 	DEFS
 };
@@ -73,7 +82,7 @@ me.getUrl = function (_, version, endpoint, id) {
 	}
 
 	return [
-		URL,
+		API_URL,
 		version || API_VER,
 		...endpoint
 	].join('/');
@@ -118,7 +127,7 @@ me.request = function ({request}, token, {endpoint, method, version}, params) {
 
 me.fetchMany = function (_, fn, token, ids) {
 	return Promise.all(ids
-		.filter((id, pos, arr) => id !== undefined && arr.indexOf(id) === pos)  // remove dups
+		.filter((id, pos, arr) => id && arr.indexOf(id) === pos)  // remove dups
 		.map(id => fn(token, id))
 	);
 };
@@ -132,6 +141,10 @@ me.fetchProject = function (_, token, id) {
 };
 me.fetchProjects = function (_, token, ids) {
 	return me.fetchMany(me.fetchProject, token, ids);
+};
+me.fetchProjectsList = function (_, token) {
+	return me.request(token, DEFS.project.list)
+		.then(({body}) => body);
 };
 
 me.fetchClient = function (_, token, id) {
@@ -161,8 +174,10 @@ me.getClients = function (_, token, {ids}) {
 	return me.fetchClients(token, ids);
 };
 
-me.getProjects = function ({utils}, token, {ids, deps}) {
-	const partial = me.fetchProjects(token, ids);
+me.getProjects = function ({utils}, token, {ids, deps = true}) {
+	const partial = ids ?
+		me.fetchProjects(token, ids) :
+		me.fetchProjectsList(token);
 
 	if (!deps) {
 		return partial;
