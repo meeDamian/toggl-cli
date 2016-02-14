@@ -6,7 +6,7 @@ chai.use(require('chai-spies'));
 const should = chai.should();
 
 describe('simple/core.js', () => {
-	const core = require('../src/simple/core.js');
+	const core = require('../src/core.js');
 
 	describe('CONSTANTS', () => {
 		it('should export MIN_IN_SEC', () => {

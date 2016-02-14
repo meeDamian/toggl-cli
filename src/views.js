@@ -216,7 +216,7 @@ me.get24hour = function ({chalk}, iso8601date) {
 
 me = require('mee')(module, me, {
 	chalk: require('chalk'),
-	core: require('./simple/core.js'),
+	core: require('./core.js'),
 
 	console
 });

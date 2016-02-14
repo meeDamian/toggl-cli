@@ -22,6 +22,6 @@ me = require('mee')(module, me, {
 	views: require('./views.js'),
 
 	input: require('./input.js'),
-	simple: require('./simple/'),
+	simple: require('./simple.js'),
 	interactive: require('./interactive/')
 });
