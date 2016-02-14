@@ -22,7 +22,7 @@ me.getShort = function ({chalk: {bold}}) {
 	].join('\n');
 };
 
-me.getLong = function ({pkg, pad}) {
+me.getLong = function ({pkg, pad, chalk: {white, black}}) {
 	return pad([
 		pkg.description,
 		'',
@@ -34,12 +34,13 @@ me.getLong = function ({pkg, pad}) {
 		'    $ toggl <cmd>',
 		'',
 		'Flags:',
-		'  -v --version - output version',
-		'  -h --help    - output this help',
-		'  --examples   - show usage examples',
-		'  --no-colors  - disable colors',
-		'  --save-token - save provided token and exit',
-		'  -t --token   - run with a custom token (will not be saved)',
+		'  -v --version     - output version',
+		'  -h --help        - output this help',
+		'  --examples       - show usage examples',
+		'  --no-colors      - disable colors',
+		'  --save-token     - save provided token and exit',
+		'  -t --token       - run with a custom token (will not be saved)',
+		`  --set-background - set color theme. Choose more readible: ${white('dark')} or ${black('light')}`,
 		'',
 		'Commands:',
 		'  c current            - see details of currently running time entry (if any).',
