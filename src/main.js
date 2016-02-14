@@ -2,7 +2,7 @@
 
 let me = {};
 
-me.main = function ({input, simple, interactive, help, views}) {
+me.main = function ({input, simple, interactive, views}) {
 	input.parse()
 		.then(input => {
 			views.dark = input.dark;
@@ -19,7 +19,6 @@ me.main = function ({input, simple, interactive, help, views}) {
 };
 
 me = require('mee')(module, me, {
-	help: require('./help.js'),
 	views: require('./views.js'),
 
 	input: require('./input.js'),

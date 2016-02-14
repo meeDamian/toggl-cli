@@ -36,8 +36,7 @@ describe('main.js#main()', () => {
 	describe('interactive mode', () => {
 		const mockInput = {
 			cmd: undefined,
-			token: 'fakeToken',
-			force: false
+			token: 'fakeToken'
 		};
 
 		before(() => {

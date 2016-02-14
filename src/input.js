@@ -4,13 +4,12 @@ let me = {};
 
 me.preProcess = function ({minimist, process: {argv}}) {
 	return minimist(argv.slice(2), {
-		boolean: ['help', 'version', 'examples', 'force', 'debug', 'logo'],
+		boolean: ['help', 'version', 'examples', 'debug', 'logo'],
 		string: ['token', 'save-token', 'set-background'],
 		alias: {
 			h: 'help',
 			v: 'version',
-			t: 'token',
-			f: 'force'
+			t: 'token'
 		}
 	});
 };
@@ -62,7 +61,6 @@ me.process = function ({help, views: {log}}, argv) {
 		const input = {
 			token: me.chooseToken(config.token, argv.token),
 			dark: config.dark,
-			force: argv.force,
 			debug: argv.debug
 		};
 

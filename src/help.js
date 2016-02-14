@@ -40,7 +40,6 @@ me.getLong = function ({pkg, pad}) {
 		'  --no-colors  - disable colors',
 		'  --save-token - save provided token and exit',
 		'  -t --token   - run with a custom token (will not be saved)',
-		'  -f --force   - (NOT recomended) prevent all confirmations',
 		'',
 		'Commands:',
 		'  c current            - see details of currently running time entry (if any).',
@@ -101,8 +100,8 @@ me.getExamples = function ({pad, chalk: {white}}) {
 		white('List last 17 time entries for a different account:'),
 		'  $ toggl --token a1ad615af03be16c2027d3dc08291457 list 17',
 		'',
-		white('Run interactive mode with a different token and force no confirmations:'),
-		'  $ toggl --force --token a1ad615af03be16c2027d3dc08291457',
+		white('Run interactive mode with a different token:'),
+		'  $ toggl --token a1ad615af03be16c2027d3dc08291457',
 		'',
 		white('Start a new task named "Writing toggl-cli docs":'),
 		'  $ toggl start Writing toggl-cli docs'

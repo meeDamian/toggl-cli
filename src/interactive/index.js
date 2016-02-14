@@ -29,16 +29,14 @@ me.loading = function ({help, logger}) {
 	].join('\n'));
 };
 
-me.dashboard = function ({toggl, views, utils}, {token, force}) {
-	let current = undefined; // object
-	let list = undefined; // view
-	let action = undefined; // list of views
+me.dashboard = function ({toggl, views, utils}, {token}) {
+	let current; // object
+	let list; // view
 
-	let renderInterval = undefined;
-	let updateTimeout = undefined;
+	let renderInterval;
+	let updateTimeout;
 
 	function renderView() {
-		let linesUsed = 0;
 		let hasCurrent = false;
 
 		Promise.resolve(current)
@@ -47,15 +45,15 @@ me.dashboard = function ({toggl, views, utils}, {token, force}) {
 			.then(views.pad)
 			.catch(views.err2)
 			.then(currentView => {
-				let linesUsed = currentView.split('\n').length;
+				const linesUsed = currentView.split('\n').length;
 
 				if (!list) {
 					return currentView + '\n'.repeat(10 - linesUsed);
 				}
 
-				let offset = hasCurrent ? 1 : 0;
+				const offset = hasCurrent ? 1 : 0;
 
-				let listViews = views.list(list.slice(
+				const listViews = views.list(list.slice(
 					offset,
 					offset + 10 - linesUsed
 				));
@@ -79,7 +77,7 @@ me.dashboard = function ({toggl, views, utils}, {token, force}) {
 	}
 
 	function updateList(listEntries) {
-		list = listEntries
+		list = listEntries;
 		renderView();
 	}
 
@@ -127,7 +125,7 @@ me.showList = function ({toggl, views}, token, amount = 9) {
 		.then(x => ['', ...x])
 		.then(me.render)
 		.catch(me.err);
-}
+};
 
 me.keyListener = function ({process: {stdin, exit}}, cb) {
 	stdin.setRawMode(true);
@@ -142,10 +140,10 @@ me.keyListener = function ({process: {stdin, exit}}, cb) {
 	});
 };
 
-me.start = function ({open, views, help, pkg}, {token, force}) {
+me.start = function ({open, views, help, pkg}, {token}) {
 	me.loading();
 
-	const dash = me.dashboard({token, force});
+	const dash = me.dashboard({token});
 
 	dash.getCurrent();
 
