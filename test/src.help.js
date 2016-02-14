@@ -9,7 +9,12 @@ const mocks = {
 	pkg: {
 		description: 'This is a test description'
 	},
-	chalk: {},
+	chalk: {
+		bold: chai.spy(v => v),
+		dim: chai.spy(v => v),
+		white: chai.spy(v => v),
+		black: chai.spy(v => v)
+	},
 	pad: chai.spy(v => v)
 };
 
@@ -28,7 +33,7 @@ describe('help.js', () => {
 				.and.contain('p')
 				.and.contain('l')
 				.and.contain('L')
-				.and.contain('o')
+				.and.contain('b')
 				.and.contain('v')
 				.and.contain('q')
 				.and.contain('h')
@@ -43,29 +48,29 @@ describe('help.js', () => {
 			shortHelp.should.not.be.empty;
 
 			const lowerShortHelp = shortHelp.toLowerCase();
-			lowerShortHelp.should.contain('time entry management:');
-			lowerShortHelp.should.contain('recent:');
-			lowerShortHelp.should.contain('other:');
+			lowerShortHelp.should.contain('time entry');
+			lowerShortHelp.should.contain('other');
 		});
 
 		it('should mention all commands', () => {
 			const shortHelp = help.getShort();
-			shortHelp.should.contain(' s -');
-			shortHelp.should.contain(' r -');
-			shortHelp.should.contain(' d -');
-			shortHelp.should.contain(' p -');
-			shortHelp.should.contain(' l -');
-			shortHelp.should.contain(' L -');
-			shortHelp.should.contain(' o -');
-			shortHelp.should.contain(' v -');
-			shortHelp.should.contain(' q -');
-			shortHelp.should.contain(' ? -');
+			shortHelp.should.contain(' c ⇾');
+			shortHelp.should.contain(' s ⇾');
+			shortHelp.should.contain(' r ⇾');
+			shortHelp.should.contain(' d ⇾');
+			shortHelp.should.contain(' p ⇾');
+			shortHelp.should.contain(' l ⇾');
+			shortHelp.should.contain(' L ⇾');
+			shortHelp.should.contain(' b ⇾');
+			shortHelp.should.contain(' v ⇾');
+			shortHelp.should.contain(' q ⇾');
+			shortHelp.should.contain(' ? ⇾');
 			shortHelp.should.contain(' h, ');
 		});
 
 		it('should be multiline', () => {
 			const newLines = (help.getShort().match(/\n/g) || []).length;
-			newLines.should.be.at.least(10);
+			newLines.should.be.equal(7);
 		});
 	});
 
@@ -84,7 +89,7 @@ describe('help.js', () => {
 
 			should.exist(arr);
 			arr.should.be.an('array');
-			arr.length.should.be.at.least(30);
+			arr.length.should.be.equal(29);
 		});
 	});
 
@@ -116,7 +121,7 @@ describe('help.js', () => {
 
 	describe('#getExamples()', () => {
 		beforeEach(() => {
-			mocks.chalk.white = chai.spy();
+			mocks.chalk.bold = chai.spy();
 			mocks.pad = chai.spy(v => v);
 		});
 
@@ -127,7 +132,7 @@ describe('help.js', () => {
 
 		it('should color descriptions', () => {
 			help.getExamples();
-			mocks.chalk.white.should.have.been.called.exactly(4);
+			mocks.chalk.bold.should.have.been.called.exactly(5);
 		});
 
 		it('should be multiline', () => {

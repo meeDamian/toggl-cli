@@ -57,42 +57,16 @@ describe('main.js#main()', () => {
 		});
 	});
 
-	describe('[temp] interactive mode', () => {
-		const mockInput = {
-			cmd: undefined
-		};
-
-		before(() => {
-			mocks.interactive.FINISHED = false;
-			mocks.input.parse = chai.spy(() => Promise.resolve(mockInput));
-			mocks.interactive.start = chai.spy();
-
-			require('../src/main.js')(mocks).main();
-		});
-
-		it('should invoke input#parse()', () => {
-			mocks.input.parse.should.have.been.called.once;
-		});
-
-		it('should print err message', () => {
-			mocks.views.log.should.have.been.called.once;
-			mocks.help.getHint.should.have.been.called.once;
-			mocks.interactive.start.should.not.have.been.called();
-			mocks.simple.execute.should.not.have.been.called();
-			mocks.views.err.should.not.have.been.called();
-		});
-	});
-
 	describe('simple mode', () => {
 		const mockInput = {
 			cmd: ['l'],
-			token: 'fakeToken',
-			farce: true
+			token: 'fakeToken'
 		};
 
 		before(() => {
 			mocks.input.parse = chai.spy(() => Promise.resolve(mockInput));
 			mocks.views.log = chai.spy();
+			mocks.interactive.start = chai.spy();
 
 			require('../src/main.js')(mocks).main();
 		});

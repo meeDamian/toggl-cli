@@ -6,12 +6,18 @@ describe('toggl.js', () => {
 	const toggl = require('../src/toggl.js')({});
 
 	describe('#DEFS', () => {
-		it('should have URL defined', () => {
+		it('should have URLs defined', () => {
 			should.exist(toggl.URL);
+			should.exist(toggl.TIMER_URL);
+			should.exist(toggl.API_URL);
+
 			toggl.URL.should.be.a('string');
+			toggl.API_URL.should.be.a('string');
+			toggl.TIMER_URL.should.be.a('string');
 			toggl.URL.should.match(/^https:\/\//);
 			toggl.URL.should.match(/toggl.com/);
-			toggl.URL.should.match(/\/api/);
+			toggl.API_URL.should.match(/\/api/);
+			toggl.TIMER_URL.should.match(/\/timer/);
 		});
 
 		it('should have API_VER defined', () => {

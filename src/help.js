@@ -3,7 +3,7 @@
 let me = {};
 
 me.getMicro = function () {
-	return 'What do you want to do [s,r,d,p,l,L,b,v,q,h,?]?';
+	return 'What do you want to do [c,s,r,d,p,l,L,b,v,h,?,q]?';
 };
 
 me.getShort = function ({chalk: {bold, dim}}) {

@@ -29,11 +29,11 @@ describe('simple/core.js', () => {
 	});
 
 	describe('#getDuration()', () => {
-		it('should return empty string for zero duration', () => {
+		it('should return 0s string for zero duration', () => {
 			const zeroDur = core.getDuration({duration: 0});
 			should.exist(zeroDur);
 			zeroDur.should.be.a('string');
-			zeroDur.should.be.empty;
+			zeroDur.should.equal('0s');
 		});
 
 		it('should skip empty outer values', () => {
