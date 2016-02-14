@@ -31,26 +31,7 @@ me.errMsg = function (_, msg) {
 	};
 };
 
-// loggers
-me.err = function ({chalk: {red}, console: {error}}, err, fn = error) {
-	if (err.message === 'ignore') {
-		return;
-	}
-
-	const msg = [red(err.message)];
-
-	if (me.debug) {
-		msg.push(err.stack);
-	}
-
-	fn(me.pad(msg));
-};
-
-me.err2 = function ({chalk: {red}, console: {error}}, err, fn = error) {
-	if (err.message === 'ignore') {
-		return;
-	}
-
+me.formatErr = function ({chalk: {red}, console: {error}}, err) {
 	const msg = [red(err.message)];
 
 	if (me.debug) {
@@ -58,6 +39,15 @@ me.err2 = function ({chalk: {red}, console: {error}}, err, fn = error) {
 	}
 
 	return me.pad(msg);
+};
+
+// loggers
+me.err = function ({console: {error}}, err, fn = error) {
+	if (err.message === 'ignore') {
+		return;
+	}
+
+	fn(me.formatErr(err));
 };
 
 me.log = function ({console: {log}}, val, pad = false) {

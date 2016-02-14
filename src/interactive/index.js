@@ -18,8 +18,8 @@ me.render = function ({logger, help, chalk}, lines) {
 	].join('\n'));
 };
 
-me.err = function ({views: {err}}, error) {
-	err(error, me.render);
+me.err = function ({views}, err) {
+	me.render(views.formatErr(err));
 };
 
 me.loading = function ({help, logger}) {
@@ -43,7 +43,7 @@ me.dashboard = function ({toggl, views, utils}, {token}) {
 			.then(views.details)
 			.then(utils.pass(() => hasCurrent = true))
 			.then(views.pad)
-			.catch(views.err2)
+			.catch(views.formatErr)
 			.then(currentView => {
 				const linesUsed = currentView.split('\n').length;
 
