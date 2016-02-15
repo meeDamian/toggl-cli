@@ -11,6 +11,8 @@ $ npm install -g toggl-cli
 
 ## Usage (Simple)
 
+![Simple Mode demo](/gifs/simple.gif)
+
 ```
 $ toggl --help
 
@@ -78,6 +80,8 @@ $ toggl --logo
 ```
 
 ## Usage (Interactive)
+
+![Interactive Mode demo](/gifs/interactive.gif)
 
 ```
   Time entry
