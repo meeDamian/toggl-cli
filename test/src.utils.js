@@ -220,4 +220,30 @@ describe('utils.js', () => {
 				.catch(done);
 		});
 	});
+
+	describe('#pass()', () => {
+		const ARG = 'random string';
+
+		it('should be a noop for noarg', () => {
+			const fn = utils.pass();
+			should.exist(fn);
+			fn.should.be.a('function');
+
+			const output = fn(ARG);
+			should.exist(output);
+			output.should.equal(ARG);
+		});
+
+		it('should call passed fn', () => {
+			const spy = chai.spy();
+			const fn = utils.pass(spy);
+			should.exist(fn);
+			fn.should.be.a('function');
+
+			const output = fn(ARG);
+			should.exist(output);
+			output.should.equal(ARG);
+			spy.should.have.been.called.once;
+		});
+	});
 });
