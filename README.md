@@ -108,6 +108,8 @@ If you discover a bug please report it [here](https://github.com/meeDamian/toggl
 
 Mail me at bugs@meedamian.com, or on twitter [@meeDamian](http://twitter.com/meedamian).
 
+![codecov.io](https://codecov.io/github/meeDamian/toggl-cli/branch.svg?branch=master)
+
 
 ## License
 
