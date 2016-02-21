@@ -31,7 +31,7 @@ me.errMsg = function (_, msg) {
 	};
 };
 
-me.formatErr = function ({chalk: {red}, console: {error}}, err) {
+me.formatErr = function ({chalk: {red}}, err) {
 	const msg = [red(err.message)];
 
 	if (me.debug) {
