@@ -34,6 +34,15 @@ DEPS.chalk.cyan.bold = chai.spy(pass);
 describe('views.js', () => {
 	const views = require('../src/views.js')(DEPS);
 
+	describe('initial state', () => {
+		it('should set right initial state', () => {
+			should.exist(views);
+			views.should.contain.keys('debug', 'dark');
+			views.debug.should.be.false;
+			views.dark.should.be.true;
+		});
+	});
+
 	describe('#dim()', () => {
 		afterEach(() => {
 			DEPS.chalk.white = chai.spy(pass);
@@ -623,190 +632,386 @@ describe('views.js', () => {
 		});
 	});
 
-	// continue here…
+	describe('#descriptionLine()', () => {
+		let getDescription;
+		let getBrackets;
+
+		before(() => {
+			getDescription = views.getDescription;
+			getBrackets = views.getBrackets;
+		});
+
+		beforeEach(() => {
+			views.getDescription = chai.spy(pass);
+			views.getBrackets = chai.spy(pass);
+		});
+
+		after(() => {
+			views.getDescription = getDescription;
+			views.getBrackets = getBrackets;
+		});
+
+		const mock = {
+			description: 'Some random description',
+			project: {}
+		};
+
+		it('should return space-separated string', () => {
+			const out = views.descriptionLine(mock);
+			should.exist(out);
+			out.should.be.a('string');
+			out.split(' ').length.should.be.at.least(2);
+		});
+
+		it('should call for relevant elements', () => {
+			views.descriptionLine(mock);
+			views.getDescription.should.have.been.called.with(mock.description);
+			views.getBrackets.should.have.been.called.with(mock.project, true);
+		});
+	});
+
+	describe('#timeLine()', () => {
+		let accent;
+		let getDuration;
+		let get24hour;
+
+		before(() => {
+			accent = views.accent;
+			getDuration = views.getDuration;
+			get24hour = views.get24hour;
+		});
+
+		beforeEach(() => {
+			views.accent = chai.spy(pass);
+			views.getDuration = chai.spy(pass);
+			views.get24hour = chai.spy(pass);
+		});
+
+		after(() => {
+			views.accent = accent;
+			views.getDuration = getDuration;
+			views.get24hour = get24hour;
+		});
+
+		const mock = {
+			duration: 42,
+			start: new Date()
+		};
+
+		it('should return space-separated string', () => {
+			const out = views.timeLine(mock);
+			should.exist(out);
+			out.should.be.a('string');
+			out.split(' ').length.should.be.at.least(5);
+			out.should.contain('\t');
+		});
+
+		it('should accent right stuff', () => {
+			views.timeLine(mock);
+			views.accent.should.have.been.called.twice;
+		});
+
+		it('should call for relevant elements', () => {
+			views.timeLine(mock);
+			views.getDuration.should.have.been.called.with(mock);
+			views.get24hour.should.have.been.called.with(mock.start);
+		});
+	});
+
+	describe('#metaLine()', () => {
+		let getId;
+
+		before(() => {
+			getId = views.getId;
+		});
+
+		beforeEach(() => {
+			views.getId = chai.spy(pass);
+		});
+
+		after(() => {
+			views.getId = getId;
+		});
+
+		const mock = {
+			id: 42
+		};
+
+		const mockProject = {
+			id: 42,
+			project: {}
+		};
+
+		const mockFull = {
+			id: 42,
+			project: {
+				client: {}
+			}
+		};
+
+		it('should return space-separated string', () => {
+			const out = views.metaLine(mockFull);
+			should.exist(out);
+			out.should.be.a('string');
+			out.split(' ').length.should.be.at.least(3);
+		});
+
+		it('should work without project and client', () => {
+			const out = views.metaLine(mock);
+			should.exist(out);
+			out.should.be.a('string');
+			views.getId.should.have.been.called.with({id: mock.id});
+		});
+
+		it('should work without client', () => {
+			const out = views.metaLine(mockProject);
+			should.exist(out);
+			out.should.be.a('string');
+			views.getId.should.have.been.called.twice;
+		});
+
+		it('should work when everything is present', () => {
+			const out = views.metaLine(mockFull);
+			should.exist(out);
+			out.should.be.a('string');
+			views.getId.should.have.been.called.exactly(3);
+		});
+	});
+
+	describe('#getId()', () => {
+		let dim;
+
+		before(() => {
+			dim = views.dim;
+		});
+
+		beforeEach(() => {
+			views.dim = chai.spy(pass);
+		});
+
+		after(() => {
+			views.dim = dim;
+		});
+
+		const mock = {
+			id: 42
+		};
+
+		it('should return a well formatted string', () => {
+			const out = views.getId(mock);
+			should.exist(out);
+			out.should.be.a('string');
+			out.should.match(/\[\w*:#\w*\]/);
+		});
+
+		it('should dim the string', () => {
+			views.getId(mock);
+			views.dim.should.have.been.called.once;
+		});
+
+		it('should use "id" as a default label', () => {
+			const out = views.getId(mock);
+			out.should.equal('[id:#42]');
+		});
+
+		it('should use provided label instead', () => {
+			const out = views.getId(mock, 'label');
+			out.should.equal('[label:#42]');
+		});
+	});
+
+	describe('#getDescription()', () => {
+		afterEach(() => {
+			DEPS.chalk.bold = chai.spy(pass);
+		});
+
+		const mock = 'Mock description';
+
+		it('should return default description', () => {
+			const out = views.getDescription();
+			should.exist(out);
+			out.should.be.a('string');
+			out.should.equal('(no description)');
+			DEPS.chalk.bold.should.not.have.been.called();
+		});
+
+		it('should return bold description', () => {
+			const out = views.getDescription(mock);
+			should.exist(out);
+			out.should.be.a('string');
+			out.should.equal(mock);
+			DEPS.chalk.bold.should.have.been.called.once.with(mock);
+		});
+	});
+
+	describe('#getDuration()', () => {
+		beforeEach(() => {
+			DEPS.core.getDuration = chai.spy(d => `${d.duration}s`);
+		});
+
+		afterEach(() => {
+			DEPS.chalk.bold = chai.spy(pass);
+			DEPS.chalk.green = chai.spy(pass);
+		});
+
+		after(() => {
+			DEPS.core.getDuration = chai.spy();
+		});
+
+		const mockPast = {
+			duration: 42,
+			start: new Date().toISOString()
+		};
+
+		const start = new Date();
+		start.setHours(start.getHours() - 1);
+
+		const mockRunning = {
+			duration: -42,
+			start: start.toISOString()
+		};
+
+		it('should work for past entries', () => {
+			const out = views.getDuration(mockPast);
+			should.exist(out);
+			out.should.be.a('string');
+			DEPS.core.getDuration.should.have.been.called.with({duration: mockPast.duration});
+		});
+
+		it('should work for running entries', () => {
+			const out = views.getDuration(mockRunning);
+			should.exist(out);
+			out.should.be.a('string');
+			DEPS.core.getDuration.should.have.been.called.with({duration: 3600});
+		});
+
+		it('should color returned string green', () => {
+			views.getDuration(mockPast);
+			DEPS.chalk.green.should.have.been.called.once;
+		});
+
+		it('should bold the running entry', () => {
+			views.getDuration(mockRunning);
+			DEPS.chalk.bold.should.have.been.called.once;
+		});
+
+		it('should not bold the past entry', () => {
+			views.getDuration(mockPast);
+			DEPS.chalk.bold.should.not.have.been.called();
+		});
+
+		it('should pad to 7 characters when asked', () => {
+			let out = views.getDuration(mockPast, true);
+			out.length.should.equal(7);
+
+			out = views.getDuration(mockRunning, true);
+			out.length.should.equal(7);
+		});
+	});
+
+	describe('#getBrackets()', () => {
+		afterEach(() => {
+			DEPS.chalk.red = chai.spy(pass);
+			DEPS.chalk.bold = chai.spy(pass);
+		});
+
+		const mock = {
+			name: 'project 42'
+		};
+
+		const mockClient = {
+			name: 'project 42',
+			client: {
+				name: 'mice'
+			}
+		};
+
+		it('should return empty string on no project', () => {
+			const out = views.getBrackets();
+			should.exist(out);
+			out.should.be.a('string');
+			out.should.be.empty;
+		});
+
+		it('should return project only', () => {
+			const out = views.getBrackets(mock);
+			should.exist(out);
+			out.should.be.a('string');
+			out.should.equal('[project 42]');
+		});
+
+		it('should color in red', () => {
+			views.getBrackets(mock);
+			DEPS.chalk.red.should.have.been.called.once;
+		});
+
+		it('should return project and client', () => {
+			const out = views.getBrackets(mockClient);
+			should.exist(out);
+			out.should.be.a('string');
+			out.should.match(/^\[project 42 .? mice\]$/);
+		});
+
+		it('should use • as separator', () => {
+			const out = views.getBrackets(mockClient);
+			should.exist(out);
+			out.should.be.a('string');
+			out.should.contain('•');
+		});
+
+		it('should bold the client when requested', () => {
+			const out = views.getBrackets(mockClient, true);
+			should.exist(out);
+			out.should.be.a('string');
+			out.should.contain('project 42');
+			out.should.contain('mice');
+			DEPS.chalk.bold.should.have.been.called.once;
+		});
+	});
 
 	describe('#get24hour()', () => {
-		DEPS.chalk.blue = chai.spy(pass);
+		afterEach(() => {
+			DEPS.chalk.blue = chai.spy(pass);
+		});
 
-		const iso8601string = new Date(0, 0, 0, 13, 1, 0).toISOString(); // 13:01
-
-		const time = views.get24hour(iso8601string);
+		const mock01 = new Date(0, 0, 0, 13, 1, 0).toISOString(); // 13:01
+		const mock10 = new Date(0, 0, 0, 13, 10, 0).toISOString(); // 13:10
 
 		it('should return a valid string', () => {
+			const time = views.get24hour(mock01);
 			should.exist(time);
 			time.should.be.a('string');
 			time.should.have.length.within(4, 5);
 			time.should.match(/^\d{1,2}:\d{2}$/);
 		});
 
-		// it('should color it blue', () => {
-		// 	DEPS.chalk.blue.should.have.been.called.once;
-		// });
+		it('should color it blue', () => {
+			views.get24hour(mock01);
+			DEPS.chalk.blue.should.have.been.called.once;
+		});
 
 		it('should use colon as a separator', () => {
+			const time = views.get24hour(mock01);
 			time.should.contain(':');
 		});
 
 		it('should return minutes as two digits', () => {
+			const time = views.get24hour(mock01);
 			const hours = time.split(':')[1];
-
 			hours.length.should.equal(2);
 			hours.should.equal('01');
 		});
 
 		it('should return hour in 24-hours format', () => {
+			const time = views.get24hour(mock01);
 			time.split(':')[0].should.equal('13');
 		});
 
 		it('should skip prepending 0 if not necessary', () => {
-			const iso8601string = new Date(0, 0, 0, 13, 10, 0).toISOString();
-
-			const time = views.get24hour(iso8601string);
-
+			const time = views.get24hour(mock10);
 			const minutes = time.split(':')[1];
 			minutes.length.should.equal(2);
 			minutes.should.equal('10');
-		});
-
-		after(() => {
-			DEPS.chalk.blue = chai.spy(pass);
-		});
-	});
-
-	describe('#getDuration()', () => {
-		before(() => {
-			DEPS.core.getDuration = () => '';
-		});
-
-		it('should return a string', () => {
-			const dur = views.getDuration({duration: 1});
-
-			should.exist(dur);
-			dur.should.be.a('string');
-		});
-
-		it('should color it green', () => {
-			DEPS.chalk.green.should.have.been.called.once;
-		});
-
-		it('should return unpadded string', () => {
-			const dur = views.getDuration({duration: 1}, false);
-
-			should.exist(dur);
-			dur.should.be.a('string');
-			dur.length.should.be.at.most(1);
-			DEPS.chalk.bold.should.not.have.been.called();
-		});
-
-		it('should return padded string', () => {
-			const dur = views.getDuration({duration: 1}, true);
-
-			should.exist(dur);
-			dur.should.be.a('string');
-			dur.length.should.equal(7);
-			DEPS.chalk.bold.should.not.have.been.called();
-		});
-
-		it('should return current duration of ongoing timer', () => {
-			const FORMATTED = '10m 3s';
-
-			const start = new Date();
-			start.setMinutes(start.getMinutes() - 10);
-			start.setSeconds(start.getSeconds() - 3);
-
-			DEPS.core.getDuration = chai.spy(() => FORMATTED);
-
-			const dur = views.getDuration({duration: -1, start: start.toISOString()});
-
-			should.exist(dur);
-			dur.should.be.a('string');
-			dur.should.equal('10m 3s');
-			DEPS.chalk.bold.should.have.been.called.once;
-			DEPS.core.getDuration.should.have.been.called.once.with({duration: 603});
-		});
-
-		after(() => {
-			DEPS.chalk.bold = chai.spy(pass);
-			DEPS.chalk.green = chai.spy(pass);
-			DEPS.core.getDuration = chai.spy();
-		});
-	});
-
-	describe('#getBrackets()', () => {
-		it('should return empty string on no project', () => {
-			const brackets = views.getBrackets(undefined);
-
-			should.exist(brackets);
-			brackets.should.be.a('string');
-			brackets.should.be.empty;
-		});
-
-		it('should return project only', () => {
-			const mock = {
-				name: 'project 42'
-			};
-
-			const brackets = views.getBrackets(mock);
-
-			should.exist(brackets);
-			brackets.should.be.a('string');
-			brackets.should.equal('[project 42]');
-		});
-
-		it('should color in red', () => {
-			DEPS.chalk.red.should.have.been.called.once;
-		});
-
-		it('should return project and client', () => {
-			const mock = {
-				name: 'project 42',
-				client: {
-					name: 'mice'
-				}
-			};
-
-			const brackets = views.getBrackets(mock);
-
-			should.exist(brackets);
-			brackets.should.be.a('string');
-			brackets.should.match(/^\[project 42 .? mice\]$/);
-		});
-
-		it('should use • as separator', () => {
-			const mock = {
-				name: 'project 42',
-				client: {
-					name: 'mice'
-				}
-			};
-
-			const brackets = views.getBrackets(mock);
-
-			should.exist(brackets);
-			brackets.should.be.a('string');
-			brackets.should.contain('•');
-		});
-
-		it('should bald the client, if asked', () => {
-			const mock = {
-				name: 'project 42',
-				client: {
-					name: 'mice'
-				}
-			};
-
-			const brackets = views.getBrackets(mock, true);
-
-			should.exist(brackets);
-			brackets.should.be.a('string');
-			brackets.should.contain('project 42');
-			brackets.should.contain('mice');
-			DEPS.chalk.bold.should.have.been.called.once;
-		});
-
-		after(() => {
-			DEPS.chalk.bold = chai.spy(pass);
-			DEPS.chalk.red = chai.spy(pass);
 		});
 	});
 });
