@@ -59,6 +59,7 @@ const DEFS = {
 		}
 	}
 };
+Object.freeze(DEFS);
 
 let me = {
 	URL,

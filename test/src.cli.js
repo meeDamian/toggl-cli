@@ -25,12 +25,12 @@ const mocks = {
 	}
 };
 
-describe('main.js#main()', () => {
+describe('cli.js#main()', () => {
 	it('should export correctly', () => {
-		const main = require('../src/main.js')(mocks);
-		should.exist(main);
-		main.main.should.exist;
-		main.main.should.be.a('function');
+		const cli = require('../src/cli.js')(mocks);
+		should.exist(cli);
+		cli.main.should.exist;
+		cli.main.should.be.a('function');
 	});
 
 	describe('interactive mode', () => {
@@ -42,7 +42,7 @@ describe('main.js#main()', () => {
 		before(() => {
 			mocks.input.parse = chai.spy(() => Promise.resolve(mockInput));
 
-			require('../src/main.js')(mocks).main();
+			require('../src/cli.js')(mocks).main();
 		});
 
 		it('should invoke input#parse()', () => {
@@ -68,7 +68,7 @@ describe('main.js#main()', () => {
 			mocks.views.log = chai.spy();
 			mocks.interactive.start = chai.spy();
 
-			require('../src/main.js')(mocks).main();
+			require('../src/cli.js')(mocks).main();
 		});
 
 		it('should invoke input#parse()', () => {
@@ -88,7 +88,7 @@ describe('main.js#main()', () => {
 			mocks.input.parse = chai.spy(() => Promise.reject(new Error('Fake Error')));
 			mocks.simple.execute = chai.spy();
 
-			require('../src/main.js')(mocks).main();
+			require('../src/cli.js')(mocks).main();
 		});
 
 		it('should print the error', () => {
