@@ -23,7 +23,17 @@ me.list = function ({views, toggl}, token, amount) {
 };
 
 me.start = function ({toggl, views}, token, description) {
-	toggl.startTimeEntry(token, description)
+	Promise.resolve(parseInt(description, 10))
+		.then(which => {
+			if (isNaN(which) || which === 0 || which > 16) {
+				return {description};
+			}
+
+			return toggl.getTimeEntries(token, {amount: which, deps: false})
+				.then(entries => entries[which - 1])
+				.then(({description, pid, billable, tags}) => ({description, pid, billable, tags}));
+		})
+		.then(entryData => toggl.startTimeEntry(token, entryData))
 		.then(views.started)
 		.then(views.pad)
 		.then(views.log)

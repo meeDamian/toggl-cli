@@ -230,11 +230,8 @@ me.getCurrentTimeEntry = function ({utils}, token, deps = true) {
 /**
  * SETTERS
  **/
-me.startTimeEntry = function ({pkg}, token, description) {
-	const time_entry = {
-		description,
-		created_with: `toggl-cli ${pkg.version}`
-	};
+me.startTimeEntry = function ({pkg}, token, time_entry = {}) {
+	time_entry.created_with = `toggl-cli ${pkg.version}`;
 	return me.request(token, DEFS.timeEntry.start, {body: {time_entry}})
 		.then(({body: {data}}) => data);
 };
