@@ -36,10 +36,10 @@ $ toggl --help
 
   Commands:
     c current             - see details of currently running time entry (if any).
-    l list [number]       - list last <number> of time entries (default: 8)
+    l list [amount]       - list last <amount> of time entries (default: 8)
+    s smart [name|number] - start or stop the entry, whatever makes more sense.
       start [name|number] - start new time entry with the given name, or resume if number is given.
       stop                - stop running entry.
-    s smart [name|number] - start or stop the entry, whatever makes more sense.
     r rename <new-name>   - rename currently running entry to <new-name>.
     b browser             - open Toggl timer in default browser.
 
