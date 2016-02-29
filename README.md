@@ -35,13 +35,14 @@ $ toggl --help
     --set-background - set color theme. Choose more readible: dark or light
 
   Commands:
-    c current            - see details of currently running time entry (if any).
-    l list [number]      - list last <number> of time entries (default: 8)
-    s smart [name]       - start or stop the entry, whatever makes more sense.
-      start [name]       - start new time entry with the given name.
-      stop               - stop running entry.
-    r rename <new-name>  - rename currently running entry to <new name>.
-    b browser            - open Toggl timer in default browser.
+    c current             - see details of currently running time entry (if any).
+    l list [number]       - list last <number> of time entries (default: 8)
+      start [name|number] - start new time entry with the given name, or resume if number is given.
+      stop                - stop running entry.
+    s smart [name|number] - start or stop the entry, whatever makes more sense.
+    r rename <new-name>   - rename currently running entry to <new-name>.
+    b browser             - open Toggl timer in default browser.
+
 
   Note:
     → Values in [square brackets] are optional.
@@ -60,6 +61,9 @@ $ toggl --examples
 
   Start a new task named "Writing toggl-cli docs":
     $ toggl start Writing toggl-cli docs
+
+  Resume last running time entry:
+    $ toggl start 1
 
   Alias toggl for work:
     $ echo "toggl2='toggl --token <work-token>'" >> ~/.bashrc
@@ -85,15 +89,15 @@ $ toggl --logo
 
 ```
   Time entry
-    c ⇾ current          r ⇾ rename        l ⇾ list last 8
-    s ⇾ start or stop    p ⇾ add project   L ⇾ list last 16
-    d ⇾ discard
+    c ⇾ current        1-9 ⇾ resume from the list
+    s ⇾ start or stop    r ⇾ rename        l ⇾ list last 8
+    d ⇾ discard          p ⇾ add project   L ⇾ list last 16
 
   Other
     x ⇾ clear         h, ? ⇾ help          v ⇾ version
     b ⇾ open in browser  q ⇾ quit
 
-  What do you want to do [c,s,r,d,p,l,L,b,v,h,?,q]?
+  What do you want to do [c,1-9,s,r,d,p,l,L,b,v,h,?,q]?
 ```
 
 ## Notice
