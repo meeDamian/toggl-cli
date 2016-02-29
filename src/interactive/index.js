@@ -128,6 +128,23 @@ me.current = function ({toggl, views, utils}, {token}) {
 		updateTimeout = setTimeout(update, 8 * 1000);
 	}
 
+	function resume(which) {
+		toggl.getTimeEntries(token, {amount: which + 1, deps: false})
+			.then(entries => {
+				if (entries[0].duration < 0) {
+					which += 1;
+				}
+
+				return entries[which - 1];
+			})
+			.then(({description, pid, billable, tags}) => ({description, pid, billable, tags}))
+			.then(entryData => toggl.startTimeEntry(token, entryData))
+			.then(update)
+			.catch(e => {
+				console.log(e);
+			});
+	}
+
 	function startStop() {
 		toggl.getCurrentTimeEntry(token, false)
 			.then(entry => {
@@ -140,6 +157,7 @@ me.current = function ({toggl, views, utils}, {token}) {
 
 	return {
 		startStop,
+		resume,
 		update,
 
 		freeze() {
@@ -182,6 +200,12 @@ me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, 
 		}
 
 		state.set(undefined);
+
+		const which = parseInt(key);
+		if (!isNaN(which) && which !== 0) {
+			current.resume(which);
+			return;
+		}
 
 		switch (key) {
 			case 'v': // version
