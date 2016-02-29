@@ -132,7 +132,7 @@ describe('help.js', () => {
 
 		it('should color descriptions', () => {
 			help.getExamples();
-			mocks.chalk.bold.should.have.been.called.exactly(5);
+			mocks.chalk.bold.should.have.been.called.exactly(6);
 		});
 
 		it('should be multiline', () => {

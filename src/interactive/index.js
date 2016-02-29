@@ -201,7 +201,7 @@ me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, 
 
 		state.set(undefined);
 
-		const which = parseInt(key);
+		const which = parseInt(key, 10);
 		if (!isNaN(which) && which !== 0) {
 			current.resume(which);
 			return;
