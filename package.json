@@ -54,7 +54,8 @@
       "node",
       "mocha",
       "es6"
-    ]
+    ],
+    "ignores": ["src/index.js"]
   },
   "babel": {
     "presets": [
