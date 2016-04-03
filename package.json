@@ -1,6 +1,6 @@
 {
   "name": "toggl-cli",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Manage your Toggl.com time entries from the familiarity of the nearby CLI.",
   "repository": {
     "type": "git",
@@ -55,7 +55,9 @@
       "mocha",
       "es6"
     ],
-    "ignores": ["src/index.js"]
+    "ignores": [
+      "src/index.js"
+    ]
   },
   "babel": {
     "presets": [
