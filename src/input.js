@@ -35,8 +35,14 @@ me.saveNeeded = function ({config, views: {log, errMsg}}, argv) {
 
 	if (argv['set-background'] !== undefined) {
 		switch (argv['set-background']) {
-			case 'dark': newConfig.dark = true; break;
-			case 'light': newConfig.dark = false; break;
+			case 'dark':
+				newConfig.dark = true;
+				break;
+
+			case 'light':
+				newConfig.dark = false;
+				break;
+
 			default: throw new Error('Invalid --set-background value. Allowed: dark, light');
 		}
 	}

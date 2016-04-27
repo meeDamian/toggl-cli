@@ -197,7 +197,7 @@ me.getBrackets = function ({chalk}, project, bold = false) {
 		brackets.push(bold ? chalk.bold(client.name) : client.name);
 	}
 
-	return chalk.red(`[${ brackets.join(' • ') }]`);
+	return chalk.red(`[${brackets.join(' • ')}]`);
 };
 
 me.get24hour = function ({chalk}, iso8601date) {

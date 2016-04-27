@@ -76,7 +76,9 @@ me.current = function ({toggl, views, utils}, {token}) {
 
 		Promise.resolve(current)
 			.then(views.details) // can throw and skip to `.catch()`
-			.then(utils.pass(() => hasCurrent = true))
+			.then(utils.pass(() => {
+				hasCurrent = true;
+			}))
 			.then(views.pad)
 			.catch(views.formatErr)
 			.then(currentView => {
