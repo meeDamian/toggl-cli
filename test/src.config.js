@@ -14,7 +14,7 @@ const DEPS = {
 		resolve: chai.spy(pass)
 	},
 	fs: {
-		writeJSON: chai.spy(pass)
+		outputJson: chai.spy(pass)
 	},
 	process: {
 		env: {
@@ -133,7 +133,7 @@ describe('config.js', () => {
 		});
 
 		beforeEach(() => {
-			DEPS.fs.writeJSON = chai.spy((_, __, ___, cb) => cb());
+			DEPS.fs.outputJson = chai.spy((_, __, ___, cb) => cb());
 			config.getPath = chai.spy(() => 'a path');
 			config.open = chai.spy();
 		});
@@ -141,7 +141,7 @@ describe('config.js', () => {
 		after(() => {
 			config.getPath = getPath;
 			config.open = open;
-			DEPS.fs.writeJSON = chai.spy(pass);
+			DEPS.fs.outputJson = chai.spy(pass);
 		});
 
 		const mock = {
@@ -168,11 +168,11 @@ describe('config.js', () => {
 
 		it('should save correctly', () => {
 			config.save(mock);
-			DEPS.fs.writeJSON.should.have.been.called.once.with('a path', mock, 2);
+			DEPS.fs.outputJson.should.have.been.called.once.with('a path', mock, {spaces: 2});
 		});
 
 		it('should reject if save fails', () => {
-			DEPS.fs.writeJSON = chai.spy((_, __, ___, cb) => cb(new Error('fake error')));
+			DEPS.fs.outputJson = chai.spy((_, __, ___, cb) => cb(new Error('fake error')));
 			return config.save(mock).should.eventually.be.rejectedWith('fake error');
 		});
 	});

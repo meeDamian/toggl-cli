@@ -38,7 +38,7 @@ me.save = function ({fs}, newConfig) {
 
 		Object.assign(config, newConfig);
 
-		fs.writeJSON(me.getPath(), config, 2, err => {
+		fs.outputJson(me.getPath(), config, {spaces: 2}, err => {
 			if (err) {
 				reject(err);
 				return;
@@ -51,7 +51,7 @@ me.save = function ({fs}, newConfig) {
 
 me = require('mee')(module, me, {
 	path: require('path'),
-	fs: require('fs-extended'),
+	fs: require('fs-extra'),
 
 	process,
 	require
