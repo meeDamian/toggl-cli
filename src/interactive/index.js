@@ -142,8 +142,8 @@ me.current = function ({toggl, views, utils}, {token}) {
 			.then(({description, pid, billable, tags}) => ({description, pid, billable, tags}))
 			.then(entryData => toggl.startTimeEntry(token, entryData))
 			.then(update)
-			.catch(e => {
-				console.log(e);
+			.catch(err => {
+				console.log(err);
 			});
 	}
 

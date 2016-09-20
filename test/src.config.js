@@ -4,6 +4,7 @@
 const chai = require('chai');
 chai.use(require('chai-spies'));
 chai.use(require('chai-as-promised'));
+
 const should = chai.should();
 
 const pass = v => v;

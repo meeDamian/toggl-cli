@@ -87,7 +87,7 @@ me.process = function ({help, views: {log}}, argv) {
 	};
 };
 
-me.parse = function ({views: {log, err}, pkg, help, config}) {
+me.parse = function ({views: {log, err: error}, pkg, help, config}) {
 	return new Promise(resolve => {
 		const argv = me.preProcess();
 
@@ -118,13 +118,13 @@ me.parse = function ({views: {log, err}, pkg, help, config}) {
 		config.get()
 			.then(me.process(argv))
 			.then(resolve)
-			.catch(error => {
-				if (error.message === 'no config exists') {
+			.catch(err => {
+				if (err.message === 'no config exists') {
 					log(help.onBoard());
 					return;
 				}
 
-				err(error);
+				error(err);
 			});
 	});
 };

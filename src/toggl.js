@@ -195,7 +195,7 @@ me.getTimeEntries = function ({utils}, token, {amount, deps = true}) {
 
 			try {
 				entries.length = Math.min(entries.length, amount || 8);
-			} catch (e) {
+			} catch (err) {
 				throw new Error('Invalid "amount"');
 			}
 

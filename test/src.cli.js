@@ -3,6 +3,7 @@
 
 const chai = require('chai');
 chai.use(require('chai-spies'));
+
 const should = chai.should();
 
 const mocks = {
@@ -28,6 +29,7 @@ const mocks = {
 describe('cli.js#main()', () => {
 	it('should export correctly', () => {
 		const cli = require('../src/cli.js')(mocks);
+
 		should.exist(cli);
 		cli.main.should.exist;
 		cli.main.should.be.a('function');

@@ -3,6 +3,7 @@
 
 const chai = require('chai');
 chai.use(require('chai-spies'));
+
 const should = chai.should();
 
 const pass = v => v;

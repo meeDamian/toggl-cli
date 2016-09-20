@@ -3,6 +3,7 @@
 
 const chai = require('chai');
 chai.use(require('chai-spies'));
+
 const should = chai.should();
 
 const utils = require('../src/utils.js');
@@ -88,7 +89,7 @@ describe('utils.js', () => {
 			should.exist(obj);
 			Object.keys(obj).length.should.equal(amount);
 			for (const i in Object.keys(obj)) {
-				if (obj.hasOwnProperty(i)) {
+				if ({}.hasOwnProperty.call(obj, i)) {
 					obj[i].should.have.property('id');
 				}
 			}
