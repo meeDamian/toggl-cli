@@ -188,18 +188,30 @@ me.getProjects = function ({utils}, token, {ids, deps = true}) {
 		.then(utils.attach(me.getClients, token, 'cid', 'client'));
 };
 
-me.getTimeEntries = function ({utils}, token, {amount, deps = true}) {
+me.getTimeEntries = function ({utils}, token, {limit, date, deps = true}) {
 	const partial = me.fetchTimeEntries(token, {})
 		.then(entries => {
 			entries.reverse();
 
-			try {
-				entries.length = Math.min(entries.length, amount || 8);
-			} catch (err) {
-				throw new Error('Invalid "amount"');
+			if ((limit === undefined && date === undefined) || !isNaN(limit)) {
+				try {
+					entries.length = Math.min(entries.length, limit || 8);
+				} catch (err) {
+					throw new Error(`Invalid "amount" ${err}`);
+				}
+
+				return entries;
 			}
 
-			return entries;
+			if (date) {
+				return entries.map((e, i) => {
+						e._id = i;
+						return e;
+					})
+					.filter(({start, stop, _id}) => {
+						return utils.compareDates(start, date) || utils.compareDates(stop, date);
+					});
+			}
 		});
 
 	if (!deps) {

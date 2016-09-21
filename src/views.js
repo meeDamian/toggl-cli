@@ -116,7 +116,9 @@ me.discard = function ({chalk: {cyan, red}}, entry) {
 };
 
 // lines
-me.listLine = function ({chalk}, {description, duration, start, project}, idx) {
+me.listLine = function ({chalk}, {description, duration, start, project, _id}, idx) {
+	idx = _id || idx;
+
 	return [
 		chalk.blue(`${(++idx < 10 ? ' ' : '') + idx})`),
 		me.getDuration({duration, start}, true),

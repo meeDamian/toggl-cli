@@ -14,23 +14,66 @@ me.showCurrent = function ({views}, token) {
 		.catch(views.err);
 };
 
-me.list = function ({views, toggl}, token, amount) {
-	toggl.getTimeEntries(token, {amount})
-		.then(views.list)
-		.then(views.pad)
-		.then(views.log)
-		.catch(views.err);
+me.list = function ({views, toggl}, token, params) {
+	Promise.resolve()
+		.then(() => {
+			if (params[0] === undefined || !isNaN(params[0])) {
+				return {limit: params[0]};
+			}
+
+			return Promise.resolve(params.map(p => p.toLowerCase()))
+				.then(params => {
+					if (params[0] === 'today') {
+						return 0;
+					}
+
+					if (params[0] === 'yesterday') {
+						return 1;
+					}
+
+					if (params[0] === 'last') {
+						const days = ['sun', 'sat', 'fri', 'thu', 'wed', 'tue', 'mon'];
+
+						// Shift array so that item at [0] is yesterday
+						let i = new Date().getDay();
+						while (--i) {
+							days.unshift(days.pop());
+						}
+
+						// add one dummy value as idx [0], to have `days.indexOf(day)` match the shift required
+						days.unshift(undefined);
+
+						const requested = params[1].trim().substring(0, 3);
+						if (days.indexOf(requested) === -1) {
+							throw new Error(`Sorry, I don't know how to show entries from "last ${requested}".`);
+						}
+
+						return days.indexOf(requested);
+					}
+				})
+				.then(shift => new Date(new Date().setDate(new Date().getDate() - shift)))
+				.then(date => ({date}));
+		})
+		.then(opts => {
+			toggl.getTimeEntries(token, opts)
+				.then(views.list)
+				.then(views.pad)
+				.then(views.log)
+				.catch(views.err);
+		});
 };
 
 me.start = function ({toggl, views}, token, description) {
-	Promise.resolve(parseInt(description, 10))
+	Promise.resolve(description)
 		.then(which => {
 			if (isNaN(which) || which === 0 || which > 16) {
 				return {description};
 			}
 
-			return toggl.getTimeEntries(token, {amount: which, deps: false})
-				.then(entries => entries[which - 1])
+			const limit = parseFloat(which);
+
+			return toggl.getTimeEntries(token, {limit, deps: false})
+				.then(entries => entries[limit - 1])
 				.then(({description, pid, billable, tags}) => ({description, pid, billable, tags}));
 		})
 		.then(entryData => toggl.startTimeEntry(token, entryData))
@@ -102,7 +145,7 @@ me.stopCurrent = function ({views}, token) {
 me.execute = function ({open, help, views, toggl}, {cmd, token}) {
 	switch (cmd[0].toLowerCase()) {
 		case 'list': case 'l': case 'ls':
-			me.list(token, cmd[1]);
+			me.list(token, cmd.splice(1));
 			break;
 
 		case 'current': case 'c': case 'top':

@@ -123,21 +123,21 @@ me.current = function ({toggl, views, utils}, {token}) {
 			.then(updateCurrent)
 			.catch(me.err);
 
-		toggl.getTimeEntries(token, {amount: 7})
+		toggl.getTimeEntries(token, {limit: 7})
 			.then(updateList)
 			.catch(me.err);
 
 		updateTimeout = setTimeout(update, 8 * 1000);
 	}
 
-	function resume(which) {
-		toggl.getTimeEntries(token, {amount: which + 1, deps: false})
+	function resume(limit) {
+		toggl.getTimeEntries(token, {limit: limit + 1, deps: false})
 			.then(entries => {
 				if (entries[0].duration < 0) {
-					which += 1;
+					limit += 1;
 				}
 
-				return entries[which - 1];
+				return entries[limit - 1];
 			})
 			.then(({description, pid, billable, tags}) => ({description, pid, billable, tags}))
 			.then(entryData => toggl.startTimeEntry(token, entryData))
@@ -172,8 +172,8 @@ me.current = function ({toggl, views, utils}, {token}) {
 	};
 };
 
-me.showList = function ({toggl, views}, token, amount = 9) {
-	toggl.getTimeEntries(token, {amount})
+me.showList = function ({toggl, views}, token, limit = 9) {
+	toggl.getTimeEntries(token, {limit})
 		.then(views.list)
 		.then(x => ['', ...x])
 		.then(me.render)

@@ -44,9 +44,21 @@ function pass(fn) {
 	};
 }
 
+function toDate(ts) {
+	ts = new Date(ts);
+	return `${ts.getFullYear()}-${ts.getMonth()}-${ts.getDate()}`;
+}
+
+function compareDates(one, two) {
+	return toDate(one) === toDate(two);
+}
+
 Object.assign(module.exports, {
 	objectify,
 	combine,
 	attach,
-	pass
+	pass,
+
+	toDate,
+	compareDates
 });
