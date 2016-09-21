@@ -205,12 +205,12 @@ me.getTimeEntries = function ({utils}, token, {limit, date, deps = true}) {
 
 			if (date) {
 				return entries.map((e, i) => {
-						e._id = i;
-						return e;
-					})
-					.filter(({start, stop, _id}) => {
-						return utils.compareDates(start, date) || utils.compareDates(stop, date);
-					});
+					e._id = i;
+					return e;
+				})
+				.filter(({start, stop}) => {
+					return utils.compareDates(start, date) || utils.compareDates(stop, date);
+				});
 			}
 		});
 
