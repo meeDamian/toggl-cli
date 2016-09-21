@@ -90,7 +90,7 @@ describe('help.js', () => {
 
 			should.exist(arr);
 			arr.should.be.an('array');
-			arr.length.should.be.equal(29);
+			arr.length.should.be.equal(31);
 		});
 	});
 
@@ -133,7 +133,7 @@ describe('help.js', () => {
 
 		it('should color descriptions', () => {
 			help.getExamples();
-			mocks.chalk.bold.should.have.been.called.exactly(6);
+			mocks.chalk.bold.should.have.been.called.exactly(7);
 		});
 
 		it('should be multiline', () => {

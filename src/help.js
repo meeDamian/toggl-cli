@@ -41,15 +41,18 @@ me.getLong = function ({pkg, pad, chalk: {white, black}}) {
 		'',
 		'Commands:',
 		'  c current             - see details of currently running time entry (if any).',
-		'  l list [amount]       - list last <amount> of time entries (default: 8)',
+		'  l list [amount|when]  - list last <amount> of time entries (default: 8) or <when> (see Notes)',
 		`  s smart [name|number] - start or stop the entry, whatever makes more sense.`,
 		'    start [name|number] - start new time entry with the given name, or resume if number is given.',
 		'    stop                - stop running entry.',
 		'  r rename <new-name>   - rename currently running entry to <new-name>.',
 		'  b browser             - open Toggl timer in default browser.',
 		'',
-		'Note:',
-		'  → Values in [square brackets] are optional.'
+		'Notes:',
+		'  → Values in [square brackets] are optional.',
+		'  → <when> is one of:',
+		'      today, yesterday, last Monday, last tue, etc…'
+
 	]);
 };
 
@@ -106,10 +109,13 @@ me.getExamples = function ({pad, chalk: {bold}}) {
 		bold('Resume last running time entry:'),
 		'  $ toggl start 1',
 		'',
+		bold('List entries from the last Friday:'),
+		'  $ toggl list last friday',
+		'',
 		bold('Alias toggl for work:'),
 		`  $ echo "toggl2='toggl --token <work-token>'" >> ~/.bashrc`,
-		'  $ toggl list   # last 8 entries from your private account',
-		'  $ toggl2 list  # last 8 entries from your work account'
+		'  $ toggl list yesterday  # yesterday entries from your private account',
+		'  $ toggl2 list           # last 8 entries from your work account'
 	]);
 };
 
