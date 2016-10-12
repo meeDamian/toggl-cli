@@ -6,6 +6,8 @@ const TIMER_URL = `${URL}/app/timer`;
 const API_URL = `${URL}/api`;
 const API_VER = 'v8';
 
+const V8_RESPONSE_WRAPPER = 'data';
+
 const DEFS = {
 	client: {
 		details: {
@@ -35,7 +37,8 @@ const DEFS = {
 		},
 		delete: {
 			endpoint: ['time_entries', ':id'],
-			method: 'DELETE'
+			method: 'DELETE',
+			wrapped: false
 		},
 		details: {
 			endpoint: ['time_entries', ':id'],
@@ -43,7 +46,8 @@ const DEFS = {
 		},
 		list: {
 			endpoint: 'time_entries',
-			method: 'GET'
+			method: 'GET',
+			wrapped: false
 		},
 		start: {
 			endpoint: ['time_entries', 'start'],
@@ -69,7 +73,7 @@ let me = {
 	DEFS
 };
 
-me.getUrl = function (_, version, endpoint, id) {
+me.buildUrl = function (_, version, endpoint, id) {
 	if (!endpoint) {
 		throw new Error('endpoint must be provided');
 	}
@@ -89,13 +93,13 @@ me.getUrl = function (_, version, endpoint, id) {
 	].join('/');
 };
 
-me.request = function ({request}, token, {endpoint, method, version}, params) {
+me.request = function ({request}, token, {endpoint, method, version, wrapped}, params) {
 	return new Promise((resolve, reject) => {
 		const tm = setTimeout(reject, 2000);
 
 		const {id, body, qs} = params || {};
 
-		const url = me.getUrl(version, endpoint, id);
+		const url = me.buildUrl(version, endpoint, id);
 
 		request({
 			method, url, qs, body,
@@ -123,6 +127,13 @@ me.request = function ({request}, token, {endpoint, method, version}, params) {
 
 			resolve({body});
 		});
+	})
+	.then(({body}) => {
+		if ((!version || version === API_VER) && wrapped !== false) {
+			return body[V8_RESPONSE_WRAPPER];
+		}
+
+		return body;
 	});
 };
 
@@ -137,20 +148,17 @@ me.fetchMany = function (_, fn, token, ids) {
  * FETCHERS
  */
 me.fetchProject = function (_, token, id) {
-	return me.request(token, DEFS.project.details, {id})
-		.then(({body: {data}}) => data);
+	return me.request(token, DEFS.project.details, {id});
 };
 me.fetchProjects = function (_, token, ids) {
 	return me.fetchMany(me.fetchProject, token, ids);
 };
 me.fetchProjectsList = function (_, token) {
-	return me.request(token, DEFS.project.list)
-		.then(({body}) => body);
+	return me.request(token, DEFS.project.list);
 };
 
 me.fetchClient = function (_, token, id) {
-	return me.request(token, DEFS.client.details, {id})
-		.then(({body: {data}}) => data);
+	return me.request(token, DEFS.client.details, {id});
 };
 me.fetchClients = function (_, token, ids) {
 	return me.fetchMany(me.fetchClient, token, ids);
@@ -161,8 +169,7 @@ me.fetchTimeEntries = function (_, token, {days = 90}) {
 		start_date: new Date(new Date().setDate(new Date().getDate() - days)).toISOString()
 	};
 
-	return me.request(token, DEFS.timeEntry.list, {qs: params})
-		.then(({body}) => body);
+	return me.request(token, DEFS.timeEntry.list, {qs: params});
 };
 me.fetchCurrentTimeEntry = function (_, token) {
 	return me.request(token, DEFS.timeEntry.current);
@@ -224,7 +231,7 @@ me.getTimeEntries = function ({utils}, token, {limit, date, deps = true}) {
 
 me.getCurrentTimeEntry = function ({utils}, token, deps = true) {
 	return me.fetchCurrentTimeEntry(token)
-		.then(({body: {data}}) => {
+		.then(data => {
 			if (!data) {
 				return undefined;
 			}
@@ -244,23 +251,19 @@ me.getCurrentTimeEntry = function ({utils}, token, deps = true) {
  **/
 me.startTimeEntry = function ({pkg}, token, time_entry = {}) {
 	time_entry.created_with = `toggl-cli ${pkg.version}`;
-	return me.request(token, DEFS.timeEntry.start, {body: {time_entry}})
-		.then(({body: {data}}) => data);
+	return me.request(token, DEFS.timeEntry.start, {body: {time_entry}});
 };
 
 me.stopTimeEntry = function (_, token, id) {
-	return me.request(token, DEFS.timeEntry.stop, {id})
-		.then(({body: {data}}) => data);
+	return me.request(token, DEFS.timeEntry.stop, {id});
 };
 
 me.updateTimeEntry = function (_, token, id, changes) {
-	return me.request(token, DEFS.timeEntry.update, {id, body: {time_entry: changes}})
-		.then(({body: {data}}) => data);
+	return me.request(token, DEFS.timeEntry.update, {id, body: {time_entry: changes}});
 };
 
 me.deleteTimeEntry = function (_, token, id) {
-	return me.request(token, DEFS.timeEntry.delete, {id})
-		.then(({body}) => body);
+	return me.request(token, DEFS.timeEntry.delete, {id});
 };
 
 /**

@@ -84,15 +84,15 @@ describe('toggl.js', () => {
 		});
 	});
 
-	describe('#getUrl()', () => {
+	describe('#buildUrl()', () => {
 		it('should exist and be exported', () => {
-			should.exist(toggl.getUrl);
-			toggl.getUrl.should.be.a('function');
+			should.exist(toggl.buildUrl);
+			toggl.buildUrl.should.be.a('function');
 		});
 
 		it('should throw on no endpoint', () => {
 			const fn = () => {
-				toggl.getUrl(toggl.API_VER, undefined);
+				toggl.buildUrl(toggl.API_VER, undefined);
 			};
 
 			fn.should.throw(Error, /endpoint/);
@@ -101,14 +101,14 @@ describe('toggl.js', () => {
 		const endpoint = 'endpoint_test';
 
 		it('should return a string', () => {
-			const url = toggl.getUrl(undefined, endpoint);
+			const url = toggl.buildUrl(undefined, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
 		});
 
 		it('should contain Toggl url', () => {
-			const url = toggl.getUrl(undefined, endpoint);
+			const url = toggl.buildUrl(undefined, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
@@ -116,7 +116,7 @@ describe('toggl.js', () => {
 		});
 
 		it('should set endpoint from `string` correctly', () => {
-			const url = toggl.getUrl(undefined, endpoint);
+			const url = toggl.buildUrl(undefined, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
@@ -125,7 +125,7 @@ describe('toggl.js', () => {
 
 		it('should set endpoint from `array` correctly', () => {
 			const endpoint = ['time_entries', 'start'];
-			const url = toggl.getUrl(undefined, endpoint);
+			const url = toggl.buildUrl(undefined, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
@@ -136,7 +136,7 @@ describe('toggl.js', () => {
 		it('should use default version', () => {
 			const DEFAULT_VERSION = 'v8';
 
-			const url = toggl.getUrl(undefined, endpoint);
+			const url = toggl.buildUrl(undefined, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
@@ -146,7 +146,7 @@ describe('toggl.js', () => {
 		it('should set custom API version', () => {
 			const version = 'v9';
 
-			const url = toggl.getUrl(version, endpoint);
+			const url = toggl.buildUrl(version, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
@@ -157,7 +157,7 @@ describe('toggl.js', () => {
 			const endpoint = ['time_entries', ':id', 'stop'];
 			const id = 6666;
 
-			const url = toggl.getUrl(undefined, endpoint, id);
+			const url = toggl.buildUrl(undefined, endpoint, id);
 
 			should.exist(url);
 			url.should.be.a('string');
