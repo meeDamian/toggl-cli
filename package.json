@@ -1,6 +1,6 @@
 {
   "name": "toggl-cli",
-  "version": "0.1.16",
+  "version": "0.2.0",
   "description": "Manage your Toggl.com time entries from the familiarity of the nearby CLI.",
   "repository": {
     "type": "git",
