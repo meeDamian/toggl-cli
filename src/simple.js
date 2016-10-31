@@ -66,7 +66,7 @@ me.list = function ({views, toggl}, token, params) {
 me.start = function ({toggl, views}, token, description) {
 	Promise.resolve(description)
 		.then(which => {
-			if (isNaN(which) || which === 0 || which > 16) {
+			if (!which || isNaN(which) || which > 16) {
 				return {description};
 			}
 
