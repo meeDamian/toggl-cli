@@ -13,8 +13,13 @@ const DEFS = {
 		details: {
 			endpoint: ['clients', ':id'],
 			method: 'GET'
-		}
-	},
+		},
+        list: {
+            endpoint: ['me', 'clients'],
+            method: 'GET',
+            version: 'v9'
+        }
+    },
 	project: {
 		details: {
 			endpoint: ['projects', ':id'],
@@ -162,6 +167,10 @@ me.fetchClient = function (_, token, id) {
 };
 me.fetchClients = function (_, token, ids) {
 	return me.fetchMany(me.fetchClient, token, ids);
+};
+
+me.fetchClientList = function (_, token) {
+	return me.request(token, DEFS.client.list);
 };
 
 me.fetchTimeEntries = function (_, token, {days = 90}) {

@@ -71,6 +71,14 @@ me.list = function (_, entries) {
 	return entries.map(me.listLine);
 };
 
+me.projects = function (_, entries) {
+	return entries.map(me.projectLine);
+};
+
+me.clients = function (_, entries) {
+	return entries.map(me.clientLine);
+};
+
 me.started = function ({chalk}, {id, description, start}) {
 	return [
 		chalk.green('Started'),
@@ -155,6 +163,30 @@ me.metaLine = function (_, {id, project}) {
 		}
 	}
 	return line.join(' ');
+};
+
+me.projectLine = function({chalk}, {_id, name, client}, idx) {
+    idx = _id || idx;
+
+    const response = [
+            chalk.blue(`${(++idx < 10 ? ' ' : '') + idx})`),
+            name
+	];
+
+    if (client) {
+    	response.push(chalk.red(`[${client.name}]`));
+    }
+
+    return response.join(' ');
+};
+
+me.clientLine = function({chalk}, {_id, name}, idx) {
+    idx = _id || idx;
+
+    return [
+        chalk.blue(`${(++idx < 10 ? ' ' : '') + idx})`),
+        name
+    ].join(' ');
 };
 
 // elements

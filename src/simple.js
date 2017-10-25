@@ -63,6 +63,28 @@ me.list = function ({views, toggl}, token, params) {
 		});
 };
 
+me.projects = function ({toggl, views}, token) {
+	Promise.resolve()
+		.then(() => {
+			toggl.getProjects(token, {})
+				.then(views.projects)
+				.then(views.pad)
+				.then(views.log)
+				.catch(views.err);
+		});
+};
+
+me.clients = function ({toggl, views}, token) {
+	Promise.resolve()
+		.then(() => {
+			toggl.fetchClientList(token)
+				.then(views.clients)
+				.then(views.pad)
+				.then(views.log)
+				.catch(views.err);
+		});
+};
+
 me.start = function ({toggl, views}, token, description) {
 	Promise.resolve(description)
 		.then(which => {
@@ -172,7 +194,15 @@ me.execute = function ({open, help, views, toggl}, {cmd, token}) {
 			open(toggl.TIMER_URL);
 			break;
 
-		default:
+		case 'projects': case 'pr':
+			me.projects(token);
+			break;
+
+        case 'clients': case 'cl':
+			me.clients(token);
+			break;
+
+        default:
 			views.log(help.getHint());
 	}
 };
