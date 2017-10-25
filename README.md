@@ -35,20 +35,26 @@ $ toggl --help
     --set-background - set color theme. Choose more readible: dark or light
 
   Commands:
-    c current             - see details of currently running time entry (if any).
-    l list [amount|when]  - list last <amount> of time entries (default: 8) or <when> (see below)
-    s smart [name|number] - start or stop the entry, whatever makes more sense.
-      start [name|number] - start new time entry with the given name, or resume if number is given.
-      stop                - stop running entry.
-    r rename <new-name>   - rename currently running entry to <new-name>.
-    b browser             - open Toggl timer in default browser.
+    c current 				- see details of currently running time entry (if any).
+    l list [amount|when] 		- list last <amount> of time entries (default: 8) or <when> (see Notes)
+    s smart [properties] [name|number]	- start or stop the entry, whatever makes more sense.
+      start [properties] [name|number]	- start new time entry with the given name, or resume if number is given.
+      stop  				- stop running entry.
+    r rename <new-name> 		- rename currently running entry to <new-name>.
+    pr projects  			- list existing projects.
+    cl clients				- list existing clients.
+    b browser				- open Toggl timer in default browser.
 
+  Properties:
+    New tasks can have properties defined as the first parameters after "start"
+    → project:, proj: - set the project for this task, can be either a number, or partial name of the project
+    → billable:, bill: - if passed "yes", will mark the task as billable
+    → tag: - can add tags to the task, can be called multiple times
 
-  Note:
+  Notes:
     → Values in [square brackets] are optional.
     → <when> is one of:
         today, yesterday, last Monday, last tue, etc…
-
 
 $ toggl --examples
 

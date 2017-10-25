@@ -98,11 +98,86 @@ me.start = function ({toggl, views}, token, description) {
 				.then(entries => entries[limit - 1])
 				.then(({description, pid, billable, tags}) => ({description, pid, billable, tags}));
 		})
+		.then(me.recurseDescriptionTags)
+		.then(entryData => me.parseProjectToken(token, entryData))
 		.then(entryData => toggl.startTimeEntry(token, entryData))
 		.then(views.started)
 		.then(views.pad)
 		.then(views.log)
 		.catch(views.err);
+};
+
+me.recurseDescriptionTags = function (_, time_entry) {
+	const {description} = time_entry;
+
+	const words = description.split(' ');
+	const firstWord = words.shift();
+
+	if (firstWord.indexOf(':') !== -1) {
+		const [key, value] = firstWord.split(':');
+
+		switch(key) {
+			case 'project': case 'proj':
+				time_entry.project_token = value;
+				time_entry.description = words.join(' ');
+				return me.recurseDescriptionTags(time_entry);
+				break;
+
+			case 'billable': case 'bill':
+				time_entry.billable = (value === 'yes' || value === '1');
+				time_entry.description = words.join(' ');
+				return me.recurseDescriptionTags(time_entry);
+
+			case 'tag':
+				if (!Array.isArray(time_entry.tags)) time_entry.tags = [];
+				time_entry.tags.push(value);
+                time_entry.description = words.join(' ');
+                return me.recurseDescriptionTags(time_entry);
+        }
+	} else {
+		return time_entry;
+	}
+};
+
+me.parseProjectToken = function({toggl}, token, time_entry) {
+	const projectToken = time_entry.project_token;
+
+	// Time Entry has no project defined
+	if (projectToken === undefined) {
+		return time_entry;
+    }
+
+    const projectTokenInt = parseInt(projectToken);
+    // The project defined is probably Toggl project ID
+	if (!isNaN(projectTokenInt) && projectTokenInt > 16) {
+		time_entry.pid = projectToken;
+		return time_entry;
+	}
+
+	// The project defined is either an internal number, or a partial string
+	return Promise.resolve()
+		.then(() => toggl.fetchProjectsList(token))
+		.then((projects) => {
+			if (!isNaN(projectTokenInt)) {
+				const projectIndex = projectTokenInt - 1;
+                time_entry.pid = projects[projectIndex].id;
+                delete time_entry.project_token;
+            } else {
+				const foundProject = projects.find((item) => {
+					const itemName = item.name.toLowerCase().replace('_', ' ');
+					const tokenName = projectToken.toLowerCase().replace('_', ' ');
+
+					return (itemName.indexOf(tokenName) !== -1)
+				});
+
+				if (foundProject !== undefined) {
+					time_entry.pid = foundProject.id;
+                    delete time_entry.project_token;
+                }
+			}
+
+			return time_entry;
+		});
 };
 
 me.rename = function ({toggl, views}, token, newName) {
