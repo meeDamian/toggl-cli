@@ -102,59 +102,59 @@ me.request = function ({
 	wrapped
 }, params) {
 	return new Promise((resolve, reject) => {
-			const tm = setTimeout(reject, 2000);
+		const tm = setTimeout(reject, 2000);
 
-			const {
+		const {
 				id,
 				body,
 				qs
 			} = params || {};
 
-			const url = me.buildUrl(version, endpoint, id);
+		const url = me.buildUrl(version, endpoint, id);
 
-			request({
-				method,
-				url,
-				qs,
-				body,
-				json: true,
-				headers: {
-					Authorization: `Basic ${new Buffer(`${token}:api_token`, 'utf8').toString('base64')}`
-				}
-			}, (error, {
+		request({
+			method,
+			url,
+			qs,
+			body,
+			json: true,
+			headers: {
+				Authorization: `Basic ${new Buffer(`${token}:api_token`, 'utf8').toString('base64')}`
+			}
+		}, (error, {
 				statusCode
 			}, body) => {
-				clearTimeout(tm);
+			clearTimeout(tm);
 
-				if (error) {
-					reject({
-						statusCode,
-						error
-					});
-					return;
-				}
-
-				if (statusCode === 429) {
-					reject({
-						statusCode,
-						error: new Error('too many requests')
-					});
-					return;
-				}
-
-				if (statusCode !== 200) {
-					reject({
-						statusCode,
-						error: new Error(`FAIL ${url}`)
-					});
-					return;
-				}
-
-				resolve({
-					body
+			if (error) {
+				reject({
+					statusCode,
+					error
 				});
+				return;
+			}
+
+			if (statusCode === 429) {
+				reject({
+					statusCode,
+					error: new Error('too many requests')
+				});
+				return;
+			}
+
+			if (statusCode !== 200) {
+				reject({
+					statusCode,
+					error: new Error(`FAIL ${url}`)
+				});
+				return;
+			}
+
+			resolve({
+				body
 			});
-		})
+		});
+	})
 		.then(({
 			body
 		}) => {
@@ -262,9 +262,9 @@ me.getTimeEntries = function ({
 
 			if (date) {
 				return entries.map((e, i) => {
-						e._id = i;
-						return e;
-					})
+					e._id = i;
+					return e;
+				})
 					.filter(({
 						start,
 						stop
