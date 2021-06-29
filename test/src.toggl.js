@@ -15,7 +15,7 @@ describe('toggl.js', () => {
 			toggl.API_URL.should.be.a('string');
 			toggl.TIMER_URL.should.be.a('string');
 			toggl.URL.should.match(/^https:\/\//);
-			toggl.URL.should.match(/toggl.com/);
+			toggl.URL.should.match(/api.track.toggl.com/);
 			toggl.API_URL.should.match(/\/api/);
 			toggl.TIMER_URL.should.match(/\/timer/);
 		});

@@ -1,7 +1,7 @@
 /* eslint camelcase: 0 */ /* some vars are used as indexes of Toggl API*/
 'use strict';
 
-const URL = 'https://www.toggl.com';
+const URL = 'https://www.api.track.toggl.com';
 const TIMER_URL = `${URL}/app/timer`;
 const API_URL = `${URL}/api`;
 const API_VER = 'v8';
@@ -93,53 +93,82 @@ me.buildUrl = function (_, version, endpoint, id) {
 	].join('/');
 };
 
-me.request = function ({request}, token, {endpoint, method, version, wrapped}, params) {
+me.request = function ({
+	request
+}, token, {
+	endpoint,
+	method,
+	version,
+	wrapped
+}, params) {
 	return new Promise((resolve, reject) => {
 		const tm = setTimeout(reject, 2000);
 
-		const {id, body, qs} = params || {};
+		const {
+				id,
+				body,
+				qs
+			} = params || {};
 
 		const url = me.buildUrl(version, endpoint, id);
 
 		request({
-			method, url, qs, body,
+			method,
+			url,
+			qs,
+			body,
 			json: true,
 			headers: {
 				Authorization: `Basic ${new Buffer(`${token}:api_token`, 'utf8').toString('base64')}`
 			}
-		}, (error, {statusCode}, body) => {
+		}, (error, {
+				statusCode
+			}, body) => {
 			clearTimeout(tm);
 
 			if (error) {
-				reject({statusCode, error});
+				reject({
+					statusCode,
+					error
+				});
 				return;
 			}
 
 			if (statusCode === 429) {
-				reject({statusCode, error: new Error('too many requests')});
+				reject({
+					statusCode,
+					error: new Error('too many requests')
+				});
 				return;
 			}
 
 			if (statusCode !== 200) {
-				reject({statusCode, error: new Error(`FAIL ${url}`)});
+				reject({
+					statusCode,
+					error: new Error(`FAIL ${url}`)
+				});
 				return;
 			}
 
-			resolve({body});
+			resolve({
+				body
+			});
 		});
 	})
-	.then(({body}) => {
-		if ((!version || version === API_VER) && wrapped !== false) {
-			return body[V8_RESPONSE_WRAPPER];
-		}
+		.then(({
+			body
+		}) => {
+			if ((!version || version === API_VER) && wrapped !== false) {
+				return body[V8_RESPONSE_WRAPPER];
+			}
 
-		return body;
-	});
+			return body;
+		});
 };
 
 me.fetchMany = function (_, fn, token, ids) {
 	return Promise.all(ids
-		.filter((id, pos, arr) => id && arr.indexOf(id) === pos)  // remove dups
+		.filter((id, pos, arr) => id && arr.indexOf(id) === pos) // remove dups
 		.map(id => fn(token, id))
 	);
 };
@@ -148,7 +177,9 @@ me.fetchMany = function (_, fn, token, ids) {
  * FETCHERS
  */
 me.fetchProject = function (_, token, id) {
-	return me.request(token, DEFS.project.details, {id});
+	return me.request(token, DEFS.project.details, {
+		id
+	});
 };
 me.fetchProjects = function (_, token, ids) {
 	return me.fetchMany(me.fetchProject, token, ids);
@@ -158,18 +189,24 @@ me.fetchProjectsList = function (_, token) {
 };
 
 me.fetchClient = function (_, token, id) {
-	return me.request(token, DEFS.client.details, {id});
+	return me.request(token, DEFS.client.details, {
+		id
+	});
 };
 me.fetchClients = function (_, token, ids) {
 	return me.fetchMany(me.fetchClient, token, ids);
 };
 
-me.fetchTimeEntries = function (_, token, {days = 90}) {
+me.fetchTimeEntries = function (_, token, {
+	days = 90
+}) {
 	const params = {
 		start_date: new Date(new Date().setDate(new Date().getDate() - days)).toISOString()
 	};
 
-	return me.request(token, DEFS.timeEntry.list, {qs: params});
+	return me.request(token, DEFS.timeEntry.list, {
+		qs: params
+	});
 };
 me.fetchCurrentTimeEntry = function (_, token) {
 	return me.request(token, DEFS.timeEntry.current);
@@ -178,11 +215,18 @@ me.fetchCurrentTimeEntry = function (_, token) {
 /**
  * GETTERS
  **/
-me.getClients = function (_, token, {ids}) {
+me.getClients = function (_, token, {
+	ids
+}) {
 	return me.fetchClients(token, ids);
 };
 
-me.getProjects = function ({utils}, token, {ids, deps = true}) {
+me.getProjects = function ({
+	utils
+}, token, {
+	ids,
+	deps = true
+}) {
 	const partial = ids ?
 		me.fetchProjects(token, ids) :
 		me.fetchProjectsList(token);
@@ -195,7 +239,13 @@ me.getProjects = function ({utils}, token, {ids, deps = true}) {
 		.then(utils.attach(me.getClients, token, 'cid', 'client'));
 };
 
-me.getTimeEntries = function ({utils}, token, {limit, date, deps = true}) {
+me.getTimeEntries = function ({
+	utils
+}, token, {
+	limit,
+	date,
+	deps = true
+}) {
 	const partial = me.fetchTimeEntries(token, {})
 		.then(entries => {
 			entries.reverse();
@@ -215,9 +265,12 @@ me.getTimeEntries = function ({utils}, token, {limit, date, deps = true}) {
 					e._id = i;
 					return e;
 				})
-				.filter(({start, stop}) => {
-					return utils.compareDates(start, date) || utils.compareDates(stop, date);
-				});
+					.filter(({
+						start,
+						stop
+					}) => {
+						return utils.compareDates(start, date) || utils.compareDates(stop, date);
+					});
 			}
 		});
 
@@ -229,7 +282,9 @@ me.getTimeEntries = function ({utils}, token, {limit, date, deps = true}) {
 		.then(utils.attach(me.getProjects, token, 'pid', 'project', deps));
 };
 
-me.getCurrentTimeEntry = function ({utils}, token, deps = true) {
+me.getCurrentTimeEntry = function ({
+	utils
+}, token, deps = true) {
 	return me.fetchCurrentTimeEntry(token)
 		.then(data => {
 			if (!data) {
@@ -249,21 +304,36 @@ me.getCurrentTimeEntry = function ({utils}, token, deps = true) {
 /**
  * SETTERS
  **/
-me.startTimeEntry = function ({pkg}, token, time_entry = {}) {
+me.startTimeEntry = function ({
+	pkg
+}, token, time_entry = {}) {
 	time_entry.created_with = `toggl-cli ${pkg.version}`;
-	return me.request(token, DEFS.timeEntry.start, {body: {time_entry}});
+	return me.request(token, DEFS.timeEntry.start, {
+		body: {
+			time_entry
+		}
+	});
 };
 
 me.stopTimeEntry = function (_, token, id) {
-	return me.request(token, DEFS.timeEntry.stop, {id});
+	return me.request(token, DEFS.timeEntry.stop, {
+		id
+	});
 };
 
 me.updateTimeEntry = function (_, token, id, changes) {
-	return me.request(token, DEFS.timeEntry.update, {id, body: {time_entry: changes}});
+	return me.request(token, DEFS.timeEntry.update, {
+		id,
+		body: {
+			time_entry: changes
+		}
+	});
 };
 
 me.deleteTimeEntry = function (_, token, id) {
-	return me.request(token, DEFS.timeEntry.delete, {id});
+	return me.request(token, DEFS.timeEntry.delete, {
+		id
+	});
 };
 
 /**
