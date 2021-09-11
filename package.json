@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "./src/index.js",
-    "test": "xo && isparta cover _mocha"
+    "test": "xo && nyc mocha"
   },
   "keywords": [
     "toggl",
@@ -44,7 +44,7 @@
     "chai-spies": "^0.7.1",
     "codecov": "^1.0.1",
     "coveralls": "^2.11.14",
-    "isparta": "^4.0.0",
+    "nyc": "^15.1.0",
     "mocha": "^9.1.1",
     "xo": "^0.16.0"
   },
