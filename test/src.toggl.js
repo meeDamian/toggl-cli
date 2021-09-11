@@ -7,17 +7,13 @@ describe('toggl.js', () => {
 
 	describe('#DEFS', () => {
 		it('should have URLs defined', () => {
-			should.exist(toggl.URL);
 			should.exist(toggl.TIMER_URL);
 			should.exist(toggl.API_URL);
 
-			toggl.URL.should.be.a('string');
 			toggl.API_URL.should.be.a('string');
 			toggl.TIMER_URL.should.be.a('string');
-			toggl.URL.should.match(/^https:\/\//);
-			toggl.URL.should.match(/api.track.toggl.com/);
-			toggl.API_URL.should.match(/\/api/);
-			toggl.TIMER_URL.should.match(/\/timer/);
+			toggl.API_URL.should.match(/^https:\/\//);
+			toggl.TIMER_URL.should.match(/^https:\/\//);
 		});
 
 		it('should have API_VER defined', () => {
@@ -107,12 +103,12 @@ describe('toggl.js', () => {
 			url.should.be.a('string');
 		});
 
-		it('should contain Toggl url', () => {
+		it('should contain Toggl API url', () => {
 			const url = toggl.buildUrl(undefined, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
-			url.should.match(new RegExp(`^${toggl.URL}`));
+			url.should.match(new RegExp(`^${toggl.API_URL}`));
 		});
 
 		it('should set endpoint from `string` correctly', () => {

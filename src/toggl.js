@@ -1,9 +1,8 @@
 /* eslint camelcase: 0 */ /* some vars are used as indexes of Toggl API*/
 'use strict';
 
-const URL = 'https://api.track.toggl.com';
-const TIMER_URL = `${URL}/app/timer`;
-const API_URL = `${URL}/api`;
+const TIMER_URL = `https://track.toggl.com/timer`;
+const API_URL = 'https://api.track.toggl.com/api';
 const API_VER = 'v8';
 
 const V8_RESPONSE_WRAPPER = 'data';
@@ -66,7 +65,6 @@ const DEFS = {
 Object.freeze(DEFS);
 
 let me = {
-	URL,
 	TIMER_URL,
 	API_URL,
 	API_VER,
