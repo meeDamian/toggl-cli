@@ -13,7 +13,8 @@
   },
   "scripts": {
     "start": "./src/index.js",
-    "test": "xo && nyc mocha"
+    "test": "xo && nyc mocha",
+    "coveralls.io": "npm test && nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "toggl",

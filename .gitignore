@@ -35,3 +35,6 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+
+# coveralls.io secret token. See https://www.npmjs.com/package/coveralls for instructions on setting this up
+.coveralls.yml
