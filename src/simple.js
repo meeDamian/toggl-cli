@@ -63,6 +63,28 @@ me.list = function ({views, toggl}, token, params) {
 		});
 };
 
+me.projects = function ({toggl, views}, token) {
+	Promise.resolve()
+		.then(() => {
+			toggl.getProjects(token, {})
+				.then(views.projects)
+				.then(views.pad)
+				.then(views.log)
+				.catch(views.err);
+		});
+};
+
+me.clients = function ({toggl, views}, token) {
+	Promise.resolve()
+		.then(() => {
+			toggl.fetchClientList(token)
+				.then(views.clients)
+				.then(views.pad)
+				.then(views.log)
+				.catch(views.err);
+		});
+};
+
 me.start = function ({toggl, views}, token, description) {
 	Promise.resolve(description)
 		.then(which => {
@@ -76,11 +98,90 @@ me.start = function ({toggl, views}, token, description) {
 				.then(entries => entries[limit - 1])
 				.then(({description, pid, billable, tags}) => ({description, pid, billable, tags}));
 		})
+		.then(me.recurseDescriptionTags)
+		.then(entryData => me.parseProjectToken(token, entryData))
 		.then(entryData => toggl.startTimeEntry(token, entryData))
 		.then(views.started)
 		.then(views.pad)
 		.then(views.log)
 		.catch(views.err);
+};
+
+me.recurseDescriptionTags = function (_, timeEntry) {
+	const {description} = timeEntry;
+
+	const words = description.split(' ');
+	const firstWord = words.shift();
+
+	if (firstWord.indexOf(':') === -1) {
+		return timeEntry;
+	}
+
+	const [key, value] = firstWord.split(':');
+
+	switch (key) {
+		case 'project': case 'proj':
+			timeEntry.projectToken = value;
+			timeEntry.description = words.join(' ');
+			return me.recurseDescriptionTags(timeEntry);
+
+		case 'billable': case 'bill':
+			timeEntry.billable = (value === 'yes' || value === '1');
+			timeEntry.description = words.join(' ');
+			return me.recurseDescriptionTags(timeEntry);
+
+		case 'tag':
+			if (!Array.isArray(timeEntry.tags)) {
+				timeEntry.tags = [];
+			}
+			timeEntry.tags.push(value);
+			timeEntry.description = words.join(' ');
+			return me.recurseDescriptionTags(timeEntry);
+		default:
+			// If we don't recognize the tag, assume that colon must be part of the name of the task.
+			return timeEntry;
+	}
+};
+
+me.parseProjectToken = function ({toggl}, token, timeEntry) {
+	const projectToken = timeEntry.projectToken;
+
+	// Time Entry has no project defined
+	if (projectToken === undefined) {
+		return timeEntry;
+	}
+
+	const projectTokenInt = parseInt(projectToken, 10);
+	// The project defined is probably Toggl project ID
+	if (!isNaN(projectTokenInt) && projectTokenInt > 16) {
+		timeEntry.pid = projectToken;
+		return timeEntry;
+	}
+
+	// The project defined is either an internal number, or a partial string
+	return Promise.resolve()
+		.then(() => toggl.fetchProjectsList(token))
+		.then(projects => {
+			if (isNaN(projectTokenInt)) {
+				const foundProject = projects.find(item => {
+					const itemName = item.name.toLowerCase().replace('_', ' ');
+					const tokenName = projectToken.toLowerCase().replace('_', ' ');
+
+					return (itemName.indexOf(tokenName) !== -1);
+				});
+
+				if (foundProject !== undefined) {
+					timeEntry.pid = foundProject.id;
+					delete timeEntry.projectToken;
+				}
+			} else {
+				const projectIndex = projectTokenInt - 1;
+				timeEntry.pid = projects[projectIndex].id;
+				delete timeEntry.projectToken;
+			}
+
+			return timeEntry;
+		});
 };
 
 me.rename = function ({toggl, views}, token, newName) {
@@ -170,6 +271,14 @@ me.execute = function ({open, help, views, toggl}, {cmd, token}) {
 
 		case 'browser': case 'b': case 'open':
 			open(toggl.TIMER_URL);
+			break;
+
+		case 'projects': case 'pr':
+			me.projects(token);
+			break;
+
+		case 'clients': case 'cl':
+			me.clients(token);
 			break;
 
 		default:

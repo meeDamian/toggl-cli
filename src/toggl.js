@@ -12,6 +12,11 @@ const DEFS = {
 		details: {
 			endpoint: ['clients', ':id'],
 			method: 'GET'
+		},
+		list: {
+			endpoint: ['me', 'clients'],
+			method: 'GET',
+			version: 'v9'
 		}
 	},
 	project: {
@@ -195,9 +200,11 @@ me.fetchClients = function (_, token, ids) {
 	return me.fetchMany(me.fetchClient, token, ids);
 };
 
-me.fetchTimeEntries = function (_, token, {
-	days = 90
-}) {
+me.fetchClientList = function (_, token) {
+	return me.request(token, DEFS.client.list);
+};
+
+me.fetchTimeEntries = function (_, token, {days = 90}) {
 	const params = {
 		start_date: new Date(new Date().setDate(new Date().getDate() - days)).toISOString()
 	};
