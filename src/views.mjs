@@ -1,4 +1,6 @@
-'use strict';
+import chalk from 'chalk';
+import meeEsm from './mee-esm.mjs';
+import core from './core.mjs';
 
 let me = {
 	debug: false,
@@ -6,11 +8,11 @@ let me = {
 };
 
 me.dim = function ({chalk}, ...args) {
-	return (me.dark ? chalk.black : chalk.white)(...args);
+	return (this.dark ? chalk.black : chalk.white)(...args);
 };
 
 me.accent = function ({chalk}, ...args) {
-	return (me.dark ? chalk.white : chalk.black)(...args);
+	return (this.dark ? chalk.white : chalk.black)(...args);
 };
 
 me.pad = function (_, arr) {
@@ -27,18 +29,18 @@ me.pad = function (_, arr) {
 
 me.errMsg = function (_, msg) {
 	return err => {
-		me.err(new Error(`${msg}: ${err.message}`));
+		this.err(new Error(`${msg}: ${err.message}`));
 	};
 };
 
 me.formatErr = function ({chalk: {red}}, err) {
 	const msg = [red(err.message)];
 
-	if (me.debug) {
+	if (this.debug) {
 		msg.push(err.stack);
 	}
 
-	return me.pad(msg);
+	return this.pad(msg);
 };
 
 // loggers
@@ -47,11 +49,11 @@ me.err = function ({console: {error}}, err, fn = error) {
 		return;
 	}
 
-	fn(me.formatErr(err));
+	fn(this.formatErr(err));
 };
 
 me.log = function ({console: {log}}, val, pad = false) {
-	log(pad ? me.pad(val) : val);
+	log(pad ? this.pad(val) : val);
 };
 
 // views
@@ -61,31 +63,31 @@ me.details = function (_, timeEntry) {
 	}
 
 	return [
-		me.descriptionLine(timeEntry),
-		me.timeLine(timeEntry),
-		me.metaLine(timeEntry)
+		this.descriptionLine(timeEntry),
+		this.timeLine(timeEntry),
+		this.metaLine(timeEntry)
 	];
 };
 
 me.list = function (_, entries) {
-	return entries.map(me.listLine);
+	return entries.map(this.listLine);
 };
 
 me.projects = function (_, entries) {
-	return entries.map(me.projectLine);
+	return entries.map(this.projectLine);
 };
 
 me.clients = function (_, entries) {
-	return entries.map(me.clientLine);
+	return entries.map(this.clientLine);
 };
 
 me.started = function ({chalk}, {id, description, start}) {
 	return [
 		chalk.green('Started'),
-		me.getDescription(description),
+		this.getDescription(description),
 		'at',
-		me.get24hour(start),
-		me.getId({id})
+		this.get24hour(start),
+		this.getId({id})
 	].join(' ');
 };
 
@@ -93,10 +95,10 @@ me.renamed = function ({chalk}, oldName) {
 	return ({id, description}) => {
 		return [
 			chalk.blue('Renamed'),
-			me.getDescription(oldName),
+			this.getDescription(oldName),
 			'to',
-			me.getDescription(description),
-			me.getId({id})
+			this.getDescription(description),
+			this.getId({id})
 		].join(' ');
 	};
 };
@@ -104,12 +106,12 @@ me.renamed = function ({chalk}, oldName) {
 me.stopped = function ({chalk}, {id, description, start, stop, duration}) {
 	return [
 		chalk.red('Stopped'),
-		me.getDescription(description),
+		this.getDescription(description),
 		'after',
-		me.getDuration({duration, start}),
+		this.getDuration({duration, start}),
 		'at',
-		me.get24hour(stop),
-		me.getId({id})
+		this.get24hour(stop),
+		this.getId({id})
 	].join(' ');
 };
 
@@ -117,7 +119,7 @@ me.discard = function ({chalk: {cyan, red}}, entry) {
 	return [
 		...Array(2),
 		red('Discard time entry:'),
-		me.pad(me.details(entry)),
+		this.pad(this.details(entry)),
 		...Array(2),
 		cyan.bold('Are you sure [y,n]?')
 	];
@@ -129,37 +131,37 @@ me.listLine = function ({chalk}, {description, duration, start, project, _id}, i
 
 	return [
 		chalk.blue(`${(++idx < 10 ? ' ' : '') + idx})`),
-		me.getDuration({duration, start}, true),
-		me.getDescription(description),
-		me.getBrackets(project, true)
+		this.getDuration({duration, start}, true),
+		this.getDescription(description),
+		this.getBrackets(project, true)
 	].join(' ');
 };
 
 me.descriptionLine = function (_, {description, project}) {
 	return [
-		me.getDescription(description),
-		me.getBrackets(project, true)
+		this.getDescription(description),
+		this.getBrackets(project, true)
 	].join(' ');
 };
 
 me.timeLine = function (_, {duration, start}) {
 	return [
-		me.accent('Running for:'),
-		me.getDuration({duration, start}),
+		this.accent('Running for:'),
+		this.getDuration({duration, start}),
 		'\t',
-		me.accent('since'),
-		me.get24hour(start)
+		this.accent('since'),
+		this.get24hour(start)
 	].join(' ');
 };
 
 me.metaLine = function (_, {id, project}) {
-	const line = [me.getId({id})];
+	const line = [this.getId({id})];
 
 	if (project) {
-		line.push(me.getId(project, 'pid'));
+		line.push(this.getId(project, 'pid'));
 
 		if (project.client) {
-			line.push(me.getId(project.client, 'cid'));
+			line.push(this.getId(project.client, 'cid'));
 		}
 	}
 	return line.join(' ');
@@ -191,7 +193,7 @@ me.clientLine = function ({chalk}, {_id, name}, idx) {
 
 // elements
 me.getId = function (_, {id}, label = 'id') {
-	return me.dim(`[${label}:#${id}]`);
+	return this.dim(`[${label}:#${id}]`);
 };
 
 me.getDescription = function ({chalk: {bold}}, description) {
@@ -248,9 +250,4 @@ me.get24hour = function ({chalk}, iso8601date) {
 	].join(':'));
 };
 
-me = require('mee')(module, me, {
-	chalk: require('chalk'),
-	core: require('./core.js'),
-
-	console
-});
+export default meeEsm(me, {chalk, core, console});

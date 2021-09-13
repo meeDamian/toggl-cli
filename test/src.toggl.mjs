@@ -1,7 +1,5 @@
-'use strict';
-
 import chai from 'chai';
-import togglFactory from '../src/toggl.js';
+import togglFactory from '../src/toggl.mjs';
 
 const should = chai.should();
 

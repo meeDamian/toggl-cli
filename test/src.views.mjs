@@ -2,7 +2,7 @@
 
 import chai from 'chai';
 import chaiSpies from 'chai-spies';
-import viewsFactory from '../src/views.js';
+import viewsFactory from '../src/views.mjs';
 
 chai.use(chaiSpies);
 

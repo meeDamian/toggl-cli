@@ -1,5 +1,9 @@
 /* eslint camelcase: 0 */ /* some vars are used as indexes of Toggl API*/
-'use strict';
+
+import request from 'request';
+import meeEsm from './mee-esm.mjs';
+import pkg from './pkg.mjs';
+import utils from './utils.mjs';
 
 const TIMER_URL = `https://track.toggl.com/timer`;
 const API_URL = 'https://api.track.toggl.com/api';
@@ -113,7 +117,7 @@ me.request = function ({
 				qs
 			} = params || {};
 
-		const url = me.buildUrl(version, endpoint, id);
+		const url = this.buildUrl(version, endpoint, id);
 
 		request({
 			method,
@@ -180,28 +184,28 @@ me.fetchMany = function (_, fn, token, ids) {
  * FETCHERS
  */
 me.fetchProject = function (_, token, id) {
-	return me.request(token, DEFS.project.details, {
+	return this.request(token, DEFS.project.details, {
 		id
 	});
 };
 me.fetchProjects = function (_, token, ids) {
-	return me.fetchMany(me.fetchProject, token, ids);
+	return this.fetchMany(this.fetchProject, token, ids);
 };
 me.fetchProjectsList = function (_, token) {
-	return me.request(token, DEFS.project.list);
+	return this.request(token, DEFS.project.list);
 };
 
 me.fetchClient = function (_, token, id) {
-	return me.request(token, DEFS.client.details, {
+	return this.request(token, DEFS.client.details, {
 		id
 	});
 };
 me.fetchClients = function (_, token, ids) {
-	return me.fetchMany(me.fetchClient, token, ids);
+	return this.fetchMany(this.fetchClient, token, ids);
 };
 
 me.fetchClientList = function (_, token) {
-	return me.request(token, DEFS.client.list);
+	return this.request(token, DEFS.client.list);
 };
 
 me.fetchTimeEntries = function (_, token, {days = 90}) {
@@ -209,12 +213,12 @@ me.fetchTimeEntries = function (_, token, {days = 90}) {
 		start_date: new Date(new Date().setDate(new Date().getDate() - days)).toISOString()
 	};
 
-	return me.request(token, DEFS.timeEntry.list, {
+	return this.request(token, DEFS.timeEntry.list, {
 		qs: params
 	});
 };
 me.fetchCurrentTimeEntry = function (_, token) {
-	return me.request(token, DEFS.timeEntry.current);
+	return this.request(token, DEFS.timeEntry.current);
 };
 
 /**
@@ -223,7 +227,7 @@ me.fetchCurrentTimeEntry = function (_, token) {
 me.getClients = function (_, token, {
 	ids
 }) {
-	return me.fetchClients(token, ids);
+	return this.fetchClients(token, ids);
 };
 
 me.getProjects = function ({
@@ -233,15 +237,15 @@ me.getProjects = function ({
 	deps = true
 }) {
 	const partial = ids ?
-		me.fetchProjects(token, ids) :
-		me.fetchProjectsList(token);
+		this.fetchProjects(token, ids) :
+		this.fetchProjectsList(token);
 
 	if (!deps) {
 		return partial;
 	}
 
 	return partial
-		.then(utils.attach(me.getClients, token, 'cid', 'client'));
+		.then(utils.attach(this.getClients, token, 'cid', 'client'));
 };
 
 me.getTimeEntries = function ({
@@ -251,7 +255,7 @@ me.getTimeEntries = function ({
 	date,
 	deps = true
 }) {
-	const partial = me.fetchTimeEntries(token, {})
+	const partial = this.fetchTimeEntries(token, {})
 		.then(entries => {
 			entries.reverse();
 
@@ -284,13 +288,13 @@ me.getTimeEntries = function ({
 	}
 
 	return partial
-		.then(utils.attach(me.getProjects, token, 'pid', 'project', deps));
+		.then(utils.attach(this.getProjects, token, 'pid', 'project', deps));
 };
 
 me.getCurrentTimeEntry = function ({
 	utils
 }, token, deps = true) {
-	return me.fetchCurrentTimeEntry(token)
+	return this.fetchCurrentTimeEntry(token)
 		.then(data => {
 			if (!data) {
 				return undefined;
@@ -301,7 +305,7 @@ me.getCurrentTimeEntry = function ({
 			}
 
 			return Promise.resolve([data])
-				.then(utils.attach(me.getProjects, token, 'pid', 'project', deps))
+				.then(utils.attach(this.getProjects, token, 'pid', 'project', deps))
 				.then(([data]) => data);
 		});
 };
@@ -313,7 +317,7 @@ me.startTimeEntry = function ({
 	pkg
 }, token, time_entry = {}) {
 	time_entry.created_with = `toggl-cli ${pkg.version}`;
-	return me.request(token, DEFS.timeEntry.start, {
+	return this.request(token, DEFS.timeEntry.start, {
 		body: {
 			time_entry
 		}
@@ -321,13 +325,13 @@ me.startTimeEntry = function ({
 };
 
 me.stopTimeEntry = function (_, token, id) {
-	return me.request(token, DEFS.timeEntry.stop, {
+	return this.request(token, DEFS.timeEntry.stop, {
 		id
 	});
 };
 
 me.updateTimeEntry = function (_, token, id, changes) {
-	return me.request(token, DEFS.timeEntry.update, {
+	return this.request(token, DEFS.timeEntry.update, {
 		id,
 		body: {
 			time_entry: changes
@@ -336,18 +340,10 @@ me.updateTimeEntry = function (_, token, id, changes) {
 };
 
 me.deleteTimeEntry = function (_, token, id) {
-	return me.request(token, DEFS.timeEntry.delete, {
+	return this.request(token, DEFS.timeEntry.delete, {
 		id
 	});
 };
 
-/**
- * EXPORT
- **/
-me = require('mee')(module, me, {
-	request: require('request'),
+export default meeEsm(me, {request, utils, pkg});
 
-	utils: require('./utils.js'),
-
-	pkg: require('../package.json')
-});

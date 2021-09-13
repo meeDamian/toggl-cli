@@ -2,7 +2,7 @@
 
 import chai from 'chai';
 import chaiSpies from 'chai-spies';
-import helpFactory from '../src/help.js';
+import helpFactory from '../src/help.mjs';
 
 chai.use(chaiSpies);
 

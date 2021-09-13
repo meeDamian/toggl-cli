@@ -1,8 +1,11 @@
-'use strict';
+import minimist from 'minimist';
+import config from './config.mjs';
+import help from './help.mjs';
+import meeEsm from './mee-esm.mjs';
+import pkg from './pkg.mjs';
+import views from './views.mjs';
 
-let me = {};
-
-me.preProcess = function ({minimist, process: {argv}}) {
+function preProcess({minimist, process: {argv}}) {
 	return minimist(argv.slice(2), {
 		boolean: ['help', 'version', 'examples', 'debug', 'logo'],
 		string: ['token', 'save-token', 'set-background'],
@@ -12,17 +15,17 @@ me.preProcess = function ({minimist, process: {argv}}) {
 			t: 'token'
 		}
 	});
-};
+}
 
-me.chooseToken = function (_, file, argument) {
+function chooseToken(_, file, argument) {
 	if (argument !== undefined && argument === '') {
 		throw new Error('--token can\'t be empty');
 	}
 
 	return argument || file;
-};
+}
 
-me.saveNeeded = function ({config, views: {log, errMsg}}, argv) {
+function saveNeeded({config, views: {log, errMsg}}, argv) {
 	const newConfig = {};
 
 	if (argv['save-token'] !== undefined) {
@@ -60,12 +63,12 @@ me.saveNeeded = function ({config, views: {log, errMsg}}, argv) {
 	}
 
 	return false;
-};
+}
 
-me.process = function ({help, views: {log}}, argv) {
+function processConfig({help, views: {log}}, argv) {
 	return config => {
 		const input = {
-			token: me.chooseToken(config.token, argv.token),
+			token: this.chooseToken(config.token, argv.token),
 			dark: config.dark,
 			debug: argv.debug
 		};
@@ -85,11 +88,11 @@ me.process = function ({help, views: {log}}, argv) {
 
 		return input;
 	};
-};
+}
 
-me.parse = function ({views: {log, err: error}, pkg, help, config}) {
+function parse({views: {log, err: error}, pkg, help, config}) {
 	return new Promise(resolve => {
-		const argv = me.preProcess();
+		const argv = this.preProcess();
 
 		if (argv.version) {
 			log(pkg.version);
@@ -111,12 +114,12 @@ me.parse = function ({views: {log, err: error}, pkg, help, config}) {
 			return;
 		}
 
-		if (me.saveNeeded(argv)) {
+		if (this.saveNeeded(argv)) {
 			return;
 		}
 
 		config.get()
-			.then(me.process(argv))
+			.then(this.processConfig(argv))
 			.then(resolve)
 			.catch(err => {
 				if (err.message === 'no config exists') {
@@ -127,16 +130,6 @@ me.parse = function ({views: {log, err: error}, pkg, help, config}) {
 				error(err);
 			});
 	});
-};
+}
 
-me = require('mee')(module, me, {
-	minimist: require('minimist'),
-
-	pkg: require('../package.json'),
-
-	config: require('./config.js'),
-	views: require('./views.js'),
-	help: require('./help.js'),
-
-	process
-});
+export default meeEsm({preProcess, chooseToken, saveNeeded, processConfig, parse}, {minimist, pkg, config, views, help, process});

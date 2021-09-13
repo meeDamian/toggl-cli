@@ -9,10 +9,10 @@
   "main": "./src/main.js",
   "preferGlobal": true,
   "bin": {
-    "toggl": "./src/index.js"
+    "toggl": "./src/index.mjs"
   },
   "scripts": {
-    "start": "./src/index.js",
+    "start": "./src/index.mjs",
     "test": "xo && nyc mocha",
     "coveralls.io": "npm test && nyc report --reporter=text-lcov | coveralls"
   },
@@ -63,10 +63,7 @@
           "max": 5
         }
       ]
-    },
-    "ignores": [
-      "src/index.js"
-    ]
+    }
   },
   "babel": {
     "presets": [

@@ -1,24 +1,24 @@
-'use strict';
+import path from 'path';
+import fs from 'fs-extra';
+import meeEsm from './mee-esm.mjs';
 
-let me = {};
-
-me.getPath = function ({path, process: {env}}) {
+function getPath({path, process: {env}}) {
 	return path.resolve(...[
 		env.HOME || env.USERPROFILE,
 		'.config/toggl-cli/config.json'
 	]);
-};
+}
 
-me.open = function ({require}) {
+function open({fs}) {
 	try {
-		return require(me.getPath());
+		return fs.readJsonSync(this.getPath()); //TODO: Make async?
 	} catch (err) {
 		return null;
 	}
-};
+}
 
-me.get = function () {
-	return Promise.resolve(me.open())
+function get() {
+	return Promise.resolve(this.open())
 		.then(config => {
 			if (!config) {
 				throw new Error('no config exists');
@@ -26,11 +26,11 @@ me.get = function () {
 
 			return config;
 		});
-};
+}
 
-me.save = function ({fs}, newConfig) {
+function save({fs}, newConfig) {
 	return new Promise((resolve, reject) => {
-		let config = me.open();
+		let config = this.open();
 
 		if (!config || typeof config !== 'object') {
 			config = {};
@@ -38,7 +38,7 @@ me.save = function ({fs}, newConfig) {
 
 		Object.assign(config, newConfig);
 
-		fs.outputJson(me.getPath(), config, {spaces: 2}, err => {
+		fs.outputJson(this.getPath(), config, {spaces: 2}, err => {
 			if (err) {
 				reject(err);
 				return;
@@ -47,12 +47,6 @@ me.save = function ({fs}, newConfig) {
 			resolve(config);
 		});
 	});
-};
+}
 
-me = require('mee')(module, me, {
-	path: require('path'),
-	fs: require('fs-extra'),
-
-	process,
-	require
-});
+export default meeEsm({getPath, open, get, save}, {path, fs, process});

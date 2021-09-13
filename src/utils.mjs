@@ -1,5 +1,3 @@
-'use strict';
-
 // turns an Array of things into a dictionary where ID is the key
 function objectify(arr) {
 	return arr.reduce((p, c) => {
@@ -53,12 +51,12 @@ function compareDates(one, two) {
 	return toDate(one) === toDate(two);
 }
 
-Object.assign(module.exports, {
+const utils = {
 	objectify,
 	combine,
 	attach,
 	pass,
-
 	toDate,
 	compareDates
-});
+};
+export default utils;

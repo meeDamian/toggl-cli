@@ -1,8 +1,17 @@
-'use strict';
-
 /*
  * Nope, not proud of below code. Either 1) deal with it, or 2) submit a cleanup PR.
  */
+
+import chalk from 'chalk';
+import logger from 'log-update';
+import open from 'open';
+import help from '../help.mjs';
+import meeEsm from '../mee-esm.mjs';
+import pkg from '../pkg.mjs';
+import toggl from '../toggl.mjs';
+import utils from '../utils.mjs';
+import views from '../views.mjs';
+import discard from './discard.mjs';
 
 let me = {};
 
@@ -23,7 +32,7 @@ me.render = function ({logger, help, chalk}, lines) {
 };
 
 me.err = function ({views}, err) {
-	me.render(views.formatErr(err));
+	this.render(views.formatErr(err));
 };
 
 me.loading = function ({help, logger}) {
@@ -42,7 +51,7 @@ me.help = function ({help, chalk: {red, bold}}, key) {
 		msg.unshift('');
 	}
 
-	me.render(msg);
+	this.render(msg);
 };
 
 me.state = function (_, exit) {
@@ -70,6 +79,7 @@ me.current = function ({toggl, views, utils}, {token}) {
 	let list;
 	let renderInterval;
 	let updateTimeout;
+	let self = this;
 
 	function renderView() {
 		let hasCurrent = false;
@@ -99,8 +109,8 @@ me.current = function ({toggl, views, utils}, {token}) {
 
 				return currentView + listViews.join('\n');
 			})
-			.then(me.render)
-			.catch(me.err);
+			.then(self.render)
+			.catch(self.err);
 	}
 
 	function updateCurrent(currentEntry) {
@@ -121,11 +131,11 @@ me.current = function ({toggl, views, utils}, {token}) {
 	function update() {
 		toggl.getCurrentTimeEntry(token, true)
 			.then(updateCurrent)
-			.catch(me.err);
+			.catch(self.err);
 
 		toggl.getTimeEntries(token, {limit: 7})
 			.then(updateList)
-			.catch(me.err);
+			.catch(self.err);
 
 		updateTimeout = setTimeout(update, 8 * 1000);
 	}
@@ -176,8 +186,8 @@ me.showList = function ({toggl, views}, token, limit = 9) {
 	toggl.getTimeEntries(token, {limit})
 		.then(views.list)
 		.then(x => ['', ...x])
-		.then(me.render)
-		.catch(me.err);
+		.then(this.render)
+		.catch(this.err);
 };
 
 me.setKeyListener = function ({process: {stdin, exit}}, cb) {
@@ -211,7 +221,7 @@ me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, 
 
 		switch (key) {
 			case 'v': // version
-				me.render([
+				this.render([
 					...Array(4),
 					`    v${pkg.version}`,
 					...Array(5)
@@ -219,7 +229,7 @@ me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, 
 				break;
 
 			case 'x': // clear
-				me.render(undefined);
+				this.render(undefined);
 				break;
 
 			case 'c': // current
@@ -231,11 +241,11 @@ me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, 
 				break;
 
 			case 'l': // list of last 8
-				me.showList(token);
+				this.showList(token);
 				break;
 
 			case 'L': // list of last 16
-				me.showList(token, 16);
+				this.showList(token, 16);
 				break;
 
 			case 'b': // open in browser
@@ -243,7 +253,7 @@ me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, 
 				break;
 
 			case 'p': // add project to current entry
-				me.render([
+				this.render([
 					...Array(2),
 					yellow('  Oops, you\'ve found a thing that\'s not there yet…'),
 					'',
@@ -254,7 +264,7 @@ me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, 
 				break;
 
 			case 'r': // rename current entry
-				me.render([
+				this.render([
 					...Array(2),
 					yellow('  Oops, you\'ve found a thing that\'s not there yet…'),
 					'',
@@ -270,40 +280,26 @@ me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, 
 				break;
 
 			case 'h': case '?': // help
-				me.help();
+				this.help();
 				break;
 
 			default:
-				me.help(key);
+				this.help(key);
 				break;
 		}
 	};
 };
 
 me.start = function (_, {token}) {
-	me.loading();
+	this.loading();
 
-	const current = me.current({token});
-	const state = me.state(current.update);
+	const current = this.current({token});
+	const state = this.state(current.update);
 
 	current.update();
 
-	me.setKeyListener(me.onKey(token, current, state));
+	this.setKeyListener(this.onKey(token, current, state));
 };
 
-me = require('mee')(module, me, {
-	open: require('open'),
-	logger: require('log-update'),
-	chalk: require('chalk'),
+export default meeEsm(me, {open, logger, chalk, discard, pkg, views, toggl, utils, help, process});
 
-	discard: require('./discard.js'),
-
-	pkg: require('../../package.json'),
-
-	views: require('../views.js'),
-	toggl: require('../toggl.js'),
-	utils: require('../utils.js'),
-	help: require('../help.js'),
-
-	process
-});

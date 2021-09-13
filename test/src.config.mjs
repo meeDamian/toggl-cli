@@ -3,7 +3,7 @@
 import chai from 'chai';
 import chaiSpies from 'chai-spies';
 import chaiAsPromised from 'chai-as-promised';
-import configFactory from '../src/config.js';
+import configFactory from '../src/config.mjs';
 
 chai.use(chaiSpies);
 chai.use(chaiAsPromised);
@@ -25,7 +25,6 @@ const DEPS = {
 			USERPROFILE: undefined
 		}
 	},
-	require: chai.spy(pass)
 };
 
 const config = configFactory(DEPS);
@@ -60,43 +59,6 @@ describe('config.js', () => {
 		it('should resolve on the right path', () => {
 			config.getPath();
 			DEPS.path.resolve.should.have.been.called.with(undefined, '.config/toggl-cli/config.json');
-		});
-	});
-
-	describe('#open()', () => {
-		let getPath;
-
-		before(() => {
-			getPath = config.getPath;
-		});
-
-		afterEach(() => {
-			config.getPath = chai.spy(pass);
-			DEPS.require = chai.spy(pass);
-		});
-
-		after(() => {
-			config.getPath = getPath;
-		});
-
-		it('should call require with output of getPath()', () => {
-			config.getPath = chai.spy(() => 'a path');
-			const out = config.open();
-			config.getPath.should.have.been.called.once;
-			DEPS.require.should.have.been.called.with('a path');
-			should.exist(out);
-			out.should.equal('a path');
-		});
-
-		it('should return null if require throws', () => {
-			DEPS.require = chai.spy(() => {
-				throw new Error('fake error');
-			});
-
-			const out = config.open();
-			config.getPath.should.have.been.called.once;
-			DEPS.require.should.have.been.called.once;
-			should.not.exist(out);
 		});
 	});
 

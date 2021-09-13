@@ -1,4 +1,8 @@
-'use strict';
+import open from 'open';
+import toggl from './toggl.mjs';
+import help from './help.mjs';
+import views from './views.mjs';
+import meeEsm from './mee-esm.mjs';
 
 let me = {};
 
@@ -7,7 +11,7 @@ me.getCurrent = function ({toggl}, token, deps = true) {
 };
 
 me.showCurrent = function ({views}, token) {
-	me.getCurrent(token)
+	this.getCurrent(token)
 		.then(views.details)
 		.then(views.pad)
 		.then(views.log)
@@ -98,8 +102,8 @@ me.start = function ({toggl, views}, token, description) {
 				.then(entries => entries[limit - 1])
 				.then(({description, pid, billable, tags}) => ({description, pid, billable, tags}));
 		})
-		.then(me.recurseDescriptionTags)
-		.then(entryData => me.parseProjectToken(token, entryData))
+		.then(this.recurseDescriptionTags)
+		.then(entryData => this.parseProjectToken(token, entryData))
 		.then(entryData => toggl.startTimeEntry(token, entryData))
 		.then(views.started)
 		.then(views.pad)
@@ -123,12 +127,12 @@ me.recurseDescriptionTags = function (_, timeEntry) {
 		case 'project': case 'proj':
 			timeEntry.projectToken = value;
 			timeEntry.description = words.join(' ');
-			return me.recurseDescriptionTags(timeEntry);
+			return this.recurseDescriptionTags(timeEntry);
 
 		case 'billable': case 'bill':
 			timeEntry.billable = (value === 'yes' || value === '1');
 			timeEntry.description = words.join(' ');
-			return me.recurseDescriptionTags(timeEntry);
+			return this.recurseDescriptionTags(timeEntry);
 
 		case 'tag':
 			if (!Array.isArray(timeEntry.tags)) {
@@ -136,7 +140,7 @@ me.recurseDescriptionTags = function (_, timeEntry) {
 			}
 			timeEntry.tags.push(value);
 			timeEntry.description = words.join(' ');
-			return me.recurseDescriptionTags(timeEntry);
+			return this.recurseDescriptionTags(timeEntry);
 		default:
 			// If we don't recognize the tag, assume that colon must be part of the name of the task.
 			return timeEntry;
@@ -185,7 +189,7 @@ me.parseProjectToken = function ({toggl}, token, timeEntry) {
 };
 
 me.rename = function ({toggl, views}, token, newName) {
-	me.getCurrent(token)
+	this.getCurrent(token)
 		.then(entry => {
 			if (!entry) {
 				throw new Error('No timer is running…');
@@ -209,18 +213,18 @@ me.rename = function ({toggl, views}, token, newName) {
 
 me.smart = function (_, token, description) {
 	if (description) {
-		me.start(token, description);
+		this.start(token, description);
 		return;
 	}
 
-	me.getCurrent(token, false)
+	this.getCurrent(token, false)
 		.then(current => {
 			if (!current) {
-				me.start(token, description);
+				this.start(token, description);
 				return;
 			}
 
-			me.stop(token, current.id);
+			this.stop(token, current.id);
 		});
 };
 
@@ -232,13 +236,13 @@ me.stop = function ({toggl, views}, token, id) {
 };
 
 me.stopCurrent = function ({views}, token) {
-	me.getCurrent(token)
+	this.getCurrent(token)
 		.then(entry => {
 			if (!entry) {
 				throw new Error('No timer is running…');
 			}
 
-			return me.stop(token, entry.id);
+			return this.stop(token, entry.id);
 		})
 		.catch(views.err);
 };
@@ -246,27 +250,27 @@ me.stopCurrent = function ({views}, token) {
 me.execute = function ({open, help, views, toggl}, {cmd, token}) {
 	switch (cmd[0].toLowerCase()) {
 		case 'list': case 'l': case 'ls':
-			me.list(token, cmd.splice(1));
+			this.list(token, cmd.splice(1));
 			break;
 
 		case 'current': case 'c': case 'top':
-			me.showCurrent(token);
+			this.showCurrent(token);
 			break;
 
 		case 'smart': case 's':
-			me.smart(token, cmd.splice(1).join(' '));
+			this.smart(token, cmd.splice(1).join(' '));
 			break;
 
 		case 'start': case 'up':
-			me.start(token, cmd.splice(1).join(' '));
+			this.start(token, cmd.splice(1).join(' '));
 			break;
 
 		case 'stop': case 'down':
-			me.stopCurrent(token);
+			this.stopCurrent(token);
 			break;
 
 		case 'rename': case 'r': case 'mv':
-			me.rename(token, cmd.splice(1).join(' '));
+			this.rename(token, cmd.splice(1).join(' '));
 			break;
 
 		case 'browser': case 'b': case 'open':
@@ -274,11 +278,11 @@ me.execute = function ({open, help, views, toggl}, {cmd, token}) {
 			break;
 
 		case 'projects': case 'pr':
-			me.projects(token);
+			this.projects(token);
 			break;
 
 		case 'clients': case 'cl':
-			me.clients(token);
+			this.clients(token);
 			break;
 
 		default:
@@ -286,10 +290,4 @@ me.execute = function ({open, help, views, toggl}, {cmd, token}) {
 	}
 };
 
-me = require('mee')(module, me, {
-	open: require('open'),
-
-	toggl: require('./toggl.js'),
-	help: require('./help.js'),
-	views: require('./views.js')
-});
+export default meeEsm(me, {open, toggl, help, views});

@@ -1,4 +1,7 @@
-'use strict';
+import chalk from 'chalk';
+import meeEsm from './mee-esm.mjs';
+import pkg from './pkg.mjs';
+import views from './views.mjs';
 
 let me = {};
 
@@ -146,9 +149,5 @@ me.getLogo = function ({pad, chalk: {red}}) {
 	].map(v => ' '.repeat(6) + v)));
 };
 
-me = require('mee')(module, me, {
-	chalk: require('chalk'),
-	pkg: require('../package.json'),
+export default meeEsm(me, {chalk, pkg, pad: views.pad});
 
-	pad: require('./views.js').pad
-});

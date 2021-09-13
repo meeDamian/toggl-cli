@@ -2,7 +2,7 @@
 
 import chai from 'chai';
 import chaiSpies from 'chai-spies';
-import cliFactory from '../src/cli.js';
+import cliFactory from '../src/cli.mjs';
 
 chai.use(chaiSpies);
 
