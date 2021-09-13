@@ -122,7 +122,7 @@ me.request = function ({
 			body,
 			json: true,
 			headers: {
-				Authorization: `Basic ${new Buffer(`${token}:api_token`, 'utf8').toString('base64')}`
+				Authorization: `Basic ${Buffer.from(`${token}:api_token`, 'utf8').toString('base64')}`
 			}
 		}, (error, {
 				statusCode
