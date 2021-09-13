@@ -1,14 +1,14 @@
 /* eslint no-unused-expressions: 0 */
-'use strict';
 
-const chai = require('chai');
-chai.use(require('chai-spies'));
+import chai from 'chai';
+import chaiSpies from 'chai-spies';
+import core from '../src/core.js';
+
+chai.use(chaiSpies);
 
 const should = chai.should();
 
 describe('simple/core.js', () => {
-	const core = require('../src/core.js');
-
 	describe('CONSTANTS', () => {
 		it('should export MIN_IN_SEC', () => {
 			should.exist(core.MIN_IN_SEC);

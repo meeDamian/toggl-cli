@@ -1,9 +1,12 @@
 /* eslint no-unused-expressions: 0 */
-'use strict';
 
-const chai = require('chai');
-chai.use(require('chai-spies'));
-chai.use(require('chai-as-promised'));
+import chai from 'chai';
+import chaiSpies from 'chai-spies';
+import chaiAsPromised from 'chai-as-promised';
+import configFactory from '../src/config.js';
+
+chai.use(chaiSpies);
+chai.use(chaiAsPromised);
 
 const should = chai.should();
 
@@ -25,7 +28,7 @@ const DEPS = {
 	require: chai.spy(pass)
 };
 
-const config = require('../src/config.js')(DEPS);
+const config = configFactory(DEPS);
 
 describe('config.js', () => {
 	describe('#getPath()', () => {

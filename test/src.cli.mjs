@@ -1,8 +1,10 @@
 /* eslint no-unused-expressions: 0 */
-'use strict';
 
-const chai = require('chai');
-chai.use(require('chai-spies'));
+import chai from 'chai';
+import chaiSpies from 'chai-spies';
+import cliFactory from '../src/cli.js';
+
+chai.use(chaiSpies);
 
 const should = chai.should();
 
@@ -28,7 +30,7 @@ const mocks = {
 
 describe('cli.js#main()', () => {
 	it('should export correctly', () => {
-		const cli = require('../src/cli.js')(mocks);
+		const cli = cliFactory(mocks);
 
 		should.exist(cli);
 		cli.main.should.exist;
@@ -44,7 +46,7 @@ describe('cli.js#main()', () => {
 		before(() => {
 			mocks.input.parse = chai.spy(() => Promise.resolve(mockInput));
 
-			require('../src/cli.js')(mocks).main();
+			cliFactory(mocks).main();
 		});
 
 		it('should invoke input#parse()', () => {
@@ -70,7 +72,7 @@ describe('cli.js#main()', () => {
 			mocks.views.log = chai.spy();
 			mocks.interactive.start = chai.spy();
 
-			require('../src/cli.js')(mocks).main();
+			cliFactory(mocks).main();
 		});
 
 		it('should invoke input#parse()', () => {
@@ -90,7 +92,7 @@ describe('cli.js#main()', () => {
 			mocks.input.parse = chai.spy(() => Promise.reject(new Error('Fake Error')));
 			mocks.simple.execute = chai.spy();
 
-			require('../src/cli.js')(mocks).main();
+			cliFactory(mocks).main();
 		});
 
 		it('should print the error', () => {

@@ -1,12 +1,12 @@
 /* eslint no-unused-expressions: 0 */
-'use strict';
 
-const chai = require('chai');
-chai.use(require('chai-spies'));
+import chai from 'chai';
+import chaiSpies from 'chai-spies';
+import utils from '../src/utils.js';
+
+chai.use(chaiSpies);
 
 const should = chai.should();
-
-const utils = require('../src/utils.js');
 
 describe('utils.js', () => {
 	describe('#objectify()', () => {

@@ -1,9 +1,12 @@
 'use strict';
 
-const should = require('chai').should();
+import chai from 'chai';
+import togglFactory from '../src/toggl.js';
+
+const should = chai.should();
 
 describe('toggl.js', () => {
-	const toggl = require('../src/toggl.js')({});
+	const toggl = togglFactory({});
 
 	describe('#DEFS', () => {
 		it('should have URLs defined', () => {

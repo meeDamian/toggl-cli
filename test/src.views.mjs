@@ -1,8 +1,10 @@
 /* eslint no-unused-expressions: 0 */
-'use strict';
 
-const chai = require('chai');
-chai.use(require('chai-spies'));
+import chai from 'chai';
+import chaiSpies from 'chai-spies';
+import viewsFactory from '../src/views.js';
+
+chai.use(chaiSpies);
 
 const should = chai.should();
 
@@ -33,7 +35,7 @@ const DEPS = {
 DEPS.chalk.cyan.bold = chai.spy(pass);
 
 describe('views.js', () => {
-	const views = require('../src/views.js')(DEPS);
+	const views = viewsFactory(DEPS);
 
 	describe('initial state', () => {
 		it('should set right initial state', () => {

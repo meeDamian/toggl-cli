@@ -1,8 +1,10 @@
 /* eslint no-unused-expressions: 0 */
-'use strict';
 
-const chai = require('chai');
-chai.use(require('chai-spies'));
+import chai from 'chai';
+import chaiSpies from 'chai-spies';
+import helpFactory from '../src/help.js';
+
+chai.use(chaiSpies);
 
 const should = chai.should();
 
@@ -19,7 +21,7 @@ const mocks = {
 	pad: chai.spy(v => v)
 };
 
-const help = require('../src/help.js')(mocks);
+const help = helpFactory(mocks);
 
 describe('help.js', () => {
 	describe('#getMicro()', () => {
