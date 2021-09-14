@@ -38,7 +38,7 @@ describe('toggl.js', () => {
 				'list',
 				'start',
 				'stop',
-				'update'
+				'update',
 			];
 
 			const te = toggl.DEFS.timeEntry;
@@ -54,7 +54,7 @@ describe('toggl.js', () => {
 			toggl.DEFS.should.have.any.keys('project');
 
 			const keys = [
-				'details'
+				'details',
 			];
 
 			const p = toggl.DEFS.project;
@@ -70,7 +70,7 @@ describe('toggl.js', () => {
 			toggl.DEFS.should.have.any.keys('client');
 
 			const keys = [
-				'details'
+				'details',
 			];
 
 			const c = toggl.DEFS.client;

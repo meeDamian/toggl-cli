@@ -4,7 +4,7 @@ import help from './help.mjs';
 import views from './views.mjs';
 import meeEsm from './mee-esm.mjs';
 
-let me = {};
+const me = {};
 
 me.getCurrent = function ({toggl}, token, deps = true) {
 	return toggl.getCurrentTimeEntry(token, deps);
@@ -18,24 +18,24 @@ me.showCurrent = function ({views}, token) {
 		.catch(views.err);
 };
 
-me.list = function ({views, toggl}, token, params) {
+me.list = function ({views, toggl}, token, parameters) {
 	Promise.resolve()
 		.then(() => {
-			if (params[0] === undefined || !isNaN(params[0])) {
-				return {limit: params[0]};
+			if (parameters[0] === undefined || !Number.isNaN(parameters[0])) {
+				return {limit: parameters[0]};
 			}
 
-			return Promise.resolve(params.map(p => p.toLowerCase()))
-				.then(params => {
-					if (params[0] === 'today') {
+			return Promise.resolve(parameters.map(p => p.toLowerCase()))
+				.then(parameters => {
+					if (parameters[0] === 'today') {
 						return 0;
 					}
 
-					if (params[0] === 'yesterday') {
+					if (parameters[0] === 'yesterday') {
 						return 1;
 					}
 
-					if (params[0] === 'last') {
+					if (parameters[0] === 'last') {
 						const days = ['sun', 'sat', 'fri', 'thu', 'wed', 'tue', 'mon'];
 
 						// Shift array so that item at [0] is yesterday
@@ -44,11 +44,11 @@ me.list = function ({views, toggl}, token, params) {
 							days.unshift(days.pop());
 						}
 
-						// add one dummy value as idx [0], to have `days.indexOf(day)` match the shift required
+						// Add one dummy value as idx [0], to have `days.indexOf(day)` match the shift required
 						days.unshift(undefined);
 
-						const requested = params[1].trim().substring(0, 3);
-						if (days.indexOf(requested) === -1) {
+						const requested = parameters[1].trim().slice(0, 3);
+						if (!days.includes(requested)) {
 							throw new Error(`Sorry, I don't know how to show entries from "last ${requested}".`);
 						}
 
@@ -58,8 +58,8 @@ me.list = function ({views, toggl}, token, params) {
 				.then(shift => new Date(new Date().setDate(new Date().getDate() - shift)))
 				.then(date => ({date}));
 		})
-		.then(opts => {
-			toggl.getTimeEntries(token, opts)
+		.then(options => {
+			toggl.getTimeEntries(token, options)
 				.then(views.list)
 				.then(views.pad)
 				.then(views.log)
@@ -92,11 +92,11 @@ me.clients = function ({toggl, views}, token) {
 me.start = function ({toggl, views}, token, description) {
 	Promise.resolve(description)
 		.then(which => {
-			if (!which || isNaN(which) || which > 16) {
+			if (!which || Number.isNaN(which) || which > 16) {
 				return {description};
 			}
 
-			const limit = parseFloat(which);
+			const limit = Number.parseFloat(which);
 
 			return toggl.getTimeEntries(token, {limit, deps: false})
 				.then(entries => entries[limit - 1])
@@ -117,7 +117,7 @@ me.recurseDescriptionTags = function (_, timeEntry) {
 	const words = description.split(' ');
 	const firstWord = words.shift();
 
-	if (firstWord.indexOf(':') === -1) {
+	if (!firstWord.includes(':')) {
 		return timeEntry;
 	}
 
@@ -138,6 +138,7 @@ me.recurseDescriptionTags = function (_, timeEntry) {
 			if (!Array.isArray(timeEntry.tags)) {
 				timeEntry.tags = [];
 			}
+
 			timeEntry.tags.push(value);
 			timeEntry.description = words.join(' ');
 			return this.recurseDescriptionTags(timeEntry);
@@ -148,16 +149,16 @@ me.recurseDescriptionTags = function (_, timeEntry) {
 };
 
 me.parseProjectToken = function ({toggl}, token, timeEntry) {
-	const projectToken = timeEntry.projectToken;
+	const {projectToken} = timeEntry;
 
 	// Time Entry has no project defined
 	if (projectToken === undefined) {
 		return timeEntry;
 	}
 
-	const projectTokenInt = parseInt(projectToken, 10);
+	const projectTokenInt = Number.parseInt(projectToken, 10);
 	// The project defined is probably Toggl project ID
-	if (!isNaN(projectTokenInt) && projectTokenInt > 16) {
+	if (!Number.isNaN(projectTokenInt) && projectTokenInt > 16) {
 		timeEntry.pid = projectToken;
 		return timeEntry;
 	}
@@ -166,12 +167,12 @@ me.parseProjectToken = function ({toggl}, token, timeEntry) {
 	return Promise.resolve()
 		.then(() => toggl.fetchProjectsList(token))
 		.then(projects => {
-			if (isNaN(projectTokenInt)) {
+			if (Number.isNaN(projectTokenInt)) {
 				const foundProject = projects.find(item => {
 					const itemName = item.name.toLowerCase().replace('_', ' ');
 					const tokenName = projectToken.toLowerCase().replace('_', ' ');
 
-					return (itemName.indexOf(tokenName) !== -1);
+					return (itemName.includes(tokenName));
 				});
 
 				if (foundProject !== undefined) {
@@ -202,12 +203,10 @@ me.rename = function ({toggl, views}, token, newName) {
 
 			return {id, description};
 		})
-		.then(({id, description}) => {
-			return toggl.updateTimeEntry(token, id, {description: newName})
-				.then(views.renamed(description))
-				.then(views.pad)
-				.then(views.log);
-		})
+		.then(({id, description}) => toggl.updateTimeEntry(token, id, {description: newName})
+			.then(views.renamed(description))
+			.then(views.pad)
+			.then(views.log))
 		.catch(views.err);
 };
 

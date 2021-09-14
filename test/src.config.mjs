@@ -8,22 +8,20 @@ import configFactory from '../src/config.mjs';
 chai.use(chaiSpies);
 chai.use(chaiAsPromised);
 
-const should = chai.should();
-
 const pass = v => v;
 
 const DEPS = {
 	path: {
-		resolve: chai.spy(pass)
+		resolve: chai.spy(pass),
 	},
 	fs: {
-		outputJson: chai.spy(pass)
+		outputJson: chai.spy(pass),
 	},
 	process: {
 		env: {
 			HOME: undefined,
-			USERPROFILE: undefined
-		}
+			USERPROFILE: undefined,
+		},
 	},
 };
 
@@ -74,7 +72,7 @@ describe('config.js', () => {
 		});
 
 		const mock = {
-			something: 'here'
+			something: 'here',
 		};
 
 		it('should reject if no config', () => {
@@ -110,7 +108,7 @@ describe('config.js', () => {
 		});
 
 		const mock = {
-			token: 'AAAAaaaaaaaa1'
+			token: 'AAAAaaaaaaaa1',
 		};
 
 		it('should create new config', () => {
@@ -127,7 +125,7 @@ describe('config.js', () => {
 			config.open = chai.spy(() => ({dark: true}));
 			return config.save(mock).should.eventually.deep.equal({
 				dark: true,
-				token: mock.token
+				token: mock.token,
 			});
 		});
 

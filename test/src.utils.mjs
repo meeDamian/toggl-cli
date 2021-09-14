@@ -20,34 +20,34 @@ describe('utils.js', () => {
 
 		it('should process numeric ID correctly', () => {
 			const id = Math.floor(1e5 * Math.random());
-			const arr = [{id}];
+			const array = [{id}];
 
-			const obj = utils.objectify(arr);
+			const object = utils.objectify(array);
 
-			should.exist(obj);
-			obj.should.be.an('object');
-			obj.should.not.be.empty;
-			obj.should.contain.all.keys(`${id}`);
-			obj[id].should.be.an('object');
-			obj[id].should.have.all.keys('id');
-			obj[id].id.should.be.a('number');
-			obj[id].id.should.equal(id);
+			should.exist(object);
+			object.should.be.an('object');
+			object.should.not.be.empty;
+			object.should.contain.all.keys(`${id}`);
+			object[id].should.be.an('object');
+			object[id].should.have.all.keys('id');
+			object[id].id.should.be.a('number');
+			object[id].id.should.equal(id);
 		});
 
 		it('should process string ID correctly', () => {
 			const id = `${Math.floor(1e5 * Math.random())}`;
-			const arr = [{id}];
+			const array = [{id}];
 
-			const obj = utils.objectify(arr);
+			const object = utils.objectify(array);
 
-			should.exist(obj);
-			obj.should.be.an('object');
-			obj.should.not.be.empty;
-			obj.should.contain.all.keys(id);
-			obj[id].should.be.an('object');
-			obj[id].should.have.all.keys('id');
-			obj[id].id.should.be.a('string');
-			obj[id].id.should.equal(id);
+			should.exist(object);
+			object.should.be.an('object');
+			object.should.not.be.empty;
+			object.should.contain.all.keys(id);
+			object[id].should.be.an('object');
+			object[id].should.have.all.keys('id');
+			object[id].id.should.be.a('string');
+			object[id].id.should.equal(id);
 		});
 
 		it('should keep the object unchanged', () => {
@@ -56,41 +56,41 @@ describe('utils.js', () => {
 			const array = [1, string];
 			const object = {string};
 
-			const arr = [{
+			const array_ = [{
 				id,
 				string,
 				array,
-				object
+				object,
 			}];
 
-			const obj = utils.objectify(arr);
+			const object_ = utils.objectify(array_);
 
-			should.exist(obj);
-			obj.should.be.an('object');
-			obj.should.not.be.empty;
-			should.exist(obj[id]);
+			should.exist(object_);
+			object_.should.be.an('object');
+			object_.should.not.be.empty;
+			should.exist(object_[id]);
 
-			const el = obj[id];
-			el.should.be.an('object');
-			el.should.contain.all.keys('id', 'string', 'array', 'object');
-			el.id.should.equal(id);
-			el.string.should.be.equal(string);
-			el.array.should.be.equal(array);
-			el.object.should.be.equal(object);
+			const element = object_[id];
+			element.should.be.an('object');
+			element.should.contain.all.keys('id', 'string', 'array', 'object');
+			element.id.should.equal(id);
+			element.string.should.be.equal(string);
+			element.array.should.be.equal(array);
+			element.object.should.be.equal(object);
 		});
 
 		it('should return the same amount of valid objects', () => {
 			const amount = 1024;
-			const arr = Array(...Array(amount)).map((v, id) => ({id}));
-			arr.length.should.equal(amount);
+			const array = [...Array.from({length: amount})].map((v, id) => ({id}));
+			array.length.should.equal(amount);
 
-			const obj = utils.objectify(arr);
+			const object = utils.objectify(array);
 
-			should.exist(obj);
-			Object.keys(obj).length.should.equal(amount);
-			for (const i in Object.keys(obj)) {
-				if ({}.hasOwnProperty.call(obj, i)) {
-					obj[i].should.have.property('id');
+			should.exist(object);
+			Object.keys(object).length.should.equal(amount);
+			for (const i in Object.keys(object)) {
+				if (Object.prototype.hasOwnProperty.call(object, i)) {
+					object[i].should.have.property('id');
 				}
 			}
 		});
@@ -100,20 +100,20 @@ describe('utils.js', () => {
 		const parents = Object.freeze([
 			{
 				tid: 1,
-				other: 'property'
+				other: 'property',
 			}, {
 				tid: 7,
-				other: 42
+				other: 42,
 			}, {
 				tid: 33,
-				other: true
-			}
+				other: true,
+			},
 		]);
 
 		const testers = Object.freeze({
 			1: {name: 'one'},
 			7: {name: 'seven'},
-			33: {name: 'two much'}
+			33: {name: 'two much'},
 		});
 
 		const SHORT = 'tid';
@@ -133,18 +133,18 @@ describe('utils.js', () => {
 
 			should.exist(merged);
 			merged.should.be.an('array');
-			for (const el of merged) {
-				el.should.not.have.property(SHORT);
-				el.should.have.property(LONG);
-				el[LONG].should.be.an('object');
-				el[LONG].should.have.property('name');
+			for (const element of merged) {
+				element.should.not.have.property(SHORT);
+				element.should.have.property(LONG);
+				element[LONG].should.be.an('object');
+				element[LONG].should.have.property('name');
 			}
 		});
 
 		it('should preserve other properties', () => {
-			for (const el of merged) {
-				el.should.have.property('other');
-				el.should.not.be.empty;
+			for (const element of merged) {
+				element.should.have.property('other');
+				element.should.not.be.empty;
 			}
 		});
 
@@ -167,25 +167,25 @@ describe('utils.js', () => {
 
 	describe('#attach()', () => {
 		const dict = [{
-			id: 1, sth: 'banana'
+			id: 1, sth: 'banana',
 		}, {
-			id: 3, sth: 'prime'
+			id: 3, sth: 'prime',
 		}, {
-			id: 5, sth: true
+			id: 5, sth: true,
 		}];
 
 		const parents = [{
 			id: 1,
 			name: 'one',
-			tid: 1
+			tid: 1,
 		}, {
 			id: 2,
 			name: 'three',
-			tid: 3
+			tid: 3,
 		}, {
 			id: 3,
 			name: 'five',
-			tid: 5
+			tid: 5,
 		}];
 
 		const TOKEN = 'test token';
@@ -207,15 +207,17 @@ describe('utils.js', () => {
 				.then(out => {
 					spy.should.have.been.called.once;
 					spy.should.have.been.called.with(TOKEN, {ids: [1, 3, 5], deps: DEPS});
-					for (const el of out) {
-						el.should.contain.all.keys('name', 'id', LONG);
-						el.should.not.have.property(SHORT);
-						el.name.should.be.a('string');
-						el.id.should.be.a('number');
-						el[LONG].should.be.an('object');
-						el[LONG].should.contain.all.keys('id', 'sth');
-						el[LONG].id.should.be.a('number');
+					for (const element of out) {
+						element.should.contain.all.keys('name', 'id', LONG);
+						element.should.not.have.property(SHORT);
+						element.name.should.be.a('string');
+						element.id.should.be.a('number');
+						should.exist(element[LONG]);
+						element[LONG].should.be.an('object');
+						element[LONG].should.contain.all.keys('id', 'sth');
+						element[LONG].id.should.be.a('number');
 					}
+
 					done();
 				})
 				.catch(done);

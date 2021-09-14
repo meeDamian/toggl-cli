@@ -4,7 +4,7 @@ import toggl from '../toggl.mjs';
 import views from '../views.mjs';
 import utils from '../utils.mjs';
 
-let me = {};
+const me = {};
 
 me.getState = function ({toggl}, token, id, exit) {
 	function confirm() {
@@ -14,7 +14,7 @@ me.getState = function ({toggl}, token, id, exit) {
 
 	return {
 		y: confirm,
-		n: exit
+		n: exit,
 	};
 };
 

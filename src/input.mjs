@@ -1,3 +1,4 @@
+import process from 'node:process';
 import minimist from 'minimist';
 import config from './config.mjs';
 import help from './help.mjs';
@@ -12,8 +13,8 @@ function preProcess({minimist, process: {argv}}) {
 		alias: {
 			h: 'help',
 			v: 'version',
-			t: 'token'
-		}
+			t: 'token',
+		},
 	});
 }
 
@@ -51,7 +52,7 @@ function saveNeeded({config, views: {log, errMsg}}, argv) {
 	}
 
 	const keys = Object.keys(newConfig);
-	if (keys.length) {
+	if (keys.length > 0) {
 		config.save(newConfig)
 			.then(config => {
 				const status = keys.map(k => `${k} '${config[k]}'`).join(' and ');
@@ -70,17 +71,17 @@ function processConfig({help, views: {log}}, argv) {
 		const input = {
 			token: this.chooseToken(config.token, argv.token),
 			dark: config.dark,
-			debug: argv.debug
+			debug: argv.debug,
 		};
 
-		if (argv._.length) {
+		if (argv._.length > 0) {
 			input.cmd = argv._;
 		}
 
 		if (!input.token || input.dark === undefined) {
 			log(help.onBoard(
 				!input.token,
-				input.dark === undefined
+				input.dark === undefined,
 			));
 
 			throw new Error('ignore');
@@ -121,13 +122,13 @@ function parse({views: {log, err: error}, pkg, help, config}) {
 		config.get()
 			.then(this.processConfig(argv))
 			.then(resolve)
-			.catch(err => {
-				if (err.message === 'no config exists') {
+			.catch(error_ => {
+				if (error_.message === 'no config exists') {
 					log(help.onBoard());
 					return;
 				}
 
-				error(err);
+				error(error_);
 			});
 	});
 }

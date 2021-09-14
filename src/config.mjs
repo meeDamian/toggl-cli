@@ -1,18 +1,18 @@
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import meeEsm from './mee-esm.mjs';
 
 function getPath({path, process: {env}}) {
-	return path.resolve(...[
+	return path.resolve(
 		env.HOME || env.USERPROFILE,
-		'.config/toggl-cli/config.json'
-	]);
+		'.config/toggl-cli/config.json',
+	);
 }
 
 function open({fs}) {
 	try {
-		return fs.readJsonSync(this.getPath()); //TODO: Make async?
-	} catch (err) {
+		return fs.readJsonSync(this.getPath()); // TODO: Make async?
+	} catch {
 		return null;
 	}
 }
@@ -38,9 +38,9 @@ function save({fs}, newConfig) {
 
 		Object.assign(config, newConfig);
 
-		fs.outputJson(this.getPath(), config, {spaces: 2}, err => {
-			if (err) {
-				reject(err);
+		fs.outputJson(this.getPath(), config, {spaces: 2}, error => {
+			if (error) {
+				reject(error);
 				return;
 			}
 

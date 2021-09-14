@@ -10,22 +10,22 @@ const should = chai.should();
 
 const mocks = {
 	input: {
-		parse: chai.spy()
+		parse: chai.spy(),
 	},
 	simple: {
-		execute: chai.spy()
+		execute: chai.spy(),
 	},
 	interactive: {
 		FINISHED: true,
-		start: chai.spy()
+		start: chai.spy(),
 	},
 	help: {
-		getHint: chai.spy()
+		getHint: chai.spy(),
 	},
 	views: {
 		log: chai.spy(),
-		err: chai.spy()
-	}
+		err: chai.spy(),
+	},
 };
 
 describe('cli.js#main()', () => {
@@ -40,7 +40,7 @@ describe('cli.js#main()', () => {
 	describe('interactive mode', () => {
 		const mockInput = {
 			cmd: undefined,
-			token: 'fakeToken'
+			token: 'fakeToken',
 		};
 
 		before(() => {
@@ -64,7 +64,7 @@ describe('cli.js#main()', () => {
 	describe('simple mode', () => {
 		const mockInput = {
 			cmd: ['l'],
-			token: 'fakeToken'
+			token: 'fakeToken',
 		};
 
 		before(() => {

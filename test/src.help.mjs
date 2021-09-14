@@ -10,15 +10,15 @@ const should = chai.should();
 
 const mocks = {
 	pkg: {
-		description: 'This is a test description'
+		description: 'This is a test description',
 	},
 	chalk: {
 		bold: chai.spy(v => v),
 		dim: chai.spy(v => v),
 		white: chai.spy(v => v),
-		black: chai.spy(v => v)
+		black: chai.spy(v => v),
 	},
-	pad: chai.spy(v => v)
+	pad: chai.spy(v => v),
 };
 
 const help = helpFactory(mocks);
@@ -88,11 +88,11 @@ describe('help.js', () => {
 		});
 
 		it('should be multiline', () => {
-			const arr = help.getLong();
+			const array = help.getLong();
 
-			should.exist(arr);
-			arr.should.be.an('array');
-			arr.length.should.be.at.least(31);
+			should.exist(array);
+			array.should.be.an('array');
+			array.length.should.be.at.least(31);
 		});
 	});
 
@@ -114,11 +114,11 @@ describe('help.js', () => {
 		});
 
 		it('should be multiline', () => {
-			const arr = help.getHint();
+			const array = help.getHint();
 
-			should.exist(arr);
-			arr.should.be.an('array');
-			arr.length.should.be.at.least(5);
+			should.exist(array);
+			array.should.be.an('array');
+			array.length.should.be.at.least(5);
 		});
 	});
 
@@ -139,11 +139,11 @@ describe('help.js', () => {
 		});
 
 		it('should be multiline', () => {
-			const arr = help.getExamples();
+			const array = help.getExamples();
 
-			should.exist(arr);
-			arr.should.be.an('array');
-			arr.length.should.be.at.least(10);
+			should.exist(array);
+			array.should.be.an('array');
+			array.length.should.be.at.least(10);
 		});
 	});
 });

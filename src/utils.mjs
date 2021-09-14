@@ -1,23 +1,19 @@
-// turns an Array of things into a dictionary where ID is the key
-function objectify(arr) {
-	return arr.reduce((p, c) => {
-		p[c.id] = c;
-		return p;
-	}, {});
+// Turns an Array of things into a dictionary where ID is the key
+function objectify(array) {
+	return Object.fromEntries(array.map(item => [item.id, item]));
 }
 
 // Replaces id with a matching object for all given objects
 function combine(parents, short, long) {
-	return list => {
-		return parents.map(l => {
-			if (l[short]) {
-				l[long] = list[l[short]];
-				l[short] = undefined;
-				delete l[short];
-			}
-			return l;
-		});
-	};
+	return list => parents.map(l => {
+		if (l[short]) {
+			l[long] = list[l[short]];
+			l[short] = undefined;
+			delete l[short];
+		}
+
+		return l;
+	});
 }
 
 // Downloads and attaches dependencies to all "parents" elements
@@ -31,7 +27,7 @@ function attach(fn, token, short, long, deps = false) {
 	};
 }
 
-// execute sth in `.then()` without breaking the pipe
+// Execute sth in `.then()` without breaking the pipe
 function pass(fn) {
 	return value => {
 		if (fn) {
@@ -57,6 +53,6 @@ const utils = {
 	attach,
 	pass,
 	toDate,
-	compareDates
+	compareDates,
 };
 export default utils;
