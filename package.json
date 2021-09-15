@@ -9,11 +9,12 @@
   "main": "./src/main.js",
   "preferGlobal": true,
   "bin": {
-    "toggl": "./src/index.js"
+    "toggl": "./src/index.mjs"
   },
   "scripts": {
-    "start": "./src/index.js",
-    "test": "xo && isparta cover _mocha"
+    "start": "./src/index.mjs",
+    "test": "xo && c8 mocha",
+    "coveralls.io": "c8 mocha && c8 report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "toggl",
@@ -26,26 +27,26 @@
   "author": "Damian Mee <mee.damian@gmail.com> (https://meedamian.com)",
   "license": "MIT",
   "engines": {
-    "node": ">=5.0.0"
+    "node": ">=12.0.0"
   },
   "dependencies": {
     "chalk": "^1.1.3",
-    "fs-extra": "^0.30.0",
+    "fs-extra": "^10.0.0",
     "log-update": "^1.0.2",
     "mee": "^0.11.3",
     "minimist": "^1.2.0",
-    "open": "0.0.5",
+    "open": "8.2.1",
     "request": "^2.75.0"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.14.0",
-    "chai": "^3.5.0",
-    "chai-as-promised": "^5.3.0",
-    "chai-spies": "^0.7.1",
+    "c8": "^7.9.0",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "chai-spies": "^1.0.0",
     "codecov": "^1.0.1",
-    "coveralls": "^2.11.14",
-    "isparta": "^4.0.0",
-    "mocha": "^3.0.2",
+    "coveralls": "^3.1.1",
+    "mocha": "^9.1.1",
     "xo": "^0.16.0"
   },
   "xo": {
@@ -62,10 +63,7 @@
           "max": 5
         }
       ]
-    },
-    "ignores": [
-      "src/index.js"
-    ]
+    }
   },
   "babel": {
     "presets": [

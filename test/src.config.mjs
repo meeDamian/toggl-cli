@@ -1,31 +1,31 @@
 /* eslint no-unused-expressions: 0 */
-'use strict';
 
-const chai = require('chai');
-chai.use(require('chai-spies'));
-chai.use(require('chai-as-promised'));
+import chai from 'chai';
+import chaiSpies from 'chai-spies';
+import chaiAsPromised from 'chai-as-promised';
+import configFactory from '../src/config.mjs';
 
-const should = chai.should();
+chai.use(chaiSpies);
+chai.use(chaiAsPromised);
 
 const pass = v => v;
 
 const DEPS = {
 	path: {
-		resolve: chai.spy(pass)
+		resolve: chai.spy(pass),
 	},
 	fs: {
-		outputJson: chai.spy(pass)
+		outputJson: chai.spy(pass),
 	},
 	process: {
 		env: {
 			HOME: undefined,
-			USERPROFILE: undefined
-		}
+			USERPROFILE: undefined,
+		},
 	},
-	require: chai.spy(pass)
 };
 
-const config = require('../src/config.js')(DEPS);
+const config = configFactory(DEPS);
 
 describe('config.js', () => {
 	describe('#getPath()', () => {
@@ -60,43 +60,6 @@ describe('config.js', () => {
 		});
 	});
 
-	describe('#open()', () => {
-		let getPath;
-
-		before(() => {
-			getPath = config.getPath;
-		});
-
-		afterEach(() => {
-			config.getPath = chai.spy(pass);
-			DEPS.require = chai.spy(pass);
-		});
-
-		after(() => {
-			config.getPath = getPath;
-		});
-
-		it('should call require with output of getPath()', () => {
-			config.getPath = chai.spy(() => 'a path');
-			const out = config.open();
-			config.getPath.should.have.been.called.once;
-			DEPS.require.should.have.been.called.with('a path');
-			should.exist(out);
-			out.should.equal('a path');
-		});
-
-		it('should return null if require throws', () => {
-			DEPS.require = chai.spy(() => {
-				throw new Error('fake error');
-			});
-
-			const out = config.open();
-			config.getPath.should.have.been.called.once;
-			DEPS.require.should.have.been.called.once;
-			should.not.exist(out);
-		});
-	});
-
 	describe('#get()', () => {
 		let open;
 
@@ -109,7 +72,7 @@ describe('config.js', () => {
 		});
 
 		const mock = {
-			something: 'here'
+			something: 'here',
 		};
 
 		it('should reject if no config', () => {
@@ -145,7 +108,7 @@ describe('config.js', () => {
 		});
 
 		const mock = {
-			token: 'AAAAaaaaaaaa1'
+			token: 'AAAAaaaaaaaa1',
 		};
 
 		it('should create new config', () => {
@@ -162,7 +125,7 @@ describe('config.js', () => {
 			config.open = chai.spy(() => ({dark: true}));
 			return config.save(mock).should.eventually.deep.equal({
 				dark: true,
-				token: mock.token
+				token: mock.token,
 			});
 		});
 

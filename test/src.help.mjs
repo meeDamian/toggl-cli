@@ -1,25 +1,27 @@
 /* eslint no-unused-expressions: 0 */
-'use strict';
 
-const chai = require('chai');
-chai.use(require('chai-spies'));
+import chai from 'chai';
+import chaiSpies from 'chai-spies';
+import helpFactory from '../src/help.mjs';
+
+chai.use(chaiSpies);
 
 const should = chai.should();
 
 const mocks = {
 	pkg: {
-		description: 'This is a test description'
+		description: 'This is a test description',
 	},
 	chalk: {
 		bold: chai.spy(v => v),
 		dim: chai.spy(v => v),
 		white: chai.spy(v => v),
-		black: chai.spy(v => v)
+		black: chai.spy(v => v),
 	},
-	pad: chai.spy(v => v)
+	pad: chai.spy(v => v),
 };
 
-const help = require('../src/help.js')(mocks);
+const help = helpFactory(mocks);
 
 describe('help.js', () => {
 	describe('#getMicro()', () => {
@@ -86,11 +88,11 @@ describe('help.js', () => {
 		});
 
 		it('should be multiline', () => {
-			const arr = help.getLong();
+			const array = help.getLong();
 
-			should.exist(arr);
-			arr.should.be.an('array');
-			arr.length.should.be.equal(31);
+			should.exist(array);
+			array.should.be.an('array');
+			array.length.should.be.at.least(31);
 		});
 	});
 
@@ -112,11 +114,11 @@ describe('help.js', () => {
 		});
 
 		it('should be multiline', () => {
-			const arr = help.getHint();
+			const array = help.getHint();
 
-			should.exist(arr);
-			arr.should.be.an('array');
-			arr.length.should.be.at.least(5);
+			should.exist(array);
+			array.should.be.an('array');
+			array.length.should.be.at.least(5);
 		});
 	});
 
@@ -131,17 +133,17 @@ describe('help.js', () => {
 			mocks.pad.should.have.been.called.once;
 		});
 
-		it('should color descriptions', () => {
+		it('should have at least 2 examples.', () => {
 			help.getExamples();
-			mocks.chalk.bold.should.have.been.called.exactly(7);
+			mocks.chalk.bold.should.have.been.called.at.least(2);
 		});
 
 		it('should be multiline', () => {
-			const arr = help.getExamples();
+			const array = help.getExamples();
 
-			should.exist(arr);
-			arr.should.be.an('array');
-			arr.length.should.be.at.least(10);
+			should.exist(array);
+			array.should.be.an('array');
+			array.length.should.be.at.least(10);
 		});
 	});
 });

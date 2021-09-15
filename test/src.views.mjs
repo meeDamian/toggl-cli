@@ -1,8 +1,10 @@
 /* eslint no-unused-expressions: 0 */
-'use strict';
 
-const chai = require('chai');
-chai.use(require('chai-spies'));
+import chai from 'chai';
+import chaiSpies from 'chai-spies';
+import viewsFactory from '../src/views.mjs';
+
+chai.use(chaiSpies);
 
 const should = chai.should();
 
@@ -19,21 +21,21 @@ const DEPS = {
 		black: chai.spy(pass),
 		white: chai.spy(pass),
 		bold: chai.spy(pass),
-		cyan: chai.spy(pass)
+		cyan: chai.spy(pass),
 	},
 	core: {
-		getDuration: chai.spy()
+		getDuration: chai.spy(),
 	},
 	console: {
 		log: chai.spy(),
-		error: chai.spy()
-	}
+		error: chai.spy(),
+	},
 };
 
 DEPS.chalk.cyan.bold = chai.spy(pass);
 
 describe('views.js', () => {
-	const views = require('../src/views.js')(DEPS);
+	const views = viewsFactory(DEPS);
 
 	describe('initial state', () => {
 		it('should set right initial state', () => {
@@ -53,11 +55,11 @@ describe('views.js', () => {
 		it('should work with dark theme', () => {
 			views.dark = true;
 
-			const val = views.dim('random text');
+			const value = views.dim('random text');
 
-			should.exist(val);
-			val.should.be.a('string');
-			val.should.equal('random text');
+			should.exist(value);
+			value.should.be.a('string');
+			value.should.equal('random text');
 			DEPS.chalk.black.should.have.been.called.once;
 			DEPS.chalk.white.should.not.have.been.called();
 		});
@@ -65,11 +67,11 @@ describe('views.js', () => {
 		it('should work with light theme', () => {
 			views.dark = false;
 
-			const val = views.dim('random text');
+			const value = views.dim('random text');
 
-			should.exist(val);
-			val.should.be.a('string');
-			val.should.equal('random text');
+			should.exist(value);
+			value.should.be.a('string');
+			value.should.equal('random text');
 			DEPS.chalk.white.should.have.been.called.once;
 			DEPS.chalk.black.should.not.have.been.called();
 		});
@@ -84,11 +86,11 @@ describe('views.js', () => {
 		it('should work with dark theme', () => {
 			views.dark = true;
 
-			const val = views.accent('random text');
+			const value = views.accent('random text');
 
-			should.exist(val);
-			val.should.be.a('string');
-			val.should.equal('random text');
+			should.exist(value);
+			value.should.be.a('string');
+			value.should.equal('random text');
 			DEPS.chalk.white.should.have.been.called.once;
 			DEPS.chalk.black.should.not.have.been.called();
 		});
@@ -96,11 +98,11 @@ describe('views.js', () => {
 		it('should work with light theme', () => {
 			views.dark = false;
 
-			const val = views.accent('random text');
+			const value = views.accent('random text');
 
-			should.exist(val);
-			val.should.be.a('string');
-			val.should.equal('random text');
+			should.exist(value);
+			value.should.be.a('string');
+			value.should.equal('random text');
 			DEPS.chalk.black.should.have.been.called.once;
 			DEPS.chalk.white.should.not.have.been.called();
 		});
@@ -135,14 +137,14 @@ describe('views.js', () => {
 	});
 
 	describe('#errMsg()', () => {
-		let err;
+		let error;
 
 		before(() => {
-			err = views.err;
+			error = views.err;
 		});
 
 		after(() => {
-			views.err = err;
+			views.err = error;
 		});
 
 		it('should return function', () => {
@@ -152,13 +154,13 @@ describe('views.js', () => {
 		});
 
 		it('should pass re-formatted error to views.err()', done => {
-			views.err = err => {
-				should.exist(err);
-				err.should.be.an('error');
-				err.message.should.be.a('string')
+			views.err = error => {
+				should.exist(error);
+				error.should.be.an('error');
+				error.message.should.be.a('string')
 					.and.contain('user message')
 					.and.contain(ERR_MSG)
-					.and.match(/[\w]*: [\w]*/);
+					.and.match(/\w*: \w*/);
 				done();
 			};
 
@@ -197,16 +199,16 @@ describe('views.js', () => {
 			should.exist(out);
 			out.split('\n').length.should.be.at.least(6);
 			out.should.match(new RegExp(`  ${ERR_MSG}`))
-				.and.match(/\.js:[0-9]{0,3}:[0-9]{0,3}/);
+				.and.match(/\.js(?::\d{0,3}){2}/);
 			DEPS.chalk.red.should.have.been.called.once.with(ERR_MSG);
 		});
 	});
 
 	describe('#err()', () => {
-		let formatErr;
+		let formatError;
 
 		before(() => {
-			formatErr = views.formatErr;
+			formatError = views.formatErr;
 		});
 
 		beforeEach(() => {
@@ -218,7 +220,7 @@ describe('views.js', () => {
 		});
 
 		after(() => {
-			views.formatErr = formatErr;
+			views.formatErr = formatError;
 		});
 
 		it('should call console.error() with formatted error', () => {
@@ -321,10 +323,10 @@ describe('views.js', () => {
 	describe('#list()', () => {
 		let listLine;
 
-		const arr = [
+		const array = [
 			{one: 1},
 			{two: 2},
-			{three: 3}
+			{three: 3},
 		];
 
 		before(() => {
@@ -340,15 +342,15 @@ describe('views.js', () => {
 		});
 
 		it('should return array with the some # of elements', () => {
-			const out = views.list(arr);
+			const out = views.list(array);
 			should.exist(out);
 			out.should.be.an('array');
 			out.length.should.equal(3);
 		});
 
 		it('should call #listLine() on each element', () => {
-			views.list(arr);
-			views.listLine.should.have.been.called.exactly(arr.length);
+			views.list(array);
+			views.listLine.should.have.been.called.exactly(array.length);
 		});
 	});
 
@@ -382,7 +384,7 @@ describe('views.js', () => {
 		const mock = {
 			id: 42,
 			description: 'hababababab',
-			start: new Date()
+			start: new Date(),
 		};
 
 		it('should return space-separated string', () => {
@@ -430,7 +432,7 @@ describe('views.js', () => {
 
 		const mock = {
 			id: 42,
-			description: 'hababababab'
+			description: 'hababababab',
 		};
 
 		const mockName = 'oldName';
@@ -496,7 +498,7 @@ describe('views.js', () => {
 			description: 'hababababab',
 			stop: new Date(),
 			start: new Date(),
-			duration: 42
+			duration: 42,
 		};
 
 		it('should return space-separated string', () => {
@@ -537,7 +539,7 @@ describe('views.js', () => {
 		afterEach(() => {
 			DEPS.chalk.red = chai.spy(pass);
 			DEPS.chalk.cyan = {
-				bold: chai.spy(pass)
+				bold: chai.spy(pass),
 			};
 		});
 
@@ -547,7 +549,7 @@ describe('views.js', () => {
 		});
 
 		const mock = {
-			dummy: 'property'
+			dummy: 'property',
 		};
 
 		it('should return an array with 7 lines', () => {
@@ -605,7 +607,7 @@ describe('views.js', () => {
 			description: 'banana republic',
 			duration: 42,
 			start: new Date(),
-			project: {}
+			project: {},
 		};
 
 		it('should return a one-line string', () => {
@@ -654,7 +656,7 @@ describe('views.js', () => {
 
 		const mock = {
 			description: 'Some random description',
-			project: {}
+			project: {},
 		};
 
 		it('should return space-separated string', () => {
@@ -696,7 +698,7 @@ describe('views.js', () => {
 
 		const mock = {
 			duration: 42,
-			start: new Date()
+			start: new Date(),
 		};
 
 		it('should return space-separated string', () => {
@@ -735,19 +737,19 @@ describe('views.js', () => {
 		});
 
 		const mock = {
-			id: 42
+			id: 42,
 		};
 
 		const mockProject = {
 			id: 42,
-			project: {}
+			project: {},
 		};
 
 		const mockFull = {
 			id: 42,
 			project: {
-				client: {}
-			}
+				client: {},
+			},
 		};
 
 		it('should return space-separated string', () => {
@@ -795,14 +797,14 @@ describe('views.js', () => {
 		});
 
 		const mock = {
-			id: 42
+			id: 42,
 		};
 
 		it('should return a well formatted string', () => {
 			const out = views.getId(mock);
 			should.exist(out);
 			out.should.be.a('string');
-			out.should.match(/\[\w*:#\w*\]/);
+			out.should.match(/\[\w*:#\w*]/);
 		});
 
 		it('should dim the string', () => {
@@ -861,7 +863,7 @@ describe('views.js', () => {
 
 		const mockPast = {
 			duration: 42,
-			start: new Date().toISOString()
+			start: new Date().toISOString(),
 		};
 
 		const start = new Date();
@@ -869,7 +871,7 @@ describe('views.js', () => {
 
 		const mockRunning = {
 			duration: -42,
-			start: start.toISOString()
+			start: start.toISOString(),
 		};
 
 		it('should work for past entries', () => {
@@ -917,14 +919,14 @@ describe('views.js', () => {
 		});
 
 		const mock = {
-			name: 'project 42'
+			name: 'project 42',
 		};
 
 		const mockClient = {
 			name: 'project 42',
 			client: {
-				name: 'mice'
-			}
+				name: 'mice',
+			},
 		};
 
 		it('should return empty string on no project', () => {
@@ -950,7 +952,7 @@ describe('views.js', () => {
 			const out = views.getBrackets(mockClient);
 			should.exist(out);
 			out.should.be.a('string');
-			out.should.match(/^\[project 42 .? mice\]$/);
+			out.should.match(/^\[project 42 .? mice]$/);
 		});
 
 		it('should use • as separator', () => {

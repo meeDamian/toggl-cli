@@ -1,6 +1,9 @@
-'use strict';
+import chalk from 'chalk';
+import meeEsm from './mee-esm.mjs';
+import pkg from './pkg.mjs';
+import views from './views.mjs';
 
-let me = {};
+const me = {};
 
 me.getMicro = function () {
 	return 'What do you want to do [c,1-9,s,r,d,p,l,L,b,v,h,?,q]?';
@@ -15,7 +18,7 @@ me.getShort = function ({chalk: {bold, dim}}) {
 		'',
 		bold('Other'),
 		'  x ⇾ clear         h, ? ⇾ help          v ⇾ version',
-		'  b ⇾ open in browser  q ⇾ quit'
+		'  b ⇾ open in browser  q ⇾ quit',
 	].join('\n');
 };
 
@@ -40,18 +43,26 @@ me.getLong = function ({pkg, pad, chalk: {white, black}}) {
 		`  --set-background - set color theme. Choose more readible: ${white('dark')} or ${black('light')}`,
 		'',
 		'Commands:',
-		'  c current             - see details of currently running time entry (if any).',
-		'  l list [amount|when]  - list last <amount> of time entries (default: 8) or <when> (see Notes)',
-		`  s smart [name|number] - start or stop the entry, whatever makes more sense.`,
-		'    start [name|number] - start new time entry with the given name, or resume if number is given.',
-		'    stop                - stop running entry.',
-		'  r rename <new-name>   - rename currently running entry to <new-name>.',
-		'  b browser             - open Toggl timer in default browser.',
+		'  c current 				- see details of currently running time entry (if any).',
+		'  l list [amount|when] 		- list last <amount> of time entries (default: 8) or <when> (see Notes)',
+		'  s smart [properties] [name|number]	- start or stop the entry, whatever makes more sense.',
+		'    start [properties] [name|number]	- start new time entry with the given name, or resume if number is given.',
+		'    stop  				- stop running entry.',
+		'  r rename <new-name> 		- rename currently running entry to <new-name>.',
+		'  pr projects  			- list existing projects.',
+		'  cl clients				- list existing clients.',
+		'  b browser				- open Toggl timer in default browser.',
+		'',
+		'Properties:',
+		'  New tasks can have properties defined as the first parameters after "start"',
+		'  → project:, proj: - set the project for this task, can be either a number, or partial name of the project',
+		'  → billable:, bill: - if passed "yes", will mark the task as billable',
+		'  → tag: - can add tags to the task, can be called multiple times',
 		'',
 		'Notes:',
 		'  → Values in [square brackets] are optional.',
 		'  → <when> is one of:',
-		'      today, yesterday, last Monday, last tue, etc…'
+		'      today, yesterday, last Monday, last tue, etc…',
 
 	]);
 };
@@ -63,7 +74,7 @@ me.getHint = function ({pad}) {
 		'  rename, list, browser.',
 		'',
 		'Or run:',
-		'  $ toggl --help'
+		'  $ toggl --help',
 	]);
 };
 
@@ -88,7 +99,7 @@ me.onBoard = function ({pad, chalk: {white, yellow, magenta}}, token = true, the
 		white(['  $ toggl', ...flags].join(' ')),
 		'',
 		'Where:',
-		...desc
+		...desc,
 	]);
 };
 
@@ -106,16 +117,22 @@ me.getExamples = function ({pad, chalk: {bold}}) {
 		bold('Start a new task named "Writing toggl-cli docs":'),
 		'  $ toggl start Writing toggl-cli docs',
 		'',
+		bold('Start a new task named "Writing toggl-cli docs" in the "toggl" project, with the "test" tag:'),
+		'  $ toggl start tag:test proj:toggl Writing toggl-cli docs',
+		'',
 		bold('Resume last running time entry:'),
 		'  $ toggl start 1',
 		'',
 		bold('List entries from the last Friday:'),
 		'  $ toggl list last friday',
 		'',
+		bold('List all the projects in the workspace:'),
+		'  $ toggl pr',
+		'',
 		bold('Alias toggl for work:'),
-		`  $ echo "toggl2='toggl --token <work-token>'" >> ~/.bashrc`,
+		'  $ echo "toggl2=\'toggl --token <work-token>\'" >> ~/.bashrc',
 		'  $ toggl list yesterday  # yesterday entries from your private account',
-		'  $ toggl2 list           # last 8 entries from your work account'
+		'  $ toggl2 list           # last 8 entries from your work account',
 	]);
 };
 
@@ -128,13 +145,9 @@ me.getLogo = function ({pad, chalk: {red}}) {
 		'WK    OO    KW',
 		'oMc        cMo',
 		' ;0Xd:,,:dX0;',
-		'   .xNMMNx.'
+		'   .xNMMNx.',
 	].map(v => ' '.repeat(6) + v)));
 };
 
-me = require('mee')(module, me, {
-	chalk: require('chalk'),
-	pkg: require('../package.json'),
+export default meeEsm(me, {chalk, pkg, pad: views.pad});
 
-	pad: require('./views.js').pad
-});

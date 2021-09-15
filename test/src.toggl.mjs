@@ -1,23 +1,20 @@
-'use strict';
+import chai from 'chai';
+import togglFactory from '../src/toggl.mjs';
 
-const should = require('chai').should();
+const should = chai.should();
 
 describe('toggl.js', () => {
-	const toggl = require('../src/toggl.js')({});
+	const toggl = togglFactory({});
 
 	describe('#DEFS', () => {
 		it('should have URLs defined', () => {
-			should.exist(toggl.URL);
 			should.exist(toggl.TIMER_URL);
 			should.exist(toggl.API_URL);
 
-			toggl.URL.should.be.a('string');
 			toggl.API_URL.should.be.a('string');
 			toggl.TIMER_URL.should.be.a('string');
-			toggl.URL.should.match(/^https:\/\//);
-			toggl.URL.should.match(/api.track.toggl.com/);
-			toggl.API_URL.should.match(/\/api/);
-			toggl.TIMER_URL.should.match(/\/timer/);
+			toggl.API_URL.should.match(/^https:\/\//);
+			toggl.TIMER_URL.should.match(/^https:\/\//);
 		});
 
 		it('should have API_VER defined', () => {
@@ -41,7 +38,7 @@ describe('toggl.js', () => {
 				'list',
 				'start',
 				'stop',
-				'update'
+				'update',
 			];
 
 			const te = toggl.DEFS.timeEntry;
@@ -57,7 +54,7 @@ describe('toggl.js', () => {
 			toggl.DEFS.should.have.any.keys('project');
 
 			const keys = [
-				'details'
+				'details',
 			];
 
 			const p = toggl.DEFS.project;
@@ -73,7 +70,7 @@ describe('toggl.js', () => {
 			toggl.DEFS.should.have.any.keys('client');
 
 			const keys = [
-				'details'
+				'details',
 			];
 
 			const c = toggl.DEFS.client;
@@ -107,12 +104,12 @@ describe('toggl.js', () => {
 			url.should.be.a('string');
 		});
 
-		it('should contain Toggl url', () => {
+		it('should contain Toggl API url', () => {
 			const url = toggl.buildUrl(undefined, endpoint);
 
 			should.exist(url);
 			url.should.be.a('string');
-			url.should.match(new RegExp(`^${toggl.URL}`));
+			url.should.match(new RegExp(`^${toggl.API_URL}`));
 		});
 
 		it('should set endpoint from `string` correctly', () => {

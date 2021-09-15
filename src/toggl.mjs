@@ -1,9 +1,15 @@
-/* eslint camelcase: 0 */ /* some vars are used as indexes of Toggl API*/
-'use strict';
+/* eslint camelcase: 0 */ /* some vars are used as indexes of Toggl API */
 
-const URL = 'https://www.api.track.toggl.com';
-const TIMER_URL = `${URL}/app/timer`;
-const API_URL = `${URL}/api`;
+import buffer from 'node:buffer';
+import request from 'request';
+import meeEsm from './mee-esm.mjs';
+import pkg from './pkg.mjs';
+import utils from './utils.mjs';
+
+const {Buffer} = buffer;
+
+const TIMER_URL = 'https://track.toggl.com/timer';
+const API_URL = 'https://api.track.toggl.com/api';
 const API_VER = 'v8';
 
 const V8_RESPONSE_WRAPPER = 'data';
@@ -12,65 +18,69 @@ const DEFS = {
 	client: {
 		details: {
 			endpoint: ['clients', ':id'],
-			method: 'GET'
-		}
+			method: 'GET',
+		},
+		list: {
+			endpoint: ['me', 'clients'],
+			method: 'GET',
+			version: 'v9',
+		},
 	},
 	project: {
 		details: {
 			endpoint: ['projects', ':id'],
-			method: 'GET'
+			method: 'GET',
 		},
 		list: {
 			endpoint: ['me', 'projects'],
 			method: 'GET',
-			version: 'v9'
-		}
+			version: 'v9',
+		},
 	},
 	timeEntry: {
 		create: {
 			endpoint: ['time_entries', 'create'],
-			method: 'POST'
+			method: 'POST',
 		},
 		current: {
 			endpoint: ['time_entries', 'current'],
-			method: 'GET'
+			method: 'GET',
 		},
 		delete: {
 			endpoint: ['time_entries', ':id'],
 			method: 'DELETE',
-			wrapped: false
+			wrapped: false,
 		},
 		details: {
 			endpoint: ['time_entries', ':id'],
-			method: 'GET'
+			method: 'GET',
 		},
 		list: {
 			endpoint: 'time_entries',
 			method: 'GET',
-			wrapped: false
+			wrapped: false,
 		},
 		start: {
 			endpoint: ['time_entries', 'start'],
-			method: 'POST'
+			method: 'POST',
 		},
 		stop: {
 			endpoint: ['time_entries', ':id', 'stop'],
-			method: 'PUT'
+			method: 'PUT',
 		},
 		update: {
 			endpoint: ['time_entries', ':id'],
-			method: 'PUT'
-		}
-	}
+			method: 'PUT',
+		},
+	},
 };
 Object.freeze(DEFS);
 
-let me = {
-	URL,
+const me = {
 	TIMER_URL,
 	API_URL,
 	API_VER,
-	DEFS
+	DEFS,
 };
 
 me.buildUrl = function (_, version, endpoint, id) {
@@ -89,28 +99,28 @@ me.buildUrl = function (_, version, endpoint, id) {
 	return [
 		API_URL,
 		version || API_VER,
-		...endpoint
+		...endpoint,
 	].join('/');
 };
 
 me.request = function ({
-	request
+	request,
 }, token, {
 	endpoint,
 	method,
 	version,
-	wrapped
-}, params) {
+	wrapped,
+}, parameters) {
 	return new Promise((resolve, reject) => {
 		const tm = setTimeout(reject, 2000);
 
 		const {
-				id,
-				body,
-				qs
-			} = params || {};
+			id,
+			body,
+			qs,
+		} = parameters || {};
 
-		const url = me.buildUrl(version, endpoint, id);
+		const url = this.buildUrl(version, endpoint, id);
 
 		request({
 			method,
@@ -119,17 +129,17 @@ me.request = function ({
 			body,
 			json: true,
 			headers: {
-				Authorization: `Basic ${new Buffer(`${token}:api_token`, 'utf8').toString('base64')}`
-			}
+				Authorization: `Basic ${Buffer.from(`${token}:api_token`, 'utf8').toString('base64')}`,
+			},
 		}, (error, {
-				statusCode
-			}, body) => {
+			statusCode,
+		}, body) => {
 			clearTimeout(tm);
 
 			if (error) {
 				reject({
 					statusCode,
-					error
+					error,
 				});
 				return;
 			}
@@ -137,7 +147,7 @@ me.request = function ({
 			if (statusCode === 429) {
 				reject({
 					statusCode,
-					error: new Error('too many requests')
+					error: new Error('too many requests'),
 				});
 				return;
 			}
@@ -145,18 +155,18 @@ me.request = function ({
 			if (statusCode !== 200) {
 				reject({
 					statusCode,
-					error: new Error(`FAIL ${url}`)
+					error: new Error(`FAIL ${url}`),
 				});
 				return;
 			}
 
 			resolve({
-				body
+				body,
 			});
 		});
 	})
 		.then(({
-			body
+			body,
 		}) => {
 			if ((!version || version === API_VER) && wrapped !== false) {
 				return body[V8_RESPONSE_WRAPPER];
@@ -168,8 +178,8 @@ me.request = function ({
 
 me.fetchMany = function (_, fn, token, ids) {
 	return Promise.all(ids
-		.filter((id, pos, arr) => id && arr.indexOf(id) === pos) // remove dups
-		.map(id => fn(token, id))
+		.filter((id, pos, array) => id && array.indexOf(id) === pos) // Remove dups
+		.map(id => fn(token, id)),
 	);
 };
 
@@ -177,100 +187,104 @@ me.fetchMany = function (_, fn, token, ids) {
  * FETCHERS
  */
 me.fetchProject = function (_, token, id) {
-	return me.request(token, DEFS.project.details, {
-		id
+	return this.request(token, DEFS.project.details, {
+		id,
 	});
 };
+
 me.fetchProjects = function (_, token, ids) {
-	return me.fetchMany(me.fetchProject, token, ids);
+	return this.fetchMany(this.fetchProject, token, ids);
 };
+
 me.fetchProjectsList = function (_, token) {
-	return me.request(token, DEFS.project.list);
+	return this.request(token, DEFS.project.list);
 };
 
 me.fetchClient = function (_, token, id) {
-	return me.request(token, DEFS.client.details, {
-		id
+	return this.request(token, DEFS.client.details, {
+		id,
 	});
 };
+
 me.fetchClients = function (_, token, ids) {
-	return me.fetchMany(me.fetchClient, token, ids);
+	return this.fetchMany(this.fetchClient, token, ids);
 };
 
-me.fetchTimeEntries = function (_, token, {
-	days = 90
-}) {
-	const params = {
-		start_date: new Date(new Date().setDate(new Date().getDate() - days)).toISOString()
+me.fetchClientList = function (_, token) {
+	return this.request(token, DEFS.client.list);
+};
+
+me.fetchTimeEntries = function (_, token, {days = 90}) {
+	const parameters = {
+		start_date: new Date(new Date().setDate(new Date().getDate() - days)).toISOString(),
 	};
 
-	return me.request(token, DEFS.timeEntry.list, {
-		qs: params
+	return this.request(token, DEFS.timeEntry.list, {
+		qs: parameters,
 	});
 };
+
 me.fetchCurrentTimeEntry = function (_, token) {
-	return me.request(token, DEFS.timeEntry.current);
+	return this.request(token, DEFS.timeEntry.current);
 };
 
 /**
  * GETTERS
  **/
 me.getClients = function (_, token, {
-	ids
+	ids,
 }) {
-	return me.fetchClients(token, ids);
+	return this.fetchClients(token, ids);
 };
 
 me.getProjects = function ({
-	utils
+	utils,
 }, token, {
 	ids,
-	deps = true
+	deps = true,
 }) {
-	const partial = ids ?
-		me.fetchProjects(token, ids) :
-		me.fetchProjectsList(token);
+	const partial = ids
+		? this.fetchProjects(token, ids)
+		: this.fetchProjectsList(token);
 
 	if (!deps) {
 		return partial;
 	}
 
 	return partial
-		.then(utils.attach(me.getClients, token, 'cid', 'client'));
+		.then(utils.attach(this.getClients, token, 'cid', 'client'));
 };
 
 me.getTimeEntries = function ({
-	utils
+	utils,
 }, token, {
 	limit,
 	date,
-	deps = true
+	deps = true,
 }) {
-	const partial = me.fetchTimeEntries(token, {})
+	const partial = this.fetchTimeEntries(token, {})
 		.then(entries => {
 			entries.reverse();
 
 			if ((limit === undefined && date === undefined) || !isNaN(limit)) {
 				try {
 					entries.length = Math.min(entries.length, limit || 8);
-				} catch (err) {
-					throw new Error(`Invalid "amount" ${err}`);
+				} catch (error) {
+					throw new Error(`Invalid "amount" ${error}`);
 				}
 
 				return entries;
 			}
 
 			if (date) {
-				return entries.map((e, i) => {
-					e._id = i;
-					return e;
+				return entries.map((entry, i) => {
+					entry._id = i;
+					return entry;
 				})
 					.filter(({
 						start,
-						stop
-					}) => {
-						return utils.compareDates(start, date) || utils.compareDates(stop, date);
-					});
+						stop,
+					}) => utils.compareDates(start, date) || utils.compareDates(stop, date));
 			}
 		});
 
@@ -279,13 +293,13 @@ me.getTimeEntries = function ({
 	}
 
 	return partial
-		.then(utils.attach(me.getProjects, token, 'pid', 'project', deps));
+		.then(utils.attach(this.getProjects, token, 'pid', 'project', deps));
 };
 
 me.getCurrentTimeEntry = function ({
-	utils
+	utils,
 }, token, deps = true) {
-	return me.fetchCurrentTimeEntry(token)
+	return this.fetchCurrentTimeEntry(token)
 		.then(data => {
 			if (!data) {
 				return undefined;
@@ -296,7 +310,7 @@ me.getCurrentTimeEntry = function ({
 			}
 
 			return Promise.resolve([data])
-				.then(utils.attach(me.getProjects, token, 'pid', 'project', deps))
+				.then(utils.attach(this.getProjects, token, 'pid', 'project', deps))
 				.then(([data]) => data);
 		});
 };
@@ -305,44 +319,36 @@ me.getCurrentTimeEntry = function ({
  * SETTERS
  **/
 me.startTimeEntry = function ({
-	pkg
+	pkg,
 }, token, time_entry = {}) {
 	time_entry.created_with = `toggl-cli ${pkg.version}`;
-	return me.request(token, DEFS.timeEntry.start, {
+	return this.request(token, DEFS.timeEntry.start, {
 		body: {
-			time_entry
-		}
+			time_entry,
+		},
 	});
 };
 
 me.stopTimeEntry = function (_, token, id) {
-	return me.request(token, DEFS.timeEntry.stop, {
-		id
+	return this.request(token, DEFS.timeEntry.stop, {
+		id,
 	});
 };
 
 me.updateTimeEntry = function (_, token, id, changes) {
-	return me.request(token, DEFS.timeEntry.update, {
+	return this.request(token, DEFS.timeEntry.update, {
 		id,
 		body: {
-			time_entry: changes
-		}
+			time_entry: changes,
+		},
 	});
 };
 
 me.deleteTimeEntry = function (_, token, id) {
-	return me.request(token, DEFS.timeEntry.delete, {
-		id
+	return this.request(token, DEFS.timeEntry.delete, {
+		id,
 	});
 };
 
-/**
- * EXPORT
- **/
-me = require('mee')(module, me, {
-	request: require('request'),
+export default meeEsm(me, {request, utils, pkg});
 
-	utils: require('./utils.js'),
-
-	pkg: require('../package.json')
-});

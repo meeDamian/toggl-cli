@@ -1,10 +1,20 @@
-'use strict';
-
 /*
  * Nope, not proud of below code. Either 1) deal with it, or 2) submit a cleanup PR.
  */
 
-let me = {};
+import process from 'node:process';
+import chalk from 'chalk';
+import logger from 'log-update';
+import open from 'open';
+import help from '../help.mjs';
+import meeEsm from '../mee-esm.mjs';
+import pkg from '../pkg.mjs';
+import toggl from '../toggl.mjs';
+import utils from '../utils.mjs';
+import views from '../views.mjs';
+import discard from './discard.mjs';
+
+const me = {};
 
 me.render = function ({logger, help, chalk}, lines) {
 	if (lines === undefined) {
@@ -18,31 +28,31 @@ me.render = function ({logger, help, chalk}, lines) {
 
 	logger([
 		...lines,
-		chalk.bold.cyan(help.getMicro())
+		chalk.bold.cyan(help.getMicro()),
 	].join('\n'));
 };
 
-me.err = function ({views}, err) {
-	me.render(views.formatErr(err));
+me.err = function ({views}, error) {
+	this.render(views.formatErr(error));
 };
 
 me.loading = function ({help, logger}) {
 	logger([
 		help.getLogo(),
-		'Loading…'
+		'Loading…',
 	].join('\n'));
 };
 
 me.help = function ({help, chalk: {red, bold}}, key) {
-	const msg = [help.getShort(), ''];
+	const message = [help.getShort(), ''];
 
 	if (key) {
-		msg.push(red(`${bold(key)} is not an option. Try one of the above.`));
+		message.push(red(`${bold(key)} is not an option. Try one of the above.`));
 	} else {
-		msg.unshift('');
+		message.unshift('');
 	}
 
-	me.render(msg);
+	this.render(message);
 };
 
 me.state = function (_, exit) {
@@ -61,7 +71,7 @@ me.state = function (_, exit) {
 			extensions[key]();
 			extensions = undefined;
 			return true;
-		}
+		},
 	};
 };
 
@@ -70,12 +80,13 @@ me.current = function ({toggl, views, utils}, {token}) {
 	let list;
 	let renderInterval;
 	let updateTimeout;
+	const self = this;
 
 	function renderView() {
 		let hasCurrent = false;
 
 		Promise.resolve(current)
-			.then(views.details) // can throw and skip to `.catch()`
+			.then(views.details) // Can throw and skip to `.catch()`
 			.then(utils.pass(() => {
 				hasCurrent = true;
 			}))
@@ -92,15 +103,15 @@ me.current = function ({toggl, views, utils}, {token}) {
 
 				const listViews = views.list(list.slice(
 					offset,
-					offset + 10 - linesUsed
+					offset + 10 - linesUsed,
 				));
 
 				listViews.unshift('');
 
 				return currentView + listViews.join('\n');
 			})
-			.then(me.render)
-			.catch(me.err);
+			.then(self.render)
+			.catch(self.err);
 	}
 
 	function updateCurrent(currentEntry) {
@@ -121,11 +132,11 @@ me.current = function ({toggl, views, utils}, {token}) {
 	function update() {
 		toggl.getCurrentTimeEntry(token, true)
 			.then(updateCurrent)
-			.catch(me.err);
+			.catch(self.err);
 
 		toggl.getTimeEntries(token, {limit: 7})
 			.then(updateList)
-			.catch(me.err);
+			.catch(self.err);
 
 		updateTimeout = setTimeout(update, 8 * 1000);
 	}
@@ -142,18 +153,16 @@ me.current = function ({toggl, views, utils}, {token}) {
 			.then(({description, pid, billable, tags}) => ({description, pid, billable, tags}))
 			.then(entryData => toggl.startTimeEntry(token, entryData))
 			.then(update)
-			.catch(err => {
-				console.log(err);
+			.catch(error => {
+				console.log(error);
 			});
 	}
 
 	function startStop() {
 		toggl.getCurrentTimeEntry(token, false)
-			.then(entry => {
-				return entry ?
-					toggl.stopTimeEntry(token, entry.id) :
-					toggl.startTimeEntry(token);
-			})
+			.then(entry => entry
+				? toggl.stopTimeEntry(token, entry.id)
+				: toggl.startTimeEntry(token))
 			.then(update);
 	}
 
@@ -168,7 +177,7 @@ me.current = function ({toggl, views, utils}, {token}) {
 
 			clearTimeout(updateTimeout);
 			updateTimeout = undefined;
-		}
+		},
 	};
 };
 
@@ -176,8 +185,8 @@ me.showList = function ({toggl, views}, token, limit = 9) {
 	toggl.getTimeEntries(token, {limit})
 		.then(views.list)
 		.then(x => ['', ...x])
-		.then(me.render)
-		.catch(me.err);
+		.then(this.render)
+		.catch(this.err);
 };
 
 me.setKeyListener = function ({process: {stdin, exit}}, cb) {
@@ -203,65 +212,65 @@ me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, 
 
 		state.set(undefined);
 
-		const which = parseInt(key, 10);
+		const which = Number.parseInt(key, 10);
 		if (!isNaN(which) && which !== 0) {
 			current.resume(which);
 			return;
 		}
 
 		switch (key) {
-			case 'v': // version
-				me.render([
-					...Array(4),
+			case 'v': // Version
+				this.render([
+					...Array.from({length: 4}),
 					`    v${pkg.version}`,
-					...Array(5)
+					...Array.from({length: 5}),
 				]);
 				break;
 
-			case 'x': // clear
-				me.render(undefined);
+			case 'x': // Clear
+				this.render(undefined);
 				break;
 
-			case 'c': // current
+			case 'c': // Current
 				current.update();
 				break;
 
-			case 's': // start/stop
+			case 's': // Start/stop
 				current.startStop();
 				break;
 
-			case 'l': // list of last 8
-				me.showList(token);
+			case 'l': // List of last 8
+				this.showList(token);
 				break;
 
-			case 'L': // list of last 16
-				me.showList(token, 16);
+			case 'L': // List of last 16
+				this.showList(token, 16);
 				break;
 
-			case 'b': // open in browser
+			case 'b': // Open in browser
 				open(toggl.TIMER_URL);
 				break;
 
-			case 'p': // add project to current entry
-				me.render([
-					...Array(2),
+			case 'p': // Add project to current entry
+				this.render([
+					...Array.from({length: 2}),
 					yellow('  Oops, you\'ve found a thing that\'s not there yet…'),
 					'',
 					`  To ${bold('add a project')}`,
 					`    Press ${bold('b')} to open in browser.`,
-					...Array(4)
+					...Array.from({length: 4}),
 				]);
 				break;
 
-			case 'r': // rename current entry
-				me.render([
-					...Array(2),
+			case 'r': // Rename current entry
+				this.render([
+					...Array.from({length: 2}),
 					yellow('  Oops, you\'ve found a thing that\'s not there yet…'),
 					'',
 					`  To ${bold('rename')} current ${bold('time entry')}`,
 					`    Exit this mode (press ${bold('q')}), and run:`,
 					bold('      $ toggl rename <new name>'),
-					...Array(3)
+					...Array.from({length: 3}),
 				]);
 				break;
 
@@ -269,41 +278,27 @@ me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, 
 				discard.act(token, state);
 				break;
 
-			case 'h': case '?': // help
-				me.help();
+			case 'h': case '?': // Help
+				this.help();
 				break;
 
 			default:
-				me.help(key);
+				this.help(key);
 				break;
 		}
 	};
 };
 
 me.start = function (_, {token}) {
-	me.loading();
+	this.loading();
 
-	const current = me.current({token});
-	const state = me.state(current.update);
+	const current = this.current({token});
+	const state = this.state(current.update);
 
 	current.update();
 
-	me.setKeyListener(me.onKey(token, current, state));
+	this.setKeyListener(this.onKey(token, current, state));
 };
 
-me = require('mee')(module, me, {
-	open: require('open'),
-	logger: require('log-update'),
-	chalk: require('chalk'),
+export default meeEsm(me, {open, logger, chalk, discard, pkg, views, toggl, utils, help, process});
 
-	discard: require('./discard.js'),
-
-	pkg: require('../../package.json'),
-
-	views: require('../views.js'),
-	toggl: require('../toggl.js'),
-	utils: require('../utils.js'),
-	help: require('../help.js'),
-
-	process
-});

@@ -1,34 +1,14 @@
 /* eslint no-unused-expressions: 0 */
-'use strict';
 
-const chai = require('chai');
-chai.use(require('chai-spies'));
+import chai from 'chai';
+import chaiSpies from 'chai-spies';
+import core from '../src/core.mjs';
+
+chai.use(chaiSpies);
 
 const should = chai.should();
 
 describe('simple/core.js', () => {
-	const core = require('../src/core.js');
-
-	describe('CONSTANTS', () => {
-		it('should export MIN_IN_SEC', () => {
-			should.exist(core.MIN_IN_SEC);
-			core.MIN_IN_SEC.should.be.a('number');
-			core.MIN_IN_SEC.should.equal(60);
-		});
-
-		it('should export HOUR_IN_SEC', () => {
-			should.exist(core.HOUR_IN_SEC);
-			core.HOUR_IN_SEC.should.be.a('number');
-			core.HOUR_IN_SEC.should.equal(60 * 60);
-		});
-
-		it('should export DAY_IN_SEC', () => {
-			should.exist(core.DAY_IN_SEC);
-			core.DAY_IN_SEC.should.be.a('number');
-			core.DAY_IN_SEC.should.equal(60 * 60 * 24);
-		});
-	});
-
 	describe('#getDuration()', () => {
 		it('should return 0s string for zero duration', () => {
 			const zeroDur = core.getDuration({duration: 0});

@@ -1,16 +1,8 @@
-'use strict';
-
 const MIN_IN_SEC = 60;
 const HOUR_IN_SEC = 60 * MIN_IN_SEC;
 const DAY_IN_SEC = 24 * HOUR_IN_SEC;
 
-let me = {
-	MIN_IN_SEC,
-	HOUR_IN_SEC,
-	DAY_IN_SEC
-};
-
-me.getDuration = function ({duration}, maxLength = 2) {
+function getDuration({duration}, maxLength = 2) {
 	const dur = [];
 
 	if (duration >= DAY_IN_SEC) {
@@ -33,6 +25,7 @@ me.getDuration = function ({duration}, maxLength = 2) {
 	}
 
 	return dur.join(' ');
-};
+}
 
-me = require('mee')(module, me);
+const core = {getDuration};
+export default core;

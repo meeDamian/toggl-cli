@@ -1,6 +1,10 @@
-'use strict';
+import logger from 'log-update';
+import meeEsm from '../mee-esm.mjs';
+import toggl from '../toggl.mjs';
+import views from '../views.mjs';
+import utils from '../utils.mjs';
 
-let me = {};
+const me = {};
 
 me.getState = function ({toggl}, token, id, exit) {
 	function confirm() {
@@ -10,23 +14,17 @@ me.getState = function ({toggl}, token, id, exit) {
 
 	return {
 		y: confirm,
-		n: exit
+		n: exit,
 	};
 };
 
 me.act = function ({toggl, views, logger, utils}, token, state) {
 	toggl.getCurrentTimeEntry(token, true)
 		.then(utils.pass(entry => {
-			state.set(me.getState(token, entry.id, state.exit));
+			state.set(this.getState(token, entry.id, state.exit));
 		}))
 		.then(views.discard)
 		.then(x => logger(x.join('\n')));
 };
 
-me = require('mee')(module, me, {
-	logger: require('log-update'),
-
-	toggl: require('../toggl.js'),
-	views: require('../views.js'),
-	utils: require('../utils.js')
-});
+export default meeEsm(me, {logger, toggl, views, utils});
