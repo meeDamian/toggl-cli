@@ -213,7 +213,7 @@ me.onKey = function ({open, pkg, toggl, discard, chalk: {bold, yellow}}, token, 
 		state.set(undefined);
 
 		const which = Number.parseInt(key, 10);
-		if (!Number.isNaN(which) && which !== 0) {
+		if (!isNaN(which) && which !== 0) {
 			current.resume(which);
 			return;
 		}

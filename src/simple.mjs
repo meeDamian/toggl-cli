@@ -21,7 +21,7 @@ me.showCurrent = function ({views}, token) {
 me.list = function ({views, toggl}, token, parameters) {
 	Promise.resolve()
 		.then(() => {
-			if (parameters[0] === undefined || !Number.isNaN(parameters[0])) {
+			if (parameters[0] === undefined || !isNaN(parameters[0])) {
 				return {limit: parameters[0]};
 			}
 
@@ -92,7 +92,7 @@ me.clients = function ({toggl, views}, token) {
 me.start = function ({toggl, views}, token, description) {
 	Promise.resolve(description)
 		.then(which => {
-			if (!which || Number.isNaN(which) || which > 16) {
+			if (!which || isNaN(which) || which > 16) {
 				return {description};
 			}
 
@@ -158,7 +158,7 @@ me.parseProjectToken = function ({toggl}, token, timeEntry) {
 
 	const projectTokenInt = Number.parseInt(projectToken, 10);
 	// The project defined is probably Toggl project ID
-	if (!Number.isNaN(projectTokenInt) && projectTokenInt > 16) {
+	if (!isNaN(projectTokenInt) && projectTokenInt > 16) {
 		timeEntry.pid = projectToken;
 		return timeEntry;
 	}
@@ -167,7 +167,7 @@ me.parseProjectToken = function ({toggl}, token, timeEntry) {
 	return Promise.resolve()
 		.then(() => toggl.fetchProjectsList(token))
 		.then(projects => {
-			if (Number.isNaN(projectTokenInt)) {
+			if (isNaN(projectTokenInt)) {
 				const foundProject = projects.find(item => {
 					const itemName = item.name.toLowerCase().replace('_', ' ');
 					const tokenName = projectToken.toLowerCase().replace('_', ' ');

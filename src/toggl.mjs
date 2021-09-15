@@ -266,7 +266,7 @@ me.getTimeEntries = function ({
 		.then(entries => {
 			entries.reverse();
 
-			if ((limit === undefined && date === undefined) || !Number.isNaN(limit)) {
+			if ((limit === undefined && date === undefined) || !isNaN(limit)) {
 				try {
 					entries.length = Math.min(entries.length, limit || 8);
 				} catch (error) {
