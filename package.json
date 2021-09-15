@@ -13,8 +13,8 @@
   },
   "scripts": {
     "start": "./src/index.mjs",
-    "test": "xo && nyc mocha",
-    "coveralls.io": "npm test && nyc report --reporter=text-lcov | coveralls"
+    "test": "xo && c8 mocha",
+    "coveralls.io": "c8 mocha && c8 report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "toggl",
@@ -40,13 +40,13 @@
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.14.0",
+    "c8": "^7.9.0",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "chai-spies": "^1.0.0",
     "codecov": "^1.0.1",
     "coveralls": "^3.1.1",
     "mocha": "^9.1.1",
-    "nyc": "^15.1.0",
     "xo": "^0.16.0"
   },
   "xo": {
